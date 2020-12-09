@@ -1,0 +1,14 @@
+:root {
+  --c-white: #faf6f5;
+  --c-p: #333;
+  --c-bkg: #f1dfd4;
+  --c-bkg-light: #fff;
+  --c-shadow: #000;
+  --c-primary: #cb5454;
+  --c-primary-dark: #994d4d;
+  --c-secondary: #355454;
+  --c-border: rgba(106, 106, 106, 0.42);
+  --c-feedback: #5480cb;
+  --c-feedback-error: var(--c-primary);
+  --c-feedback-success: var(--c-secondary);
+}

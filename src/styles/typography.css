@@ -1,0 +1,66 @@
+:root {
+  --fs: 1.5rem;
+  --fs-small: 1.3rem;
+  --fs-big: 2rem;
+}
+
+html {
+//font-size: 2vmin;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 100%;
+  line-height: 1.4;
+  color: var(--c-p);
+}
+
+b {
+  font-weight: 700;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+  line-height: 1.1;
+  font-size: 2rem;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h2 {
+  font-size: 2.6rem;
+}
+
+h3 {
+  font-size: 2.3rem;
+}
+
+h4 {
+  font-size: 2rem;
+}
+
+
+/* button reset */
+button {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+a {
+  color: var(--c-primary);
+}
+
+.fs--small {
+  font-size: var(--fs-small);
+}
+
+.fs--xsmall {
+  font-size: var(--fs-xsmall);
+}

@@ -1,0 +1,15 @@
+:root {
+  --space: 1rem;
+  --space-grid: 1.5rem;
+  --space-s: 0.8rem;
+  --space-xs: 0.5rem;
+  --space-l: 1.5rem;
+  --space-xl: 3rem;
+  --menu-width: 400px;
+}
+
+@media (max-width: 800px) {
+  :root {
+    --space-grid: 0.5rem;
+  }
+}
