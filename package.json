@@ -14,7 +14,8 @@
     "serve:dev": "webpack-dev-server --open"
   },
   "dependencies": {
-    "preact": "^10.5.4"
+    "preact": "^10.5.4",
+    "react-showdown": "^2.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",

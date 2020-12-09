@@ -1,0 +1,5 @@
+.header {
+  &__nav {
+    margin-left: auto;
+  }
+}

@@ -178,7 +178,6 @@ module.exports = (env, argv) => {
         '@app': `${dirSrc}/app/`,
         '@utils': `${dirSrc}/utils/`,
         '@theme': `${dirSrc}/theme/`,
-        '@store': `${dirSrc}/store/`,
         '@types': `${dirSrc}/@types/`,
       },
     },

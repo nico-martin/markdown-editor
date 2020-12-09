@@ -1,0 +1,21 @@
+.editor-markup {
+  position: relative;
+
+  &__textarea {
+    position: absolute;
+    bottom: var(--space-grid-half);
+    left: var(--space-grid-half);
+    top: var(--space-grid-half);
+    width: calc(100% - 2 * var(--space-grid-half));
+    border: none;
+    background-color: transparent;
+    padding: var(--space-grid-half);
+    font-family: 'JetBrains Mono', monospace;
+
+    &:focus {
+      border: 0;
+      outline: none;
+      @mixin a11y-focus;
+    }
+  }
+}

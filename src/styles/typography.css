@@ -1,15 +1,16 @@
 :root {
-  --fs: 1.5rem;
-  --fs-small: 1.3rem;
-  --fs-big: 2rem;
+  --fs: 1rem;
+  --fs-small: 0.9rem;
+  --fs-xsmall: 0.7rem;
+  --fs-big: 1.2rem;
 }
 
 html {
-//font-size: 2vmin;
+  //font-size: 2vmin;
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: Affogato, sans-serif;
   font-weight: 400;
   font-size: 100%;
   line-height: 1.4;
@@ -23,28 +24,19 @@ b {
 h1,
 h2,
 h3 {
-  font-family: 'Open Sans', sans-serif;
+  font-family: Affogato, sans-serif;
   font-weight: 700;
   line-height: 1.1;
-  font-size: 2rem;
-}
-
-h1 {
-  font-size: 3rem;
+  font-size: 1.8em;
 }
 
 h2 {
-  font-size: 2.6rem;
+  font-size: 1.5em;
 }
 
 h3 {
-  font-size: 2.3rem;
+  font-size: 1.2em;
 }
-
-h4 {
-  font-size: 2rem;
-}
-
 
 /* button reset */
 button {

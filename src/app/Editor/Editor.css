@@ -1,0 +1,7 @@
+.editor {
+  display: flex;
+
+  & > * {
+    padding: var(--space-grid);
+  }
+}
