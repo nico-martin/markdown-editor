@@ -1,0 +1,19 @@
+.editor-html {
+  position: relative;
+
+  &__saved {
+    position: absolute;
+    right: 1em;
+    top: 1em;
+    font-size: var(--fs-small);
+    color: var(--c-feedback-success);
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 200ms;
+    will-change: opacity;
+
+    &[aria-hidden='false'] {
+      opacity: 1;
+    }
+  }
+}

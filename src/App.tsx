@@ -6,6 +6,7 @@ import { actions, store } from '@store/index';
 
 import Header from '@app/Header';
 import Editor from '@app/Editor/Editor';
+import Footer from '@app/Footer';
 
 import './App.css';
 
@@ -20,6 +21,7 @@ const App = () => {
     <div className="app">
       <Header className="app__header" />
       <Editor className="app__editor" />
+      <Footer className="app__footer" />
     </div>
   );
 };

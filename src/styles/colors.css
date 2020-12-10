@@ -4,11 +4,10 @@
   --c-bkg: #f1f0f0;
   --c-bkg-light: #fff;
   --c-shadow: #000;
-  --c-primary: #cb5454;
-  --c-primary-dark: #994d4d;
-  --c-secondary: #355454;
+  --c-primary: #006e7c;
+  --c-primary-dark: #00575f;
   --c-border: rgb(205, 205, 205);
   --c-feedback: #5480cb;
-  --c-feedback-error: var(--c-primary);
-  --c-feedback-success: var(--c-secondary);
+  --c-feedback-error: #722121;
+  --c-feedback-success: #206920;
 }

@@ -25,9 +25,8 @@ const EditorMarkup = ({
           setActiveFile({ content: (e.target as HTMLTextAreaElement).value })
         }
         placeholder="start typing.."
-      >
-        {activeFile.content}
-      </textarea>
+        value={activeFile.content}
+      />
     </div>
   );
 };

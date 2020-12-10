@@ -13,6 +13,9 @@ const initialState: State = {
     title: '',
     path: '',
     content: '',
+    savedContent: '',
+    handle: null,
+    saved: false,
   },
 };
 

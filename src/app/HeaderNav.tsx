@@ -1,25 +1,22 @@
 import React from 'react';
 
 import cn from '@utils/classnames';
-import { Button } from '@theme';
+import { featureCheck } from '@utils/helpers';
+
+import ButtonNew from './Controls/ButtonNew';
+import ButtonSave from './Controls/ButtonSave';
+import ButtonOpen from './Controls/ButtonOpen';
 
 import './HeaderNav.css';
 
 const HeaderNav = ({ className = '' }: { className?: string }) => {
-  React.useEffect(() => {
-    console.log('key listener');
-  });
-
-  return (
+  return featureCheck ? (
     <nav className={cn(className, 'header-nav')}>
-      <Button className="header-nav__element" icon="mdi/open" layout="empty">
-        Open File
-      </Button>
-      <Button className="header-nav__element" icon="mdi/save" layout="empty">
-        Save
-      </Button>
+      <ButtonNew className="header-nav__element" />
+      <ButtonOpen className="header-nav__element" />
+      <ButtonSave className="header-nav__element" />
     </nav>
-  );
+  ) : null;
 };
 
 export default HeaderNav;

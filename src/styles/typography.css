@@ -56,3 +56,8 @@ a {
 .fs--xsmall {
   font-size: var(--fs-xsmall);
 }
+
+.code,
+p code {
+  font-family: 'JetBrains Mono', monospace;
+}

@@ -1,3 +1,7 @@
 .header-nav {
   display: flex;
+
+  &__element:last-child {
+    margin-left: var(--space);
+  }
 }
