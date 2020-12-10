@@ -14,8 +14,11 @@
     "serve:dev": "webpack-dev-server --open"
   },
   "dependencies": {
+    "idb": "^5.0.8",
     "preact": "^10.5.4",
-    "react-showdown": "^2.1.0"
+    "react-showdown": "^2.1.0",
+    "unistore": "^3.5.2",
+    "unistore-hooks": "^0.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",

@@ -85,34 +85,30 @@ module.exports = (env, argv) => {
               useShortDoctype: true,
             },
       }),
-      ...(!dev || process.env.GENERATE_SW === 'true' // only generate manifest and SW in prod build
-        ? [
-            new WebpackPwaManifest({
-              name: app.title,
-              short_name: app.short,
-              description: app.description,
-              theme_color: app.color,
-              background_color: app.colorbkg,
-              crossorigin: 'use-credentials',
-              start_url: '/',
-              fingerprints: false,
-              icons: [
-                {
-                  src: path.resolve(`${dirSrc}/assets/pwadvent-appicon.png`),
-                  sizes: [96, 128, 192, 256, 384, 512],
-                  destination: path.join('assets', 'pwa-icon'),
-                  ios: true,
-                  purpose: 'maskable any',
-                },
-              ],
-            }),
-            new workboxPlugin.InjectManifest({
-              swSrc: './src/service-worker.js',
-              include: [/\.html$/, /\.js$/, /\.css$/],
-              maximumFileSizeToCacheInBytes: 5000000,
-            }),
-          ]
-        : []),
+      new WebpackPwaManifest({
+        name: app.title,
+        short_name: app.short,
+        description: app.description,
+        theme_color: app.color,
+        background_color: app.colorbkg,
+        crossorigin: 'use-credentials',
+        start_url: '/',
+        fingerprints: false,
+        icons: [
+          {
+            src: path.resolve(`${dirSrc}/assets/favicon.png`),
+            sizes: [96, 128, 192, 256, 384, 512],
+            destination: path.join('assets', 'pwa-icon'),
+            ios: true,
+            purpose: 'maskable any',
+          },
+        ],
+      }),
+      new workboxPlugin.InjectManifest({
+        swSrc: './src/service-worker.js',
+        include: [/\.html$/, /\.js$/, /\.css$/],
+        maximumFileSizeToCacheInBytes: 5000000,
+      }),
       new DefinePlugin({
         IS_DEV: JSON.stringify(dev),
         APP_TITLE: JSON.stringify(app.title) || '',
@@ -178,6 +174,7 @@ module.exports = (env, argv) => {
         '@app': `${dirSrc}/app/`,
         '@utils': `${dirSrc}/utils/`,
         '@theme': `${dirSrc}/theme/`,
+        '@store': `${dirSrc}/store/`,
         '@types': `${dirSrc}/@types/`,
       },
     },

@@ -4,4 +4,13 @@
   & > * {
     padding: var(--space-grid);
   }
+
+  &__not-supported {
+    align-self: center;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    border: 2px dashed var(--c-border);
+  }
 }

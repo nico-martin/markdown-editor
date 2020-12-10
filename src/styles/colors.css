@@ -7,7 +7,7 @@
   --c-primary: #cb5454;
   --c-primary-dark: #994d4d;
   --c-secondary: #355454;
-  --c-border: rgba(106, 106, 106, 0.42);
+  --c-border: rgb(205, 205, 205);
   --c-feedback: #5480cb;
   --c-feedback-error: var(--c-primary);
   --c-feedback-success: var(--c-secondary);
