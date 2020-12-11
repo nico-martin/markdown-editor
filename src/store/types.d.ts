@@ -1,6 +1,5 @@
-export interface ActiveFile {
+export interface File {
   title: string;
-  path: string;
   content: string;
   savedContent: string;
   handle: any;
@@ -9,8 +8,8 @@ export interface ActiveFile {
 
 export interface State {
   offline: boolean;
-  recentFiles: Record<string, string>;
-  activeFile: ActiveFile;
+  files: Array<File>;
+  activeFileIndex: number;
 }
 
 export interface Actions {}

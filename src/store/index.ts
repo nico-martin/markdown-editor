@@ -1,32 +1,50 @@
-import { ActiveFile, State } from './types';
+import { File, State } from './types';
 
 import createStore, { Store } from 'unistore';
 import devtools from 'unistore/devtools';
 
 import { isDev } from '@utils/helpers';
-import { filesDB } from '@store/idb';
+
+export const defaultFile = {
+  title: 'untitled',
+  content: '',
+  savedContent: '',
+  handle: null,
+  saved: false,
+};
 
 const initialState: State = {
   offline: false,
-  recentFiles: {},
-  activeFile: {
-    title: '',
-    path: '',
-    content: '',
-    savedContent: '',
-    handle: null,
-    saved: false,
-  },
+  files: [defaultFile],
+  activeFileIndex: 0,
 };
 
 export const actions = (store: Store<State>) => ({
   setOffline: (state, offline: boolean) => ({ offline }),
-  loadRecentFiles: async () => await filesDB.getAll(),
-  setActiveFile: ({ activeFile }, newActiveDay: Partial<ActiveFile>) => ({
-    activeFile: {
-      ...activeFile,
-      ...newActiveDay,
-    },
+  setFiles: (state, files, index = 0) => ({ files, activeFileIndex: index }),
+  updateActiveFile: (state, updatedFile: Partial<File>) => ({
+    files: state.files.map((file, index) =>
+      index === state.activeFileIndex
+        ? {
+            ...state.files[index],
+            ...updatedFile,
+          }
+        : file
+    ),
+  }),
+  deleteFileByIndex: ({ files, activeFileIndex }, index) => ({
+    files: files.filter((file, i) => index !== i),
+    activeFileIndex:
+      activeFileIndex === index
+        ? index - 1
+        : activeFileIndex > index
+        ? activeFileIndex - 1
+        : activeFileIndex,
+  }),
+  setActiveFileIndex: (state, index) => ({ activeFileIndex: index }),
+  createNewFile: ({ files }, newFile: Partial<File> = {}) => ({
+    files: [...files, { ...defaultFile, ...newFile }],
+    activeFileIndex: files.length,
   }),
 });
 

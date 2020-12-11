@@ -13,4 +13,10 @@
     text-align: center;
     border: 2px dashed var(--c-border);
   }
+
+  &__loader {
+    align-self: center;
+    margin: 0 auto;
+    font-size: 4vmin;
+  }
 }

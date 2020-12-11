@@ -1,23 +1,23 @@
 import React from 'react';
-import { useStoreState } from 'unistore-hooks';
 
-import { State } from '@store/types';
 import cn from '@utils/classnames';
+import { featureCheck } from '@utils/helpers';
 import FooterNav from '@app/FooterNav';
+import FileMenu from '@app/FileMenu';
 
 import './Footer.css';
 
-const Footer = ({ className = '' }: { className?: string }) => {
-  const { activeFile } = useStoreState<State>(['activeFile']);
-
-  return (
-    <div className={cn(className, 'footer')}>
-      <p className="footer__path code">
-        File: {activeFile.path || 'not yet saved'}
-      </p>
-      <FooterNav className="footer__nav" />
-    </div>
-  );
-};
+const Footer = ({
+  className = '',
+  init,
+}: {
+  className?: string;
+  init: boolean;
+}) => (
+  <div className={cn(className, 'footer')}>
+    {init && featureCheck && <FileMenu className="footer__files" />}
+    <FooterNav className="footer__nav" />
+  </div>
+);
 
 export default Footer;

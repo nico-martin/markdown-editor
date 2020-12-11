@@ -1,0 +1,70 @@
+.file-menu {
+  display: flex;
+
+  &__element {
+    margin-right: var(--space);
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      .file-menu__delete {
+        opacity: 1;
+      }
+    }
+
+    &--active {
+      font-weight: bold;
+    }
+  }
+
+  &__button {
+    cursor: pointer;
+
+    &:focus {
+      @mixin a11y-focus;
+      outline: none;
+
+      & + .file-menu__delete {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__delete {
+    width: 1em;
+    height: 1em;
+    position: relative;
+    text-indent: -999px;
+    cursor: pointer;
+    opacity: 0;
+    border-radius: 50%;
+    transform: scale(0.8);
+
+    &:focus,
+    &:hover {
+      outline: none;
+      background-color: var(--c-border);
+    }
+
+    &:focus {
+      opacity: 1;
+    }
+
+    &::after,
+    &::before {
+      content: '';
+      display: block;
+      width: 1px;
+      background-color: currentColor;
+      height: 60%;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translateY(-50%) translateX(-50%) rotate(45deg);
+    }
+
+    &::before {
+      transform: translateY(-50%) translateX(-50%) rotate(-45deg);
+    }
+  }
+}

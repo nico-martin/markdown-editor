@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStoreState, useActions } from 'unistore-hooks';
 
-import { actions } from '@store/index';
+import { actions, defaultFile } from '@store/index';
 import { State } from '@store/types';
 import cn from '@utils/classnames';
 import { Button } from '@theme';
@@ -9,8 +9,16 @@ import { Button } from '@theme';
 import './ButtonSave.css';
 
 const ButtonSave = ({ className = '' }: { className?: string }) => {
-  const { setActiveFile } = useActions(actions);
-  const { activeFile } = useStoreState<State>(['activeFile']);
+  const { updateActiveFile } = useActions(actions);
+  const { activeFileIndex, files } = useStoreState<State>([
+    'activeFileIndex',
+    'files',
+  ]);
+
+  const activeFile = React.useMemo(
+    () => files[activeFileIndex] || defaultFile,
+    [files, activeFileIndex]
+  );
 
   const canSave = React.useMemo(
     () => activeFile.content !== activeFile.savedContent,
@@ -55,11 +63,11 @@ const ButtonSave = ({ className = '' }: { className?: string }) => {
     await writable.write(activeFile.content);
     const file = await handle.getFile();
 
-    setActiveFile({
+    updateActiveFile({
+      title: file.name,
       savedContent: activeFile.content,
-      saved: true,
       handle,
-      path: file.name,
+      saved: true,
     });
     await writable.close();
   };

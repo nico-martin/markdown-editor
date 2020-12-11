@@ -2,9 +2,12 @@
   padding: var(--space-grid-half) var(--space-grid);
   display: flex;
   align-items: center;
-  justify-content: space-between;
 
   &__path {
     font-size: var(--fs-small);
+  }
+
+  &__nav {
+    margin-left: auto;
   }
 }

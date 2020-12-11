@@ -9,7 +9,7 @@ import { Button } from '@theme';
 import './ButtonNew.css';
 
 const ButtonNew = ({ className = '' }: { className?: string }) => {
-  const { setActiveFile } = useActions(actions);
+  const { updateActiveFile } = useActions(actions);
   const { activeFile } = useStoreState<State>(['activeFile']);
   const hasChanges = React.useMemo(
     () => activeFile.content !== activeFile.savedContent,
@@ -38,7 +38,7 @@ const ButtonNew = ({ className = '' }: { className?: string }) => {
         'Are you sure you want to create a new file? Changes not yet saved are lost.'
       )
     ) {
-      setActiveFile({
+      updateActiveFile({
         content: '',
         savedContent: '',
         handle: null,

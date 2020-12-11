@@ -9,12 +9,7 @@ import { Button } from '@theme';
 import './ButtonOpen.css';
 
 const ButtonOpen = ({ className = '' }: { className?: string }) => {
-  const { setActiveFile } = useActions(actions);
-  const { activeFile } = useStoreState<State>(['activeFile']);
-  const hasChanges = React.useMemo(
-    () => activeFile.content !== activeFile.savedContent,
-    [activeFile.content, activeFile.savedContent]
-  );
+  const { createNewFile } = useActions(actions);
 
   React.useEffect(() => {
     window.addEventListener('keydown', keyEvent, false);
@@ -32,14 +27,6 @@ const ButtonOpen = ({ className = '' }: { className?: string }) => {
   };
 
   const openFile = async () => {
-    if (
-      hasChanges &&
-      !confirm(
-        'Are you sure you want to open a new file? Changes not yet saved are lost.'
-      )
-    ) {
-      return;
-    }
     // @ts-ignore
     const [handle] = await window.showOpenFilePicker({
       types: [
@@ -55,11 +42,11 @@ const ButtonOpen = ({ className = '' }: { className?: string }) => {
     const file = await handle.getFile();
 
     const content = await file.text();
-    setActiveFile({
+    createNewFile({
+      title: file.name,
       content,
       savedContent: content,
       handle,
-      path: file.name,
     });
   };
 
