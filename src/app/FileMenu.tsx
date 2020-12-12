@@ -22,6 +22,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
         <div
           className={cn('file-menu__element', {
             'file-menu__element--active': index === activeFileIndex,
+            'file-menu__element--tosave': file.content !== file.savedContent,
           })}
         >
           <button

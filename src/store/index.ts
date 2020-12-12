@@ -17,6 +17,7 @@ const initialState: State = {
   offline: false,
   files: [defaultFile],
   activeFileIndex: 0,
+  editMode: null,
 };
 
 export const actions = (store: Store<State>) => ({
@@ -46,6 +47,7 @@ export const actions = (store: Store<State>) => ({
     files: [...files, { ...defaultFile, ...newFile }],
     activeFileIndex: files.length,
   }),
+  setEditMode: (state, editMode) => ({ editMode }),
 });
 
 export const store = isDev

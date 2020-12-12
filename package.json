@@ -14,9 +14,11 @@
     "serve:dev": "webpack-dev-server --open"
   },
   "dependencies": {
+    "@tinymce/tinymce-react": "^3.8.3",
     "idb": "^5.0.8",
     "preact": "^10.5.4",
-    "react-showdown": "^2.1.0",
+    "showdown": "^1.9.1",
+    "turndown": "^7.0.0",
     "unistore": "^3.5.2",
     "unistore-hooks": "^0.1.1"
   },

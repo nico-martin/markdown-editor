@@ -6,10 +6,13 @@ export interface File {
   saved: boolean;
 }
 
+export type EditModes = 'markdown' | 'html';
+
 export interface State {
   offline: boolean;
   files: Array<File>;
   activeFileIndex: number;
+  editMode: EditModes;
 }
 
 export interface Actions {}

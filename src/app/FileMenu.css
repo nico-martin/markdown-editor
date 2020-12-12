@@ -5,6 +5,7 @@
     margin-right: var(--space);
     display: flex;
     align-items: center;
+    position: relative;
 
     &:hover {
       .file-menu__delete {
@@ -14,6 +15,19 @@
 
     &--active {
       font-weight: bold;
+    }
+
+    &--tosave {
+      &::after {
+        background-color: var(--c-primary);
+        width: 0.4em;
+        height: 0.4em;
+        border-radius: 50%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        content: '';
+      }
     }
   }
 

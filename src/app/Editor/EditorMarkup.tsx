@@ -14,7 +14,7 @@ const EditorMarkup = ({
   className?: string;
   [k: string]: any;
 }) => {
-  const { updateActiveFile } = useActions(actions);
+  const { updateActiveFile, setEditMode } = useActions(actions);
   const { activeFileIndex, files } = useStoreState<State>([
     'activeFileIndex',
     'files',
@@ -34,6 +34,7 @@ const EditorMarkup = ({
         }
         placeholder="start typing.."
         value={activeFile.content}
+        onFocus={() => setEditMode('markdown')}
       />
     </div>
   );

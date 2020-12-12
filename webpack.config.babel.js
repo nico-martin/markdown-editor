@@ -113,6 +113,7 @@ module.exports = (env, argv) => {
         IS_DEV: JSON.stringify(dev),
         APP_TITLE: JSON.stringify(app.title) || '',
         APP_DESCRIPTION: JSON.stringify(app.description) || '',
+        TINYMCE_KEY: JSON.stringify(process.env.TINYMCE_KEY) || '',
       }),
     ],
     module: {

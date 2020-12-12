@@ -11,7 +11,6 @@ import Footer from '@app/Footer';
 
 import './App.css';
 import { settingsDB } from '@store/idb';
-import { Loader } from '@theme';
 
 const App = () => {
   const [init, setInit] = React.useState<boolean>(false);
@@ -25,7 +24,7 @@ const App = () => {
     const activeIndex = await settingsDB.get('activeFileIndex');
     const files = await settingsDB.get('files');
     if (files) {
-      console.log('setFiles', files, activeIndex);
+      // todo: set actual file content instead if idb content
       setFiles(files, activeIndex);
     }
   };
