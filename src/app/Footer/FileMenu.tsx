@@ -6,6 +6,7 @@ import { File, State } from '@store/types';
 import cn from '@utils/classnames';
 
 import './FileMenu.css';
+import { maxOpenFiles } from '@utils/constants';
 
 const Footer = ({ className = '' }: { className?: string }) => {
   const { activeFileIndex, files } = useStoreState<State>([
@@ -41,14 +42,16 @@ const Footer = ({ className = '' }: { className?: string }) => {
           )}
         </div>
       ))}
-      <div className={cn('file-menu__element', 'file-menu__element--new')}>
-        <button
-          onClick={() => createNewFile()}
-          className={cn('file-menu__button', 'file-menu__button--new')}
-        >
-          new File
-        </button>
-      </div>
+      {files.length < maxOpenFiles && (
+        <div className={cn('file-menu__element', 'file-menu__element--new')}>
+          <button
+            onClick={() => createNewFile()}
+            className={cn('file-menu__button', 'file-menu__button--new')}
+          >
+            new File
+          </button>
+        </div>
+      )}
     </div>
   );
 };

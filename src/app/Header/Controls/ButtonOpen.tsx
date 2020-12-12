@@ -4,12 +4,15 @@ import { useStoreState, useActions } from 'unistore-hooks';
 import { actions } from '@store/index';
 import { State } from '@store/types';
 import cn from '@utils/classnames';
+import { maxOpenFiles } from '@utils/constants';
+
 import { Button } from '@theme';
 
 import './ButtonOpen.css';
 
 const ButtonOpen = ({ className = '' }: { className?: string }) => {
   const { createNewFile } = useActions(actions);
+  const { files } = useStoreState<State>(['files']);
 
   // todo: if the current file is untiteled and empty, opening a new file shoud replace the empty file
 
@@ -59,6 +62,7 @@ const ButtonOpen = ({ className = '' }: { className?: string }) => {
       layout="empty"
       onClick={openFile}
       title="CTRL+O"
+      disabled={files.length >= maxOpenFiles}
     >
       Open File
     </Button>
