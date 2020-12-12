@@ -104,11 +104,15 @@ module.exports = (env, argv) => {
           },
         ],
       }),
-      new workboxPlugin.InjectManifest({
-        swSrc: './src/service-worker.js',
-        include: [/\.html$/, /\.js$/, /\.css$/],
-        maximumFileSizeToCacheInBytes: 5000000,
-      }),
+      ...(!dev
+        ? [
+            new workboxPlugin.InjectManifest({
+              swSrc: './src/service-worker.js',
+              include: [/\.html$/, /\.js$/, /\.css$/],
+              maximumFileSizeToCacheInBytes: 5000000,
+            }),
+          ]
+        : []),
       new DefinePlugin({
         IS_DEV: JSON.stringify(dev),
         APP_TITLE: JSON.stringify(app.title) || '',

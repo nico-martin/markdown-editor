@@ -1,5 +1,7 @@
 .editor-html {
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   &__saved {
     position: absolute;
@@ -14,6 +16,23 @@
 
     &[aria-hidden='false'] {
       opacity: 1;
+    }
+  }
+
+  &__editor {
+    height: 100%;
+
+    .mce-content-body {
+      height: calc(100% - var(--space-grid));
+      overflow: auto;
+      padding: var(--space-grid-half);
+      margin: var(--space-grid-half);
+
+      &:focus {
+        border: 0;
+        outline: none;
+        @mixin a11y-focus;
+      }
     }
   }
 }

@@ -1,16 +1,16 @@
 .editor-markup {
   position: relative;
+  display: flex;
+  flex-direction: column;
 
   &__textarea {
-    position: absolute;
-    bottom: var(--space-grid-half);
-    left: var(--space-grid-half);
-    top: var(--space-grid-half);
-    width: calc(100% - 2 * var(--space-grid-half));
+    flex: 1 1 auto;
     border: none;
     background-color: transparent;
     padding: var(--space-grid-half);
+    margin: var(--space-grid-half);
     font-family: 'JetBrains Mono', monospace;
+    resize: none;
 
     &:focus {
       border: 0;

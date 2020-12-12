@@ -13,7 +13,9 @@ import { tinymceKey } from '@utils/constants';
 import './EditorHtml.css';
 
 const showdownConverter = new showdown.Converter();
-const turndownConverter = new TurndownService();
+const turndownConverter = new TurndownService({
+  headingStyle: 'atx',
+});
 
 const EditorHtml = ({
   className = '',
@@ -53,30 +55,32 @@ const EditorHtml = ({
       <p className="editor-html__saved" aria-hidden={!activeFile.saved}>
         SAVED
       </p>
-      <Editor
-        initialValue={html}
-        init={{
-          height: 500,
-          menubar: false,
-          plugins: [
-            'advlist autolink lists link image charmap print preview anchor',
-            'searchreplace visualblocks code fullscreen',
-            'insertdatetime media table paste code help wordcount',
-          ],
-          toolbar:
-            'undo redo | formatselect | bold italic backcolor | \
-            alignleft aligncenter alignright alignjustify | \
-            bullist numlist outdent indent | removeformat | help',
-          inline: true,
-          setup: e => setEditor(e),
-        }}
-        onFocus={() => setEditMode('html')}
-        onEditorChange={markup => {
-          editMode === 'html' &&
-            updateActiveFile({ content: turndownConverter.turndown(markup) });
-        }}
-        apiKey={tinymceKey}
-      />
+      <div className="editor-html__editor">
+        <Editor
+          initialValue={html}
+          init={{
+            height: 500,
+            menubar: false,
+            plugins: [
+              'autolink lists link image charmap print preview anchor',
+              'searchreplace visualblocks code fullscreen',
+              'insertdatetime media table paste code help wordcount',
+            ],
+            toolbar:
+              'formatselect | bold italic | link | bullist numlist | removeformat |',
+            inline: true,
+            block_formats:
+              'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3; Preformatted=code',
+            setup: e => setEditor(e),
+          }}
+          onFocus={() => setEditMode('html')}
+          onEditorChange={markup => {
+            editMode === 'html' &&
+              updateActiveFile({ content: turndownConverter.turndown(markup) });
+          }}
+          apiKey={tinymceKey}
+        />
+      </div>
     </div>
   );
 };

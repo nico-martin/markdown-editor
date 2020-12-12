@@ -1,38 +1,44 @@
 .file-menu {
   display: flex;
+  align-items: flex-start;
 
   &__element {
-    margin-right: var(--space);
+    margin-right: var(--space-half);
     display: flex;
     align-items: center;
     position: relative;
+    padding: 0.4em 0.8em;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
 
-    &:hover {
-      .file-menu__delete {
-        opacity: 1;
-      }
+    &--new {
+      padding: 0.4em 0;
     }
 
     &--active {
-      font-weight: bold;
+      background-color: var(--c-bkg);
+      box-shadow: 0 2px 7px 0 rgba(60, 64, 67, 0.2);
+
+      &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        height: 4px;
+        top: -3px;
+        left: 0;
+        right: 0;
+        background-color: var(--c-bkg);
+      }
     }
 
     &--tosave {
-      &::after {
-        background-color: var(--c-primary);
-        width: 0.4em;
-        height: 0.4em;
-        border-radius: 50%;
-        position: absolute;
-        right: 0;
-        top: 0;
-        content: '';
-      }
+      font-weight: bold;
     }
   }
 
   &__button {
     cursor: pointer;
+    line-height: 1;
 
     &:focus {
       @mixin a11y-focus;
@@ -40,6 +46,35 @@
 
       & + .file-menu__delete {
         opacity: 1;
+      }
+    }
+
+    &--new {
+      width: 1em;
+      height: 1em;
+      position: relative;
+      text-indent: -999px;
+      border-radius: 50%;
+
+      &:hover {
+        background-color: var(--c-border-light);
+      }
+
+      &::after,
+      &::before {
+        content: '';
+        display: block;
+        width: 1px;
+        background-color: currentColor;
+        height: 60%;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translateY(-50%) translateX(-50%) rotate(0);
+      }
+
+      &::before {
+        transform: translateY(-50%) translateX(-50%) rotate(90deg);
       }
     }
   }
@@ -50,18 +85,14 @@
     position: relative;
     text-indent: -999px;
     cursor: pointer;
-    opacity: 0;
     border-radius: 50%;
     transform: scale(0.8);
-
-    &:focus,
-    &:hover {
-      outline: none;
-      background-color: var(--c-border);
-    }
+    background-color: var(--c-border-light);
+    margin-left: 0.5em;
 
     &:focus {
-      opacity: 1;
+      @mixin a11y-focus;
+      outline: none;
     }
 
     &::after,

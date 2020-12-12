@@ -1,7 +1,7 @@
 .footer {
-  padding: var(--space-grid-half) var(--space-grid);
+  padding: 0 var(--space-grid);
   display: flex;
-  align-items: center;
+  align-items: stretch;
 
   &__path {
     font-size: var(--fs-small);
