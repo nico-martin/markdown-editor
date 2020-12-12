@@ -4,13 +4,13 @@ import ReactDOM from 'react-dom';
 import { Provider, useActions, useStoreState } from 'unistore-hooks';
 import { actions, store } from '@store/index';
 import { State } from '@store/types';
+import { settingsDB } from '@store/idb';
 
-import Header from '@app/Header';
-import Editor from '@app/Editor/Editor';
-import Footer from '@app/Footer';
+import Header from '@app/Header/Header';
+import Main from '@app/Main/Main';
+import Footer from '@app/Footer/Footer';
 
 import './App.css';
-import { settingsDB } from '@store/idb';
 
 const App = () => {
   const [init, setInit] = React.useState<boolean>(false);
@@ -43,7 +43,7 @@ const App = () => {
   return (
     <div className="app">
       <Header className="app__header" />
-      <Editor className="app__editor" init={init} />
+      <Main className="app__main" init={init} />
       <Footer className="app__footer" init={init} />
     </div>
   );

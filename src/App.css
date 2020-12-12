@@ -5,15 +5,15 @@
 
   &__header {
     background-color: var(--c-bkg-light);
-    box-shadow: 0 1px 7px 0 rgba(60, 64, 67, 0.2);
+    box-shadow: 0 1px 4px 0 rgba(60, 64, 67, 0.1);
     height: 4rem;
     position: relative;
     z-index: 10;
   }
 
-  &__editor {
+  &__main {
     height: calc(100vh - 8rem);
-    box-shadow: 0 1px 7px 0 rgba(60, 64, 67, 0.2);
+    box-shadow: 0 1px 4px 0 rgba(60, 64, 67, 0.1);
     position: relative;
   }
 

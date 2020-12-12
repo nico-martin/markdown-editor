@@ -2,7 +2,7 @@ import React from 'react';
 
 import cn from '@utils/classnames';
 import { appTitle } from '@utils/constants';
-import HeaderNav from '@app/HeaderNav';
+import HeaderNav from '@app/Header/HeaderNav';
 
 import './Header.css';
 

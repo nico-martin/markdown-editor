@@ -3,8 +3,8 @@ import React from 'react';
 import cn from '@utils/classnames';
 import { featureCheck } from '@utils/helpers';
 
-import ButtonSave from './Controls/ButtonSave';
-import ButtonOpen from './Controls/ButtonOpen';
+import ButtonSave from '../Controls/ButtonSave';
+import ButtonOpen from '../Controls/ButtonOpen';
 
 import './HeaderNav.css';
 

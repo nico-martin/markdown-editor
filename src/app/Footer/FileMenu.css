@@ -7,17 +7,18 @@
     display: flex;
     align-items: center;
     position: relative;
-    padding: 0.4em 0.8em;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
+    padding: 0.7rem 1rem 0.6rem 1rem;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 
     &--new {
-      padding: 0.4em 0;
+      padding: 0.7rem 0 0.6rem 0;
     }
 
     &--active {
       background-color: var(--c-bkg);
-      box-shadow: 0 2px 7px 0 rgba(60, 64, 67, 0.2);
+      box-shadow: 0 1px 4px 0 rgba(60, 64, 67, 0.1);
+      padding: 0.5rem 1rem 0.8rem 1rem;
 
       &::before {
         content: '';
@@ -39,6 +40,7 @@
   &__button {
     cursor: pointer;
     line-height: 1;
+    font-size: var(--fs-small);
 
     &:focus {
       @mixin a11y-focus;

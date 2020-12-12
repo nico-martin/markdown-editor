@@ -2,8 +2,8 @@ import React from 'react';
 
 import cn from '@utils/classnames';
 import { featureCheck } from '@utils/helpers';
-import FooterNav from '@app/FooterNav';
-import FileMenu from '@app/FileMenu';
+import FooterNav from '@app/Footer/FooterNav';
+import FileMenu from '@app/Footer/FileMenu';
 
 import './Footer.css';
 
@@ -14,10 +14,10 @@ const Footer = ({
   className?: string;
   init: boolean;
 }) => (
-  <div className={cn(className, 'footer')}>
+  <footer className={cn(className, 'footer')}>
     {init && featureCheck && <FileMenu className="footer__files" />}
     <FooterNav className="footer__nav" />
-  </div>
+  </footer>
 );
 
 export default Footer;
