@@ -3,19 +3,20 @@
 
   &__column {
     flex: 1 1 50%;
+  }
 
-    & > * {
-      height: calc(100% - var(--space-grid));
-      overflow: auto;
-      padding: var(--space-grid-half);
-      margin: var(--space-grid-half);
-      width: calc(100% - var(--space-grid));
+  &__editor {
+    height: calc(100% - var(--space-grid));
+    overflow: auto;
+    padding: var(--space-grid-half);
+    margin: var(--space-grid-half);
+    width: calc(100% - var(--space-grid));
 
-      &:focus {
-        border: 0;
-        outline: none;
-        @mixin a11y-focus;
-      }
+    &:focus,
+    &[data-focus='true'] {
+      border: 0;
+      outline: none;
+      @mixin a11y-focus;
     }
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStoreState, useActions } from 'unistore-hooks';
+import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 
 import { actions, defaultFile } from '@store/index';
 import { State } from '@store/types';
@@ -25,20 +26,28 @@ const Editor = ({ className = '' }: { className?: string }) => {
   );
 
   return (
-    <div className={cn(className, 'editor')}>
-      <div className="editor__column" style={{ width: `${markupWidth}%` }}>
-        <EditorMarkdown
-          activeFile={activeFile}
-          updateActiveFile={updateActiveFile}
-        />
+    <ScrollSync>
+      <div className={cn(className, 'editor')}>
+        <div className="editor__column" style={{ width: `${markupWidth}%` }}>
+          <ScrollSyncPane>
+            <EditorMarkdown
+              className="editor__editor"
+              activeFile={activeFile}
+              updateActiveFile={updateActiveFile}
+            />
+          </ScrollSyncPane>
+        </div>
+        <div className="editor__column" style={{ width: `${htmlWidth}%` }}>
+          <ScrollSyncPane>
+            <EditorHtml
+              className="editor__editor"
+              activeFile={activeFile}
+              updateActiveFile={updateActiveFile}
+            />
+          </ScrollSyncPane>
+        </div>
       </div>
-      <div className="editor__column" style={{ width: `${htmlWidth}%` }}>
-        <EditorHtml
-          activeFile={activeFile}
-          updateActiveFile={updateActiveFile}
-        />
-      </div>
-    </div>
+    </ScrollSync>
   );
 };
 

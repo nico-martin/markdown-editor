@@ -1,5 +1,6 @@
 import './styles.css';
 import './styles/content.css';
+import './styles/markdown-styles.css';
 import './App';
 
 'serviceWorker' in navigator &&

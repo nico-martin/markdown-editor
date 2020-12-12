@@ -1,0 +1,28 @@
+.mce-content-body {
+  & > * {
+    & + * {
+      margin-top: var(--space);
+    }
+
+    & + h2,
+    & + h3 {
+      margin-top: var(--space-l);
+    }
+  }
+
+  a {
+    max-width: 100%;
+    word-wrap: break-word;
+  }
+
+  p code {
+    background-color: #2d2d2d;
+    border-radius: 3px;
+    color: #fff;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    padding: 0.1rem 0.3rem 0.2rem;
+  }
+}

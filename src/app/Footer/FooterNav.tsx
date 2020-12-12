@@ -84,7 +84,7 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
                 </a>
               </p>
 
-              <h2>Frontend</h2>
+              <h2>Dependencies</h2>
 
               <ul>
                 <li>
@@ -119,6 +119,16 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
                   cache
                 </li>
                 <li>
+                  <a
+                    rel="noreferrer noopener"
+                    href="https://www.tiny.cloud/"
+                    target="_blank"
+                  >
+                    TinyMCE
+                  </a>
+                  : The Most Advanced WYSIWYG HTML Editor
+                </li>
+                <li>
                   …a lot of other great open-source projects:{' '}
                   <a href="https://github.com/nico-martin/markdown-editor/blob/main/package.json">
                     https://github.com/nico-martin/markdown-editor/blob/main/package.json
@@ -140,6 +150,43 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
                 <a href="https://github.com/nico-martin/markdown-editor/">
                   https://github.com/nico-martin/markdown-editor/
                 </a>
+              </p>
+            </div>
+          </ShadowBox>
+        ) : null}
+        {activeBox === 'legal' ? (
+          <ShadowBox
+            close={() => setActiveBox(null)}
+            title="Legal"
+            size="small"
+          >
+            <div className="content">
+              <h2>Disclaimer</h2>
+              <p>
+                The texts and contents of this site were created with great
+                care. Nevertheless, I cannot give any guarantee with regard to
+                the correctness, accuracy, up-to-dateness, reliability and
+                completeness of the information.
+              </p>
+              <h2>Privacy</h2>
+              <p>
+                Believe it or not: This website{' '}
+                <strong>does not collect any personal data</strong> besides what
+                is technically required.
+              </p>
+              <h2>Contact</h2>
+              <p>
+                <strong>Nico Martin</strong>
+                <br />
+                Say Hello GmbH
+                <br />
+                Thunstrasse 4<br />
+                CH-3700 Spiez
+                <br />
+                Switzerland
+              </p>
+              <p>
+                <a href="mailto:nico@sayhello.ch">nico@sayhello.ch</a>
               </p>
             </div>
           </ShadowBox>
