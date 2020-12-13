@@ -1,0 +1,9 @@
+.mce-content-body {
+  font-family: Segoe UI, system-ui, -apple-system, sans-serif;
+
+  h1,
+  h2,
+  h3 {
+    font-family: Segoe UI, system-ui, -apple-system, sans-serif;
+  }
+}

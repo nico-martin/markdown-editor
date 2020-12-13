@@ -53,6 +53,5 @@ export const saveFileToSystem = async (
     title: file.name,
     savedContent: toSave.content,
     handle,
-    saved: true,
   };
 };

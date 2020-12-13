@@ -3,22 +3,46 @@
   align-items: flex-start;
 
   &__element {
-    margin-right: var(--space-half);
+    //margin-right: var(--space-half);
     display: flex;
     align-items: center;
     position: relative;
-    padding: 0.7rem 1rem 0.6rem 1rem;
+    padding: 0.7rem 1.4rem 0.6rem 1.4rem;
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
 
-    &--new {
-      padding: 0.7rem 0 0.6rem 0;
+    &::after {
+      content: '';
+      position: absolute;
+      height: 50%;
+      width: 1px;
+      background-color: currentColor;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.15;
+    }
+
+    &:first-child {
+      &::after {
+        display: none;
+      }
+    }
+
+    &--active + .file-menu__element {
+      &::after {
+        display: none;
+      }
     }
 
     &--active {
       background-color: var(--c-bkg);
       box-shadow: 0 1px 4px 0 rgba(60, 64, 67, 0.1);
       padding: 0.5rem 1rem 0.8rem 1rem;
+
+      &::after {
+        display: none;
+      }
 
       &::before {
         content: '';
@@ -55,7 +79,7 @@
       width: 1em;
       height: 1em;
       position: relative;
-      text-indent: -999px;
+      text-indent: -9999px;
       border-radius: 50%;
 
       &:hover {
@@ -85,7 +109,7 @@
     width: 1em;
     height: 1em;
     position: relative;
-    text-indent: -999px;
+    text-indent: -9999px;
     cursor: pointer;
     border-radius: 50%;
     transform: scale(0.8);

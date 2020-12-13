@@ -4,19 +4,20 @@ import createStore, { Store } from 'unistore';
 import devtools from 'unistore/devtools';
 
 import { isDev } from '@utils/helpers';
+import { EDITOR_VIEWS } from '@utils/constants';
 
 export const defaultFile = {
   title: 'untitled',
   content: '',
   savedContent: '',
   handle: null,
-  saved: false,
 };
 
 const initialState: State = {
   offline: false,
   files: [defaultFile],
   activeFileIndex: 0,
+  editorView: EDITOR_VIEWS.SPLIT,
 };
 
 export const actions = (store: Store<State>) => ({
@@ -46,6 +47,10 @@ export const actions = (store: Store<State>) => ({
     files: [...files, { ...defaultFile, ...newFile }],
     activeFileIndex: files.length,
   }),
+  setEditorView: (state, view) =>
+    Object.values(EDITOR_VIEWS).indexOf(view) !== -1
+      ? { editorView: view }
+      : {},
 });
 
 export const store = isDev

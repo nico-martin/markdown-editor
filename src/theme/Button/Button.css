@@ -1,12 +1,13 @@
 .button {
   cursor: pointer;
   font-weight: 400;
+  line-height: 1;
 
   &--fontWeight-normal {
     font-weight: normal;
   }
 
-  padding: 0.5em 1em;
+  padding: 0.7em 1em;
 
   &--zeropadding {
     padding: 0 0;
@@ -14,16 +15,28 @@
 
   position: relative;
   color: var(--c-p);
-  background-color: currentColor;
   display: flex;
   align-items: center;
   box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
     0 2px 6px 2px rgba(60, 64, 67, 0.15);
 
+  &__bkg {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    top: 0;
+    background-color: currentColor;
+    opacity: 0.8;
+    will-change: opacity;
+    transition: opacity 200ms;
+  }
+
   &__icon {
     color: #fff;
     will-change: opacity;
     transition: opacity 200ms ease-in-out;
+    display: block;
 
     &--left {
       margin-right: 0.6em;
@@ -34,14 +47,33 @@
     }
   }
 
+  &--notext {
+    padding: 0.5em;
+
+    .button__icon {
+      &--left {
+        margin-right: 0;
+      }
+
+      &--right {
+        margin-left: 0;
+      }
+    }
+  }
+
   &--type {
     &-ghost,
     &-empty {
-      border: 1px solid currentColor;
       background-color: transparent;
       box-shadow: none;
 
       .button {
+        &__bkg {
+          background-color: transparent;
+          border: 1px dashed currentColor;
+          opacity: 0.7;
+        }
+
         &__content,
         &__icon,
         &__loader {
@@ -55,7 +87,11 @@
     }
 
     &-empty {
-      border: none;
+      .button {
+        &__bkg {
+          border: none;
+        }
+      }
     }
   }
 
@@ -71,16 +107,23 @@
 
   &--round {
     border-radius: 5rem;
+
+    .button__bkg {
+      border-radius: 5rem;
+    }
   }
 
   &--disabled {
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.5;
   }
 
   transition: all 200ms ease-in-out;
 
   &:hover {
+    .button__bkg {
+      opacity: 1;
+    }
     //background-color: var(--c-hellgrau);
   }
 

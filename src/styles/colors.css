@@ -1,11 +1,11 @@
 :root {
   --c-white: #faf6f5;
   --c-p: #333;
-  --c-bkg: #f5f5f5;
+  --c-bkg: #f6f6f6;
   --c-bkg-dark: #eaeaea;
   --c-bkg-light: #fff;
   --c-shadow: #000;
-  --c-primary: #006e7c;
+  --c-primary: #106672;
   --c-primary-dark: #00575f;
   --c-border: rgb(205, 205, 205);
   --c-border-dark: rgb(143, 143, 143);

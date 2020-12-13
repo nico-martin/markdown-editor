@@ -2,8 +2,10 @@
   padding: 0 var(--space-grid);
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
-  &__nav {
+  &__save {
     margin-left: auto;
+    margin-right: var(--space-grid-big);
   }
 }

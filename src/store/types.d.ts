@@ -3,13 +3,13 @@ export interface File {
   content: string;
   savedContent: string;
   handle: any;
-  saved: boolean;
 }
 
 export interface State {
   offline: boolean;
   files: Array<File>;
   activeFileIndex: number;
+  editorView: string;
 }
 
 export interface Actions {}

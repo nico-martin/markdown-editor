@@ -54,10 +54,12 @@ const Button = ({
           'button--loading': loading,
           'button--disabled': disabled,
           'button--zeropadding': zeroPadding,
+          'button--notext': children === '',
         }
       )}
       onClick={() => onClick()}
     >
+      <div className="button__bkg" />
       <Loader className="button__loader" />
       {icon !== '' && !iconRight && (
         <Icon

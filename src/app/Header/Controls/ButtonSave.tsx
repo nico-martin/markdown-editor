@@ -55,9 +55,10 @@ const ButtonSave = ({ className = '' }: { className?: string }) => {
       className={cn(className)}
       icon="mdi/save"
       onClick={saveFile}
-      color="primary"
+      color={canSave ? 'primary' : 'black'}
       title="CTRL+S"
       round
+      layout={canSave ? 'solid' : 'empty'}
       disabled={!canSave}
     >
       Save

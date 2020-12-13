@@ -36,8 +36,9 @@ const EditorHtml = ({
   }, [editor, html]);
 
   React.useEffect(() => {
-    window.setTimeout(() => updateActiveFile({ saved: false }), 1000);
-  }, [activeFile.saved]);
+    editor && editor.on('focus', () => setIsEdit(true));
+    editor && editor.on('blur', () => setIsEdit(false));
+  }, [editor]);
 
   return (
     <div className={cn(className, 'editor-html')} data-focus={isEdit}>
@@ -58,8 +59,6 @@ const EditorHtml = ({
             'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3; Preformatted=code',
           setup: e => setEditor(e),
         }}
-        onFocus={() => setIsEdit(true)}
-        onFocusOut={() => setIsEdit(false)}
         onEditorChange={markup => {
           isEdit &&
             updateActiveFile({ content: turndownConverter.turndown(markup) });

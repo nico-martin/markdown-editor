@@ -47,42 +47,50 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
                 </a>
               </p>
 
-              <h2>Font</h2>
+              <h2>Fonts</h2>
 
-              <p>
-                <b>{appTitle}</b> uses the wonderful{' '}
-                <a
-                  rel="noreferrer noopener"
-                  href="https://lobdell.me/affogato/"
-                  target="_blank"
-                >
-                  Affogato
-                </a>{' '}
-                by{' '}
-                <a
-                  href="https://www.lobdell.me/"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  Eric Lobdell
-                </a>{' '}
-                and{' '}
-                <a
-                  rel="noreferrer noopener"
-                  href="https://www.jetbrains.com/lp/mono/"
-                  target="_blank"
-                >
-                  JetBrains Mono
-                </a>{' '}
-                by{' '}
-                <a
-                  href="https://www.jetbrains.com/"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  JetBrains
-                </a>
-              </p>
+              <ul>
+                <li>
+                  App:{' '}
+                  <a
+                    rel="noreferrer noopener"
+                    href="https://lobdell.me/affogato/"
+                    target="_blank"
+                  >
+                    Affogato
+                  </a>{' '}
+                  by{' '}
+                  <a
+                    href="https://www.lobdell.me/"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    Eric Lobdell
+                  </a>
+                </li>
+                <li>
+                  Markup/Code:{' '}
+                  <a
+                    rel="noreferrer noopener"
+                    href="https://www.jetbrains.com/lp/mono/"
+                    target="_blank"
+                  >
+                    JetBrains Mono
+                  </a>{' '}
+                  by{' '}
+                  <a
+                    href="https://www.jetbrains.com/"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    JetBrains
+                  </a>
+                </li>
+                <li>
+                  Preview Editor: Segoe UI, system-ui, -apple-system or just
+                  sans-serif based on the operating system
+                </li>
+              </ul>
 
               <h2>Dependencies</h2>
 
@@ -135,6 +143,7 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
                   </a>
                 </li>
               </ul>
+              <h2>Open Source</h2>
               <p>
                 The directory is publicly available on GitHub and is{' '}
                 <a

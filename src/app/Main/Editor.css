@@ -3,20 +3,40 @@
 
   &__column {
     flex: 1 1 50%;
+    display: flex;
+    justify-content: center;
   }
 
   &__editor {
-    height: calc(100% - var(--space-grid));
     overflow: auto;
     padding: var(--space-grid-half);
-    margin: var(--space-grid-half);
-    width: calc(100% - var(--space-grid));
+    margin: var(--space-grid-half) var(--space-grid) var(--space-grid)
+      var(--space-grid);
+    height: calc(100% - (2 * var(--space-grid)));
+    width: calc(100% - (2 * var(--space-grid)));
+    max-width: 70vh;
+
+    &--html {
+      padding: var(--space-grid-big);
+    }
 
     &:focus,
     &[data-focus='true'] {
       border: 0;
       outline: none;
-      @mixin a11y-focus;
+    }
+
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--c-border-dark);
+      border-radius: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
     }
   }
 
