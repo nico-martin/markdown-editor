@@ -32,7 +32,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
           >
             {file.title}
           </button>
-          {files.length > 1 && index === activeFileIndex && (
+          {index === activeFileIndex && (
             <button
               onClick={() => deleteFileByIndex(index)}
               className={cn('file-menu__delete')}
@@ -42,7 +42,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
           )}
         </div>
       ))}
-      {files.length < maxOpenFiles && (
+      {files.length < maxOpenFiles && files.length !== 0 && (
         <div className={cn('file-menu__element', 'file-menu__element--new')}>
           <button
             onClick={() => createNewFile()}

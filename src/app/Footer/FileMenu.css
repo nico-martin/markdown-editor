@@ -8,8 +8,8 @@
     align-items: center;
     position: relative;
     padding: 0.7rem 1rem 0.6rem 1rem;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
 
     &--new {
       padding: 0.7rem 0 0.6rem 0;

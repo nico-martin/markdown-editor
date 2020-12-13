@@ -12,7 +12,8 @@
     max-width: 500px;
     text-align: center;
     border: 2px dashed var(--c-border);
-    padding: var(--space);
+    padding: var(--space-grid);
+    border-radius: var(--border-radius);
   }
 
   &__loader {

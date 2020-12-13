@@ -5,6 +5,7 @@ import { actions } from '@store/index';
 import { State } from '@store/types';
 import cn from '@utils/classnames';
 import { maxOpenFiles } from '@utils/constants';
+import { openFileFromSystem } from '@utils/fileAccess';
 
 import { Button } from '@theme';
 
@@ -32,27 +33,8 @@ const ButtonOpen = ({ className = '' }: { className?: string }) => {
   };
 
   const openFile = async () => {
-    // @ts-ignore
-    const [handle] = await window.showOpenFilePicker({
-      types: [
-        {
-          description: 'Markdown Files',
-          accept: {
-            'text/markdown': ['.md'],
-          },
-        },
-      ],
-    });
-
-    const file = await handle.getFile();
-
-    const content = await file.text();
-    createNewFile({
-      title: file.name,
-      content,
-      savedContent: content,
-      handle,
-    });
+    const file = await openFileFromSystem();
+    createNewFile(file);
   };
 
   return (

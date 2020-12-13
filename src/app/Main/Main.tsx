@@ -18,9 +18,7 @@ const Main = ({
   <main className={cn(className, 'main')}>
     {!init ? (
       <Loader className="main__loader" />
-    ) : featureCheck ? (
-      <Editor className="main__editor" />
-    ) : (
+    ) : !featureCheck ? (
       <div className="main__not-supported">
         <p>
           Your Browser does not support the{' '}
@@ -31,6 +29,8 @@ const Main = ({
           another browser.
         </p>
       </div>
+    ) : (
+      <Editor className="main__editor" />
     )}
   </main>
 );

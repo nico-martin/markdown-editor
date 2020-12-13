@@ -4,6 +4,8 @@ import { useStoreState, useActions } from 'unistore-hooks';
 import { actions, defaultFile } from '@store/index';
 import { State } from '@store/types';
 import cn from '@utils/classnames';
+import { saveFileToSystem } from '@utils/fileAccess';
+
 import { Button } from '@theme';
 
 import './ButtonSave.css';
@@ -44,32 +46,8 @@ const ButtonSave = ({ className = '' }: { className?: string }) => {
     if (!canSave) {
       return;
     }
-    let handle = activeFile.handle;
-    if (!handle) {
-      // if no handle exists it must be a new file. So we create a new handle
-      // @ts-ignore
-      handle = await window.showSaveFilePicker({
-        types: [
-          {
-            description: 'Markdown Files',
-            accept: {
-              'text/markdown': ['.md'],
-            },
-          },
-        ],
-      });
-    }
-    const writable = await handle.createWritable();
-    await writable.write(activeFile.content);
-    const file = await handle.getFile();
-
-    updateActiveFile({
-      title: file.name,
-      savedContent: activeFile.content,
-      handle,
-      saved: true,
-    });
-    await writable.close();
+    const file = await saveFileToSystem(activeFile);
+    updateActiveFile(file);
   };
 
   return (

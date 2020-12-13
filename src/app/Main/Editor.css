@@ -19,4 +19,9 @@
       @mixin a11y-focus;
     }
   }
+
+  &__new {
+    margin: 0 auto;
+    align-self: center;
+  }
 }
