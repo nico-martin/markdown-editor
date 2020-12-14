@@ -40,6 +40,8 @@ const EditorHtml = ({
     editor && editor.on('blur', () => setIsEdit(false));
   }, [editor]);
 
+  // todo: inline controls wrong position
+
   return (
     <div className={cn(className, 'editor-html')} data-focus={isEdit}>
       <Editor

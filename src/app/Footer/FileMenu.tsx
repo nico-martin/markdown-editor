@@ -13,7 +13,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
     'activeFileIndex',
     'files',
   ]);
-  const { setActiveFileIndex, deleteFileByIndex, createNewFile } = useActions(
+  const { setActiveFileIndex, deleteFileByIndex, openFileSelect } = useActions(
     actions
   );
 
@@ -45,7 +45,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
       {files.length < maxOpenFiles && files.length !== 0 && (
         <div className={cn('file-menu__element', 'file-menu__element--new')}>
           <button
-            onClick={() => createNewFile()}
+            onClick={() => openFileSelect()}
             className={cn('file-menu__button', 'file-menu__button--new')}
           >
             new File

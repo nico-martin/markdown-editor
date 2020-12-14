@@ -31,7 +31,7 @@ const Editor = ({ className = '' }: { className?: string }) => {
   return (
     <ScrollSync>
       <div className={cn(className, 'editor')}>
-        {files.length === 0 ? (
+        {activeFileIndex === 'new' ? (
           <EditorNew className="editor__new" />
         ) : (
           <React.Fragment>

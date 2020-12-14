@@ -20,23 +20,29 @@
       padding: var(--space-grid-big);
     }
 
-    &:focus,
-    &[data-focus='true'] {
-      border: 0;
-      outline: none;
-    }
-
     &::-webkit-scrollbar {
       width: 5px;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: var(--c-border-dark);
+      background-color: transparent;
+      transition: background-color 200ms;
+      will-change: background-color;
       border-radius: 5px;
     }
 
     &::-webkit-scrollbar-track {
       background: transparent;
+    }
+
+    &:focus,
+    &[data-focus='true'] {
+      border: 0;
+      outline: none;
+
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--c-border-dark);
+      }
     }
   }
 

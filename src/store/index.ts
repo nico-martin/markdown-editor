@@ -16,7 +16,7 @@ export const defaultFile = {
 const initialState: State = {
   offline: false,
   files: [defaultFile],
-  activeFileIndex: 0,
+  activeFileIndex: 'new',
   editorView: EDITOR_VIEWS.SPLIT,
 };
 
@@ -35,17 +35,15 @@ export const actions = (store: Store<State>) => ({
   }),
   deleteFileByIndex: ({ files, activeFileIndex }, index) => ({
     files: files.filter((file, i) => index !== i),
-    activeFileIndex:
-      activeFileIndex === index
-        ? index - 1
-        : activeFileIndex > index
-        ? activeFileIndex - 1
-        : activeFileIndex,
+    activeFileIndex: activeFileIndex === files.length - 1 ? index - 1 : index,
   }),
   setActiveFileIndex: (state, index) => ({ activeFileIndex: index }),
   createNewFile: ({ files }, newFile: Partial<File> = {}) => ({
     files: [...files, { ...defaultFile, ...newFile }],
     activeFileIndex: files.length,
+  }),
+  openFileSelect: state => ({
+    activeFileIndex: 'new',
   }),
   setEditorView: (state, view) =>
     Object.values(EDITOR_VIEWS).indexOf(view) !== -1

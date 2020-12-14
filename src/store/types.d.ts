@@ -8,7 +8,7 @@ export interface File {
 export interface State {
   offline: boolean;
   files: Array<File>;
-  activeFileIndex: number;
+  activeFileIndex: number | 'new';
   editorView: string;
 }
 
