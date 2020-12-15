@@ -9,7 +9,7 @@ import { getFileFromHandle } from '@utils/fileAccess';
 
 export const defaultFile = {
   title: 'untitled',
-  content: '#Title\nHello World',
+  content: '',
   savedContent: '',
   handle: null,
   handleLoaded: true,

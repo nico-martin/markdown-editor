@@ -7,6 +7,7 @@ import { State } from '@store/types';
 import { EDITOR_VIEWS } from '@utils/constants';
 import cn from '@utils/classnames';
 import useWindowSize from '@app/hooks/useWindowSize';
+import useMobile from '@app/hooks/useMobile';
 
 import EditorMarkdown from './EditorMarkdown';
 import EditorHtml from './EditorHtml';
@@ -25,6 +26,7 @@ const Editor = ({ className = '' }: { className?: string }) => {
     'editorView',
   ]);
   const windowSize = useWindowSize();
+
   const activeFile = React.useMemo(
     () => files[activeFileIndex] || defaultFile,
     [files, activeFileIndex]

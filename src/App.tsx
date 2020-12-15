@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 
 import { Provider, useActions, useStoreState } from 'unistore-hooks';
 
-import { getFileFromHandle } from '@utils/fileAccess';
 import { actions, defaultFile, store } from '@store/index';
 import { State } from '@store/types';
 import { settingsDB } from '@store/idb';

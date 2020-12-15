@@ -3,10 +3,13 @@ import { useStoreState, useActions } from 'unistore-hooks';
 
 import { actions } from '@store/index';
 import { File, State } from '@store/types';
+
 import cn from '@utils/classnames';
+import { maxOpenFiles } from '@utils/constants';
+
+import useMobile from '@app/hooks/useMobile';
 
 import './FileMenu.css';
-import { maxOpenFiles } from '@utils/constants';
 
 const Footer = ({ className = '' }: { className?: string }) => {
   const { activeFileIndex, files } = useStoreState<State>([
@@ -16,6 +19,11 @@ const Footer = ({ className = '' }: { className?: string }) => {
   const { setActiveFileIndex, closeFileByIndex, openFileSelect } = useActions(
     actions
   );
+  const { isMobile } = useMobile();
+
+  if (isMobile) {
+    return;
+  }
 
   return (
     <div className={cn(className, 'file-menu')}>

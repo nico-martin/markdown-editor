@@ -10,6 +10,7 @@
   --space-xl: 3rem;
   --menu-width: 400px;
   --border-radius: 8px;
+  --bp-mobile: 800px;
 }
 
 @media (max-width: 800px) {
