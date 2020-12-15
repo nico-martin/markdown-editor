@@ -3,6 +3,7 @@ export interface File {
   content: string;
   savedContent: string;
   handle: any;
+  handleLoaded: boolean;
 }
 
 export interface State {

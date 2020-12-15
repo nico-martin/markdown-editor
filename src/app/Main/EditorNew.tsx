@@ -9,7 +9,13 @@ import { Icon } from '@theme';
 
 import './EditorNew.css';
 
-const EditorNew = ({ className = '' }: { className?: string }) => {
+const EditorNew = ({
+  className = '',
+  style,
+}: {
+  className?: string;
+  style: Object;
+}) => {
   const { createNewFile } = useActions(actions);
 
   const openFile = async () => {
@@ -22,7 +28,7 @@ const EditorNew = ({ className = '' }: { className?: string }) => {
   };
 
   return (
-    <div className={cn(className, 'editor-new')}>
+    <div className={cn(className, 'editor-new')} style={style}>
       <button className="editor-new__button" onClick={openFile}>
         <Icon icon="mdi/open" className="editor-new__icon" />
         Open .md File

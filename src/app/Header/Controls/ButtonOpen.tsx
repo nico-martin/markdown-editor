@@ -15,8 +15,6 @@ const ButtonOpen = ({ className = '' }: { className?: string }) => {
   const { createNewFile } = useActions(actions);
   const { files } = useStoreState<State>(['files']);
 
-  // todo: if the current file is untiteled and empty, opening a new file shoud replace the empty file
-
   React.useEffect(() => {
     window.addEventListener('keydown', keyEvent, false);
     return () => {

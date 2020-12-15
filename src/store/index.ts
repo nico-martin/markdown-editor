@@ -5,24 +5,29 @@ import devtools from 'unistore/devtools';
 
 import { isDev } from '@utils/helpers';
 import { EDITOR_VIEWS } from '@utils/constants';
+import { getFileFromHandle } from '@utils/fileAccess';
 
 export const defaultFile = {
   title: 'untitled',
-  content: '',
+  content: '#Title\nHello World',
   savedContent: '',
   handle: null,
+  handleLoaded: true,
 };
 
 const initialState: State = {
   offline: false,
-  files: [defaultFile],
+  files: [],
   activeFileIndex: 'new',
   editorView: EDITOR_VIEWS.SPLIT,
 };
 
 export const actions = (store: Store<State>) => ({
   setOffline: (state, offline: boolean) => ({ offline }),
-  setFiles: (state, files, index = 0) => ({ files, activeFileIndex: index }),
+  setFiles: (state, files: Array<File>, index = 0) => ({
+    files,
+    activeFileIndex: index,
+  }),
   updateActiveFile: (state, updatedFile: Partial<File>) => ({
     files: state.files.map((file, index) =>
       index === state.activeFileIndex
@@ -33,11 +38,26 @@ export const actions = (store: Store<State>) => ({
         : file
     ),
   }),
-  deleteFileByIndex: ({ files, activeFileIndex }, index) => ({
-    files: files.filter((file, i) => index !== i),
-    activeFileIndex: activeFileIndex === files.length - 1 ? index - 1 : index,
-  }),
-  setActiveFileIndex: (state, index) => ({ activeFileIndex: index }),
+  closeFileByIndex: ({ files }, index) =>
+    files[index].content !== files[index].savedContent &&
+    !confirm(
+      'Are you sure you want to close this file? Unsaved changes will be lost.'
+    )
+      ? {}
+      : {
+          files: files.filter((file, i) => index !== i),
+          activeFileIndex: 'new',
+        },
+  setActiveFileIndex: async ({ files }, activeFileIndex) => {
+    const activeFile = files[activeFileIndex];
+    if (!activeFile) {
+      return {};
+    }
+
+    return {
+      activeFileIndex,
+    };
+  },
   createNewFile: ({ files }, newFile: Partial<File> = {}) => ({
     files: [...files, { ...defaultFile, ...newFile }],
     activeFileIndex: files.length,

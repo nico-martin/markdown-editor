@@ -1,6 +1,7 @@
 .editor-new {
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
 
   &__button {
     border: 2px dashed var(--c-border-dark);

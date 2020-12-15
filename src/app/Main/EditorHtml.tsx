@@ -18,10 +18,12 @@ const EditorHtml = ({
   className = '',
   activeFile,
   updateActiveFile,
+  style,
 }: {
   className?: string;
   activeFile: File;
   updateActiveFile: Function;
+  style: Object;
 }) => {
   const [editor, setEditor] = React.useState(null);
   const [isEdit, setIsEdit] = React.useState(false);
@@ -43,7 +45,11 @@ const EditorHtml = ({
   // todo: inline controls wrong position
 
   return (
-    <div className={cn(className, 'editor-html')} data-focus={isEdit}>
+    <div
+      className={cn(className, 'editor-html')}
+      data-focus={isEdit}
+      style={style}
+    >
       <Editor
         initialValue={html}
         init={{

@@ -1,10 +1,45 @@
+:root {
+  --fs-base-editor: 1rem;
+}
+
 .mce-content-body {
   font-family: Segoe UI, system-ui, -apple-system, sans-serif;
   height: 100%;
+  padding: 0 var(--space-grid-big);
+  font-size: var(--fs-base-editor);
+
+  & > * {
+    &:first-child {
+      padding-top: var(--space-grid-big);
+    }
+
+    &:last-child {
+      padding-bottom: var(--space-grid-big);
+    }
+  }
+
+  & > * {
+    & + * {
+      margin-top: var(--fs-base-editor);
+    }
+
+    & + h2 {
+      margin-top: calc(1.5 * var(--fs-base-editor));
+    }
+  }
 
   h1,
   h2,
   h3 {
     font-family: Segoe UI, system-ui, -apple-system, sans-serif;
+    font-size: calc(2 * var(--fs-base-editor));
+  }
+
+  h2 {
+    font-size: calc(1.5 * var(--fs-base-editor));
+  }
+
+  h3 {
+    font-size: calc(1.1 * var(--fs-base-editor));
   }
 }

@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Provider, useActions, useStoreState } from 'unistore-hooks';
-import { actions, store } from '@store/index';
+
+import { getFileFromHandle } from '@utils/fileAccess';
+import { actions, defaultFile, store } from '@store/index';
 import { State } from '@store/types';
 import { settingsDB } from '@store/idb';
 
@@ -21,22 +23,33 @@ const App = () => {
   const { setFiles } = useActions(actions);
 
   const setFromDB = async () => {
-    const activeIndex = await settingsDB.get('activeFileIndex');
-    const files = await settingsDB.get('files');
-    if (files) {
-      // todo: set actual file content instead if idb content
-      setFiles(files, activeIndex);
+    const fileHandles = await settingsDB.get('files');
+    if (fileHandles) {
+      setFiles(
+        fileHandles.map(handle => ({
+          ...defaultFile,
+          handle,
+          title: handle.name,
+          handleLoaded: false,
+        })),
+        'new'
+      );
     }
   };
 
   React.useEffect(() => {
-    setFromDB().then(() => setInit(true));
+    setFromDB()
+      .then(() => setInit(true))
+      .catch(() => setInit(true));
   }, []);
 
   React.useEffect(() => {
     if (init) {
       settingsDB.set('activeFileIndex', activeFileIndex);
-      settingsDB.set('files', files);
+      settingsDB.set(
+        'files',
+        files.map(({ handle }) => handle).filter(handle => !!handle)
+      );
     }
   }, [activeFileIndex, files]);
 

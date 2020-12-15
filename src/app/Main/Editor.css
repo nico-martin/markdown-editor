@@ -1,24 +1,27 @@
 .editor {
   display: flex;
+  margin-top: var(--space-grid-half);
+  margin-bottom: var(--space-grid);
+  position: relative;
 
   &__column {
-    flex: 1 1 50%;
+    flex: 1 1 auto;
     display: flex;
     justify-content: center;
+    padding: var(--space-grid-half);
+    margin: 0 var(--space-grid);
+
+    &--markup {
+      flex-grow: 1;
+    }
   }
 
   &__editor {
     overflow: auto;
-    padding: var(--space-grid-half);
-    margin: var(--space-grid-half) var(--space-grid) var(--space-grid)
-      var(--space-grid);
-    height: calc(100% - (2 * var(--space-grid)));
-    width: calc(100% - (2 * var(--space-grid)));
+    height: 100%;
+    width: 100%;
     max-width: 70vh;
-
-    &--html {
-      padding: var(--space-grid-big);
-    }
+    justify-self: center;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -47,7 +50,31 @@
   }
 
   &__new {
-    margin: 0 auto;
-    align-self: center;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    top: 0;
+    background-color: var(--c-bkg);
+    z-index: 500;
+
+    &::after,
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: auto;
+      bottom: 1px;
+      height: 10px;
+      background-color: var(--c-bkg);
+      transform: translateY(100%);
+    }
+
+    &::before {
+      transform: translateY(-100%);
+      top: 1px;
+      bottom: auto;
+    }
   }
 }

@@ -13,7 +13,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
     'activeFileIndex',
     'files',
   ]);
-  const { setActiveFileIndex, deleteFileByIndex, openFileSelect } = useActions(
+  const { setActiveFileIndex, closeFileByIndex, openFileSelect } = useActions(
     actions
   );
 
@@ -34,7 +34,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
           </button>
           {index === activeFileIndex && (
             <button
-              onClick={() => deleteFileByIndex(index)}
+              onClick={() => closeFileByIndex(index)}
               className={cn('file-menu__delete')}
             >
               delete
@@ -42,16 +42,18 @@ const Footer = ({ className = '' }: { className?: string }) => {
           )}
         </div>
       ))}
-      {files.length < maxOpenFiles && files.length !== 0 && (
-        <div className={cn('file-menu__element', 'file-menu__element--new')}>
-          <button
-            onClick={() => openFileSelect()}
-            className={cn('file-menu__button', 'file-menu__button--new')}
-          >
-            new File
-          </button>
-        </div>
-      )}
+      {activeFileIndex !== 'new' &&
+        files.length < maxOpenFiles &&
+        files.length !== 0 && (
+          <div className={cn('file-menu__element', 'file-menu__element--new')}>
+            <button
+              onClick={() => openFileSelect()}
+              className={cn('file-menu__button', 'file-menu__button--new')}
+            >
+              new File
+            </button>
+          </div>
+        )}
     </div>
   );
 };
