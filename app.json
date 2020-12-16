@@ -2,6 +2,6 @@
   "title": "[md.edit]",
   "short": "Markdown Editor",
   "description": "A markdown editor web app based on the File System Access API",
-  "color": "#a7956f",
-  "colorbkg": "#A8956E"
+  "color": "#106672",
+  "colorbkg": "#eaeaea"
 }

@@ -17,7 +17,7 @@ export const openFileFromSystem = async (): Promise<Partial<File>> => {
 };
 
 export const getFileFromHandle = async (fileHandle): Promise<Partial<File>> => {
-  if ((await verifyPermission(fileHandle, true)) === false) {
+  if ((await verifyPermission(fileHandle, false)) === false) {
     alert('Permission denied');
     return;
   }

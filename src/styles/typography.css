@@ -3,6 +3,8 @@
   --fs-small: 0.9rem;
   --fs-xsmall: 0.7rem;
   --fs-big: 1.2rem;
+  --font: Affogato, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 html {
@@ -10,7 +12,7 @@ html {
 }
 
 body {
-  font-family: Affogato, sans-serif;
+  font-family: var(--font);
   font-weight: 400;
   font-size: 100%;
   line-height: 1.4;
@@ -24,7 +26,7 @@ b {
 h1,
 h2,
 h3 {
-  font-family: Affogato, sans-serif;
+  font-family: var(--font);
   font-weight: 700;
   line-height: 1.1;
   font-size: 1.5em;
@@ -59,5 +61,5 @@ a {
 
 .code,
 code {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
 }

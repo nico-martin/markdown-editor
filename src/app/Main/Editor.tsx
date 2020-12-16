@@ -7,7 +7,6 @@ import { State } from '@store/types';
 import { EDITOR_VIEWS } from '@utils/constants';
 import cn from '@utils/classnames';
 import useWindowSize from '@app/hooks/useWindowSize';
-import useMobile from '@app/hooks/useMobile';
 
 import EditorMarkdown from './EditorMarkdown';
 import EditorHtml from './EditorHtml';
@@ -19,7 +18,7 @@ import { getFileFromHandle } from '@utils/fileAccess';
 const Editor = ({ className = '' }: { className?: string }) => {
   const editorRef = React.useRef(null);
   const [editorWidth, setEditorWidth] = React.useState(0);
-  const { updateActiveFile } = useActions(actions);
+  const { updateActiveFile, createNewFile } = useActions(actions);
   const { activeFileIndex, files, editorView } = useStoreState<State>([
     'activeFileIndex',
     'files',
@@ -31,6 +30,19 @@ const Editor = ({ className = '' }: { className?: string }) => {
     () => files[activeFileIndex] || defaultFile,
     [files, activeFileIndex]
   );
+
+  React.useEffect(() => {
+    if ('launchQueue' in window) {
+      // @ts-ignore
+      window.launchQueue.setConsumer(async launchParams => {
+        if (launchParams.files.length) {
+          const fileHandle = launchParams.files[0];
+          const file = await getFileFromHandle(fileHandle);
+          createNewFile(file);
+        }
+      });
+    }
+  }, []);
 
   const loadActiveFile = async () => {
     if (!activeFile.handleLoaded) {

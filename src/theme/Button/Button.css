@@ -7,7 +7,7 @@
     font-weight: normal;
   }
 
-  padding: 0.7em 1em;
+  padding: 0.6em 0.8em;
 
   &--zeropadding {
     padding: 0 0;
@@ -17,8 +17,6 @@
   color: var(--c-p);
   display: flex;
   align-items: center;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
-    0 2px 6px 2px rgba(60, 64, 67, 0.15);
 
   &__bkg {
     position: absolute;
@@ -39,11 +37,11 @@
     display: block;
 
     &--left {
-      margin-right: 0.6em;
+      margin-right: 0.4em;
     }
 
     &--right {
-      margin-left: 0.6em;
+      margin-left: 0.4em;
     }
   }
 

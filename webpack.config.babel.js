@@ -103,6 +103,14 @@ module.exports = (env, argv) => {
             purpose: 'maskable any',
           },
         ],
+        file_handlers: [
+          {
+            action: '/',
+            accept: {
+              'text/markdown': ['.md'],
+            },
+          },
+        ],
       }),
       ...(!dev
         ? [

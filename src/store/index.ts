@@ -5,7 +5,6 @@ import devtools from 'unistore/devtools';
 
 import { isDev } from '@utils/helpers';
 import { EDITOR_VIEWS } from '@utils/constants';
-import { getFileFromHandle } from '@utils/fileAccess';
 
 export const defaultFile = {
   title: 'untitled',
