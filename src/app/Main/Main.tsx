@@ -34,7 +34,7 @@ const Main = ({
           <p>
             Your Browser does not support the{' '}
             <a target="_blank" href="https://caniuse.com/native-filesystem-api">
-              Native File System API
+              File System Access API
             </a>
             . This project is about demonstrating this API. Please try it with
             another browser.
