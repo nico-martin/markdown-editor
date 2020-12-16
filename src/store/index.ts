@@ -37,7 +37,7 @@ export const actions = (store: Store<State>) => ({
         : file
     ),
   }),
-  closeFileByIndex: ({ files }, index) =>
+  closeFileByIndex: ({ files, activeFileIndex }, index) =>
     files[index].content !== files[index].savedContent &&
     !confirm(
       'Are you sure you want to close this file? Unsaved changes will be lost.'
@@ -45,7 +45,12 @@ export const actions = (store: Store<State>) => ({
       ? {}
       : {
           files: files.filter((file, i) => index !== i),
-          activeFileIndex: 'new',
+          activeFileIndex:
+            index === activeFileIndex
+              ? 'new'
+              : activeFileIndex > index
+              ? activeFileIndex - 1
+              : activeFileIndex,
         },
   setActiveFileIndex: async ({ files }, activeFileIndex) => {
     const activeFile = files[activeFileIndex];
@@ -57,10 +62,25 @@ export const actions = (store: Store<State>) => ({
       activeFileIndex,
     };
   },
-  createNewFile: ({ files }, newFile: Partial<File> = {}) => ({
-    files: [...files, { ...defaultFile, ...newFile }],
-    activeFileIndex: files.length,
-  }),
+  createNewFile: async ({ files }, newFile: Partial<File> = {}) => {
+    newFile = { ...defaultFile, ...newFile };
+    const fileExistsIndex = !newFile.handle
+      ? files.findIndex(
+          file =>
+            file.handle === newFile.handle && file.content === newFile.content
+        )
+      : (
+          await Promise.all(
+            files.map(file => file.handle.isSameEntry(newFile.handle))
+          )
+        ).findIndex(same => same);
+    const fileExists = fileExistsIndex !== -1;
+
+    store.setState({
+      files: fileExists ? files : [...files, newFile],
+      activeFileIndex: fileExists ? fileExistsIndex : files.length,
+    });
+  },
   openFileSelect: state => ({
     activeFileIndex: 'new',
   }),

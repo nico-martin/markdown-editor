@@ -13,7 +13,7 @@ import EditorHtml from './EditorHtml';
 import EditorNew from '@app/Main/EditorNew';
 
 import './Editor.css';
-import { getFileFromHandle } from '@utils/fileAccess';
+import { getFileFromHandle, openFileFromSystem } from '@utils/fileAccess';
 
 const Editor = ({ className = '' }: { className?: string }) => {
   const editorRef = React.useRef(null);
@@ -44,6 +44,11 @@ const Editor = ({ className = '' }: { className?: string }) => {
     }
   }, []);
 
+  const openFile = async () => {
+    const file = await openFileFromSystem();
+    createNewFile(file);
+  };
+
   const loadActiveFile = async () => {
     if (!activeFile.handleLoaded) {
       const updatedFile = await getFileFromHandle(activeFile.handle);
@@ -57,13 +62,15 @@ const Editor = ({ className = '' }: { className?: string }) => {
 
   React.useEffect(() => {
     setTimeout(() => {
-      document.documentElement.style.setProperty(
-        '--fs-base-editor',
-        editorRef.current.clientHeight * 0.018 + 'px'
-      );
-      setEditorWidth(
-        editorRef.current ? editorRef.current.clientHeight * 0.7 : 0
-      );
+      if (editorRef.current) {
+        document.documentElement.style.setProperty(
+          '--fs-base-editor',
+          editorRef.current.clientHeight * 0.018 + 'px'
+        );
+        setEditorWidth(
+          editorRef.current ? editorRef.current.clientHeight * 0.7 : 0
+        );
+      }
     }, 1);
   }, [editorRef.current, activeFileIndex, editorView, windowSize]);
 

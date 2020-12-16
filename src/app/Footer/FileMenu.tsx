@@ -40,14 +40,12 @@ const Footer = ({ className = '' }: { className?: string }) => {
           >
             {file.title}
           </button>
-          {index === activeFileIndex && (
-            <button
-              onClick={() => closeFileByIndex(index)}
-              className={cn('file-menu__delete')}
-            >
-              delete
-            </button>
-          )}
+          <button
+            onClick={() => closeFileByIndex(index)}
+            className={cn('file-menu__delete')}
+          >
+            delete
+          </button>
         </div>
       ))}
       {activeFileIndex !== 'new' &&
