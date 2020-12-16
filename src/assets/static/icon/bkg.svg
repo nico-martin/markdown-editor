@@ -1,0 +1,67 @@
+<svg viewBox="0 0 2000 2000">
+  <path fill="url(#_Linear1)" d="M290.585 192.947h1327.35v1327.35H290.585z"
+        transform="rotate(-130 985.158 858.053) scale(.90843)"/>
+  <path fill="url(#_Linear2)" d="M290.585 192.947h1327.35v1327.35H290.585z"
+        transform="rotate(-120 997.471 850.658) scale(.90843)"/>
+  <path fill="url(#_Linear3)" d="M290.585 192.947h1327.35v1327.35H290.585z"
+        transform="rotate(-110 1011.1 842.484) scale(.90843)"/>
+  <path fill="url(#_Linear4)" d="M290.585 192.947h1327.35v1327.35H290.585z"
+        transform="rotate(-100 1026.501 833.236) scale(.90843)"/>
+  <path fill="url(#_Linear5)" d="M290.585 192.947h1327.35v1327.35H290.585z"
+        transform="rotate(-90 1044.351 822.531) scale(.90843)"/>
+  <path fill="url(#_Linear6)" d="M290.585 192.947h1327.35v1327.35H290.585z"
+        transform="rotate(-80 1065.619 809.767) scale(.90843)"/>
+  <path fill="url(#_Linear7)" d="M290.585 192.947h1327.35v1327.35H290.585z"
+        transform="rotate(-70 1091.833 794.029) scale(.90843)"/>
+  <path fill="url(#_Linear8)" d="M290.585 192.947h1327.35v1327.35H290.585z"
+        transform="rotate(-60 1125.544 773.803) scale(.90843)"/>
+  <path fill="url(#_Linear9)" d="M290.585 192.947h1327.35v1327.35H290.585z"
+        transform="rotate(-50 1171.284 746.35) scale(.90843)"/>
+  <defs>
+    <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(290.585 856.62) scale(1327.35)">
+      <stop offset="0" stop-color="#009fb4" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#009c69" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(290.585 856.62) scale(1327.35)">
+      <stop offset="0" stop-color="#009fb4" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#009c69" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="_Linear3" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(290.585 856.62) scale(1327.35)">
+      <stop offset="0" stop-color="#009fb4" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#009c69" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="_Linear4" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(290.585 856.62) scale(1327.35)">
+      <stop offset="0" stop-color="#009fb4" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#009c69" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="_Linear5" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(290.585 856.62) scale(1327.35)">
+      <stop offset="0" stop-color="#009fb4" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#009c69" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="_Linear6" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(290.585 856.62) scale(1327.35)">
+      <stop offset="0" stop-color="#009fb4" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#009c69" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="_Linear7" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(290.585 856.62) scale(1327.35)">
+      <stop offset="0" stop-color="#009fb4" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#009c69" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="_Linear8" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(290.585 856.62) scale(1327.35)">
+      <stop offset="0" stop-color="#009fb4" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#009c69" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="_Linear9" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(290.585 856.62) scale(1327.35)">
+      <stop offset="0" stop-color="#009fb4" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#009c69" stop-opacity=".5"/>
+    </linearGradient>
+  </defs>
+</svg>

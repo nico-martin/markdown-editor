@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStoreState, useActions } from 'unistore-hooks';
 
-import { actions, defaultFile } from '@store/index';
+import { actions } from '@store/index';
 import { State } from '@store/types';
 import cn from '@utils/classnames';
 import { settingsDB } from '@store/idb';
