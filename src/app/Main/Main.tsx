@@ -29,12 +29,19 @@ const Main = ({
               Your Browser does not support the{' '}
               <a
                 target="_blank"
-                href="https://caniuse.com/native-filesystem-api"
+                href="https://wicg.github.io/file-system-access/"
               >
                 File System Access API
               </a>
               . This project is about demonstrating this API. Please try it with
-              another browser.
+              a
+              <a
+                target="_blank"
+                href="https://caniuse.com/native-filesystem-api"
+              >
+                different browser
+              </a>
+              .
             </p>
           </div>
         </div>
