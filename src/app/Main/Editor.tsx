@@ -43,7 +43,7 @@ const Editor = ({ className = '' }: { className?: string }) => {
         if (launchParams.files.length) {
           const fileHandle = launchParams.files[0];
           const file = await getFileFromHandle(fileHandle);
-          trackEvent({ category: 'file-action', action: 'create-new' });
+          trackEvent({ category: 'file-action', action: 'create-from-queue' });
           createNewFile(file);
         }
       });

@@ -2,7 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Provider, useActions, useStoreState } from 'unistore-hooks';
-import { MatomoProvider, createInstance } from '@datapunt/matomo-tracker-react';
+import {
+  MatomoProvider,
+  createInstance,
+  useMatomo,
+} from '@datapunt/matomo-tracker-react';
 
 import { actions, defaultFile, store } from '@store/index';
 import { State } from '@store/types';
@@ -14,14 +18,19 @@ import Main from '@app/Main/Main';
 import Footer from '@app/Footer/Footer';
 
 import './App.css';
+import { featureCheck } from '@utils/helpers';
 
 const matomoInstance = createInstance({
   urlBase: matomoURL,
   siteId: matomoSiteID,
   linkTracking: true,
+  configurations: {
+    disableCookies: true,
+  },
 });
 
 const App = () => {
+  const { trackEvent } = useMatomo();
   const [init, setInit] = React.useState<boolean>(false);
   const { activeFileIndex, files } = useStoreState<State>([
     'activeFileIndex',
@@ -45,6 +54,11 @@ const App = () => {
   };
 
   React.useEffect(() => {
+    trackEvent({
+      category: 'feature-check',
+      action: 'fileAPI',
+      name: featureCheck ? 'supported' : 'not-supported',
+    });
     setFromDB()
       .then(() => setInit(true))
       .catch(() => setInit(true));
