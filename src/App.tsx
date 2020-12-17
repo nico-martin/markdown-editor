@@ -12,13 +12,13 @@ import { actions, defaultFile, store } from '@store/index';
 import { State } from '@store/types';
 import { settingsDB } from '@store/idb';
 import { matomoSiteID, matomoURL } from '@utils/constants';
+import { featureCheck } from '@utils/helpers';
 
 import Header from '@app/Header/Header';
 import Main from '@app/Main/Main';
 import Footer from '@app/Footer/Footer';
 
 import './App.css';
-import { featureCheck } from '@utils/helpers';
 
 const matomoInstance = createInstance({
   urlBase: matomoURL,
