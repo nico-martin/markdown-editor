@@ -11,6 +11,10 @@
     padding: var(--space-grid-half);
     margin: 0 var(--space-grid);
 
+    @mixin mobile {
+      padding: var(--space-grid-half) 0;
+    }
+
     &--markup {
       flex-grow: 1;
     }

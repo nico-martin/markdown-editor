@@ -2,14 +2,24 @@
   display: flex;
   align-items: flex-start;
 
+  @mixin mobile {
+    overflow-y: hidden;
+    overflow-x: auto;
+  }
+
   &__element {
-    //margin-right: var(--space-half);
     display: flex;
     align-items: center;
     position: relative;
     padding: 0.7rem 1rem 0.6rem 1.4rem;
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
+    cursor: pointer;
+
+    &:focus {
+      @mixin a11y-focus;
+      outline: none;
+    }
 
     &::after {
       content: '';
@@ -40,6 +50,10 @@
       box-shadow: 0 1px 4px 0 rgba(60, 64, 67, 0.1);
       padding: 0.5rem 1rem 0.8rem 1rem;
 
+      &:focus {
+        box-shadow: none;
+      }
+
       &::after {
         display: none;
       }
@@ -61,26 +75,24 @@
     }
   }
 
-  &__button {
-    cursor: pointer;
+  &__text {
     line-height: 1;
     font-size: var(--fs-small);
+    white-space: nowrap;
+  }
 
-    &:focus {
-      @mixin a11y-focus;
-      outline: none;
-
-      & + .file-menu__delete {
-        opacity: 1;
-      }
-    }
-
+  &__button {
     &--new {
       width: 1em;
       height: 1em;
       position: relative;
       text-indent: -9999px;
       border-radius: 50%;
+
+      &:focus {
+        @mixin a11y-focus;
+        outline: none;
+      }
 
       &:hover {
         background-color: var(--c-border-light);

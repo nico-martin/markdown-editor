@@ -3,11 +3,21 @@
   display: flex;
   align-items: stretch;
 
+  @mixin mobile {
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
   &__path {
     font-size: var(--fs-small);
   }
 
   &__nav {
     margin-left: auto;
+
+    @mixin mobile {
+      margin-left: 0;
+      justify-content: center;
+    }
   }
 }

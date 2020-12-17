@@ -5,6 +5,7 @@ import { actions } from '@store/index';
 import { State } from '@store/types';
 import cn from '@utils/classnames';
 import { settingsDB } from '@store/idb';
+import useMobile from '@app/hooks/useMobile';
 
 import { featureCheck } from '@utils/helpers';
 import { EDITOR_VIEWS } from '@utils/constants';
@@ -16,8 +17,13 @@ const HeaderView = ({ className = '' }: { className?: string }) => {
   const { setEditorView } = useActions(actions);
   const { editorView } = useStoreState<State>(['editorView']);
   const [firstRender, setFirstRender] = React.useState<boolean>(true);
+  const { isMobile } = useMobile();
 
-  React.useEffect(() => {}, []);
+  React.useEffect(() => {
+    isMobile &&
+      editorView === EDITOR_VIEWS.SPLIT &&
+      setEditorView(EDITOR_VIEWS.HTML);
+  }, [isMobile, editorView]);
 
   React.useEffect(() => {
     if (firstRender) {

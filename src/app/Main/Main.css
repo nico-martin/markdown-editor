@@ -8,12 +8,16 @@
   &__error {
     align-self: center;
     margin: 0 auto;
-    width: 100%;
-    max-width: 500px;
-    text-align: center;
-    border: 2px dashed var(--c-border);
-    padding: var(--space-grid);
-    border-radius: var(--border-radius);
+    max-width: 100%;
+    width: 500px;
+
+    &-inner {
+      margin: 0 var(--space-grid-half);
+      text-align: center;
+      border: 2px dashed var(--c-border);
+      padding: var(--space-grid);
+      border-radius: var(--border-radius);
+    }
   }
 
   &__loader {
@@ -21,5 +25,6 @@
     margin: 0 auto;
     font-size: 4vmin;
     color: var(--c-primary);
+    width: 100%;
   }
 }

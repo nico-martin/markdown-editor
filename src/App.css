@@ -4,13 +4,14 @@
   flex-direction: column;
 
   &__header {
-    //background-color: var(--c-bkg-light); //box-shadow: 0 1px 4px 0 rgba(60, 64, 67, 0.1); height: 4rem;
+    height: 4rem;
     position: relative;
     z-index: 20;
   }
 
   &__main {
     height: calc(100vh - 7rem);
+    min-height: 800px;
     box-shadow: 0 1px 4px 0 rgba(60, 64, 67, 0.1);
     position: relative;
 
@@ -29,5 +30,20 @@
   &__footer {
     height: 3rem;
     background-color: var(--c-bkg-dark);
+  }
+
+  @mixin mobile {
+    height: auto;
+    min-height: 100vh;
+
+    &__main {
+      height: calc(100vh - 8.2rem);
+      min-height: auto;
+    }
+
+    &__footer {
+      margin-top: auto;
+      height: 4.2rem;
+    }
   }
 }

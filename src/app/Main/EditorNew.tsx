@@ -5,7 +5,7 @@ import { actions } from '@store/index';
 import cn from '@utils/classnames';
 import { openFileFromSystem } from '@utils/fileAccess';
 
-import { Button, Icon } from '@theme';
+import { Icon } from '@theme';
 
 import './EditorNew.css';
 

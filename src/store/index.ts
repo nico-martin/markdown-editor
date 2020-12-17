@@ -71,7 +71,9 @@ export const actions = (store: Store<State>) => ({
         )
       : (
           await Promise.all(
-            files.map(file => file.handle.isSameEntry(newFile.handle))
+            files.map(file =>
+              !file.handle ? false : file.handle.isSameEntry(newFile.handle)
+            )
           )
         ).findIndex(same => same);
     const fileExists = fileExistsIndex !== -1;

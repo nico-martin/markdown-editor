@@ -6,18 +6,20 @@ import { actions, defaultFile } from '@store/index';
 import { State } from '@store/types';
 import { EDITOR_VIEWS } from '@utils/constants';
 import cn from '@utils/classnames';
+import { getFileFromHandle } from '@utils/fileAccess';
+
 import useWindowSize from '@app/hooks/useWindowSize';
+import useMobile from '@app/hooks/useMobile';
 
 import EditorMarkdown from './EditorMarkdown';
 import EditorHtml from './EditorHtml';
 import EditorNew from '@app/Main/EditorNew';
 
 import './Editor.css';
-import { getFileFromHandle, openFileFromSystem } from '@utils/fileAccess';
 
 const Editor = ({ className = '' }: { className?: string }) => {
   const editorRef = React.useRef(null);
-  const [editorWidth, setEditorWidth] = React.useState(0);
+  const [editorWidth, setEditorWidth] = React.useState<number | '100%'>(0);
   const { updateActiveFile, createNewFile } = useActions(actions);
   const { activeFileIndex, files, editorView } = useStoreState<State>([
     'activeFileIndex',
@@ -25,6 +27,7 @@ const Editor = ({ className = '' }: { className?: string }) => {
     'editorView',
   ]);
   const windowSize = useWindowSize();
+  const { isMobile } = useMobile();
 
   const activeFile = React.useMemo(
     () => files[activeFileIndex] || defaultFile,
@@ -44,11 +47,6 @@ const Editor = ({ className = '' }: { className?: string }) => {
     }
   }, []);
 
-  const openFile = async () => {
-    const file = await openFileFromSystem();
-    createNewFile(file);
-  };
-
   const loadActiveFile = async () => {
     if (!activeFile.handleLoaded) {
       const updatedFile = await getFileFromHandle(activeFile.handle);
@@ -65,10 +63,14 @@ const Editor = ({ className = '' }: { className?: string }) => {
       if (editorRef.current) {
         document.documentElement.style.setProperty(
           '--fs-base-editor',
-          editorRef.current.clientHeight * 0.018 + 'px'
+          editorRef.current.clientHeight * (isMobile ? 0.022 : 0.018) + 'px'
         );
         setEditorWidth(
-          editorRef.current ? editorRef.current.clientHeight * 0.7 : 0
+          isMobile
+            ? '100%'
+            : editorRef.current
+            ? editorRef.current.clientHeight * 0.7
+            : 0
         );
       }
     }, 1);

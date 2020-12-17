@@ -22,31 +22,27 @@ const Footer = ({ className = '' }: { className?: string }) => {
   const { isMobile } = useMobile();
 
   if (isMobile) {
-    return;
+    //return;
   }
 
   return (
     <div className={cn(className, 'file-menu')}>
       {files.map((file: File, index) => (
-        <div
+        <button
+          onClick={() => setActiveFileIndex(index)}
           className={cn('file-menu__element', {
             'file-menu__element--active': index === activeFileIndex,
             'file-menu__element--tosave': file.content !== file.savedContent,
           })}
         >
-          <button
-            onClick={() => setActiveFileIndex(index)}
-            className={cn('file-menu__button')}
-          >
-            {file.title}
-          </button>
+          <span className={cn('file-menu__text')}>{file.title}</span>
           <button
             onClick={() => closeFileByIndex(index)}
             className={cn('file-menu__delete')}
           >
             delete
           </button>
-        </div>
+        </button>
       ))}
       {activeFileIndex !== 'new' &&
         files.length < maxOpenFiles &&

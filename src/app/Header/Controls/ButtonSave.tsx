@@ -9,6 +9,7 @@ import { saveFileToSystem } from '@utils/fileAccess';
 import { Button } from '@theme';
 
 import './ButtonSave.css';
+import useMobile from '@app/hooks/useMobile';
 
 const ButtonSave = ({ className = '' }: { className?: string }) => {
   const { updateActiveFile } = useActions(actions);
@@ -16,6 +17,8 @@ const ButtonSave = ({ className = '' }: { className?: string }) => {
     'activeFileIndex',
     'files',
   ]);
+
+  const { isMobile } = useMobile();
 
   const activeFile = React.useMemo(
     () => files[activeFileIndex] || defaultFile,
@@ -61,7 +64,7 @@ const ButtonSave = ({ className = '' }: { className?: string }) => {
       layout={canSave ? 'solid' : 'empty'}
       disabled={!canSave}
     >
-      Save
+      {isMobile ? '' : 'Save'}
     </Button>
   );
 };
