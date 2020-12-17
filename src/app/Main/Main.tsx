@@ -34,7 +34,7 @@ const Main = ({
                 File System Access API
               </a>
               . This project is about demonstrating this API. Please try it with
-              a
+              a{' '}
               <a
                 target="_blank"
                 href="https://caniuse.com/native-filesystem-api"
