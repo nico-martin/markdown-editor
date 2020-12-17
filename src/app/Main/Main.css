@@ -26,5 +26,9 @@
     font-size: 4vmin;
     color: var(--c-primary);
     width: 100%;
+
+    &::after {
+      margin: 0 auto;
+    }
   }
 }

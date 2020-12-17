@@ -22,6 +22,8 @@ const Main = ({
     <main className={cn(className, 'main')}>
       {!init ? (
         <Loader className="main__loader" />
+      ) : true ? (
+        <Loader className="main__loader" />
       ) : !featureCheck ? (
         <div className="main__error">
           <div className="main__error-inner">
