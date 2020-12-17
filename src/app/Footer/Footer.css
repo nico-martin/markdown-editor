@@ -5,7 +5,7 @@
 
   @mixin mobile {
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
   }
 
   &__path {

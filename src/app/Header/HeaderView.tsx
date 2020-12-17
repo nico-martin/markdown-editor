@@ -7,7 +7,6 @@ import cn from '@utils/classnames';
 import { settingsDB } from '@store/idb';
 import useMobile from '@app/hooks/useMobile';
 
-import { featureCheck } from '@utils/helpers';
 import { EDITOR_VIEWS } from '@utils/constants';
 import { Icon } from '@theme';
 
@@ -33,7 +32,7 @@ const HeaderView = ({ className = '' }: { className?: string }) => {
     settingsDB.set('editorView', editorView);
   }, [editorView]);
 
-  return featureCheck ? (
+  return (
     <nav className={cn(className, 'header-view')}>
       {Object.values(EDITOR_VIEWS).map(view => (
         <button
@@ -46,7 +45,7 @@ const HeaderView = ({ className = '' }: { className?: string }) => {
         </button>
       ))}
     </nav>
-  ) : null;
+  );
 };
 
 export default HeaderView;
