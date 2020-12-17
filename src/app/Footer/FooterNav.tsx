@@ -1,4 +1,5 @@
 import React from 'react';
+import { useMatomo } from '@datapunt/matomo-tracker-react';
 
 import { appTitle } from '@utils/constants';
 import cn from '@utils/classnames';
@@ -15,6 +16,12 @@ const NAVIGATION: Record<Menu, string> = {
 
 const FooterNav = ({ className = '' }: { className?: string }) => {
   const [activeBox, setActiveBox] = React.useState<Menu>(null);
+  const { trackEvent } = useMatomo();
+
+  React.useEffect(() => {
+    activeBox &&
+      trackEvent({ category: 'page', action: 'open', name: activeBox });
+  }, []);
 
   return (
     <React.Fragment>
@@ -170,18 +177,17 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
             size="small"
           >
             <div className="content">
-              <h2>Disclaimer</h2>
-              <p>
-                The texts and contents of this site were created with great
-                care. Nevertheless, I cannot give any guarantee with regard to
-                the correctness, accuracy, up-to-dateness, reliability and
-                completeness of the information.
-              </p>
               <h2>Privacy</h2>
               <p>
-                Believe it or not: This website{' '}
-                <strong>does not collect any personal data</strong> besides what
-                is technically required.
+                This web app does not collect any personal data. We use a{' '}
+                <a href="https://analytics.sayhello.agency" target="_blank">
+                  self-hosted
+                </a>{' '}
+                <a href="https://matomo.org/" target="_blank">
+                  Matomo
+                </a>{' '}
+                instance where we collect anonymized data about the use of the
+                app.
               </p>
               <h2>Contact</h2>
               <p>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useActions } from 'unistore-hooks';
+import { useMatomo } from '@datapunt/matomo-tracker-react';
 
 import { actions } from '@store/index';
 import cn from '@utils/classnames';
@@ -17,6 +18,7 @@ const EditorNew = ({
   style: Object;
 }) => {
   const { createNewFile } = useActions(actions);
+  const { trackEvent } = useMatomo();
 
   React.useEffect(() => {
     window.addEventListener('keydown', keyEvent, false);
@@ -32,17 +34,19 @@ const EditorNew = ({
       return;
     } else if ((e.ctrlKey === true || e.metaKey === true) && e.key === 'c') {
       e.preventDefault();
-      createNewFile();
+      newFile();
       return;
     }
   };
 
   const openFile = async () => {
     const file = await openFileFromSystem();
+    trackEvent({ category: 'file-action', action: 'open' });
     createNewFile(file);
   };
 
   const newFile = () => {
+    trackEvent({ category: 'file-action', action: 'create-new' });
     createNewFile();
   };
 

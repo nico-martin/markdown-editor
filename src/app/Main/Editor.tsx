@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStoreState, useActions } from 'unistore-hooks';
 import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
+import { useMatomo } from '@datapunt/matomo-tracker-react';
 
 import { actions, defaultFile } from '@store/index';
 import { State } from '@store/types';
@@ -18,6 +19,7 @@ import EditorNew from '@app/Main/EditorNew';
 import './Editor.css';
 
 const Editor = ({ className = '' }: { className?: string }) => {
+  const { trackEvent } = useMatomo();
   const editorRef = React.useRef(null);
   const [editorWidth, setEditorWidth] = React.useState<number | '100%'>(0);
   const { updateActiveFile, createNewFile } = useActions(actions);
@@ -41,6 +43,7 @@ const Editor = ({ className = '' }: { className?: string }) => {
         if (launchParams.files.length) {
           const fileHandle = launchParams.files[0];
           const file = await getFileFromHandle(fileHandle);
+          trackEvent({ category: 'file-action', action: 'create-new' });
           createNewFile(file);
         }
       });

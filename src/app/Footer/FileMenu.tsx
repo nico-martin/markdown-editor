@@ -7,8 +7,6 @@ import { File, State } from '@store/types';
 import cn from '@utils/classnames';
 import { maxOpenFiles } from '@utils/constants';
 
-import useMobile from '@app/hooks/useMobile';
-
 import './FileMenu.css';
 
 const Footer = ({ className = '' }: { className?: string }) => {
@@ -19,11 +17,6 @@ const Footer = ({ className = '' }: { className?: string }) => {
   const { setActiveFileIndex, closeFileByIndex, openFileSelect } = useActions(
     actions
   );
-  const { isMobile } = useMobile();
-
-  if (isMobile) {
-    //return;
-  }
 
   return (
     <div className={cn(className, 'file-menu')}>

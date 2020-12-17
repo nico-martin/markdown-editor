@@ -126,6 +126,8 @@ module.exports = (env, argv) => {
         APP_TITLE: JSON.stringify(app.title) || '',
         APP_DESCRIPTION: JSON.stringify(app.description) || '',
         TINYMCE_KEY: JSON.stringify(process.env.TINYMCE_KEY) || '',
+        MATOMO_URL: JSON.stringify(process.env.MATOMO_URL) || '',
+        MATOMO_SITEID: JSON.stringify(process.env.MATOMO_SITEID) || '',
       }),
     ],
     module: {

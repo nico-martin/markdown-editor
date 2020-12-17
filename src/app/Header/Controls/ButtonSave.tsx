@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStoreState, useActions } from 'unistore-hooks';
+import { useMatomo } from '@datapunt/matomo-tracker-react';
 
 import { actions, defaultFile } from '@store/index';
 import { State } from '@store/types';
@@ -12,6 +13,7 @@ import './ButtonSave.css';
 import useMobile from '@app/hooks/useMobile';
 
 const ButtonSave = ({ className = '' }: { className?: string }) => {
+  const { trackEvent } = useMatomo();
   const { updateActiveFile } = useActions(actions);
   const { activeFileIndex, files } = useStoreState<State>([
     'activeFileIndex',
@@ -49,6 +51,7 @@ const ButtonSave = ({ className = '' }: { className?: string }) => {
     if (!canSave) {
       return;
     }
+    trackEvent({ category: 'file-action', action: 'save' });
     const file = await saveFileToSystem(activeFile);
     updateActiveFile(file);
   };

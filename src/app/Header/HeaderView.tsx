@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStoreState, useActions } from 'unistore-hooks';
+import { useMatomo } from '@datapunt/matomo-tracker-react';
 
 import { actions } from '@store/index';
 import { State } from '@store/types';
@@ -13,6 +14,7 @@ import { Icon } from '@theme';
 import './HeaderView.css';
 
 const HeaderView = ({ className = '' }: { className?: string }) => {
+  const { trackEvent } = useMatomo();
   const { setEditorView } = useActions(actions);
   const { editorView } = useStoreState<State>(['editorView']);
   const [firstRender, setFirstRender] = React.useState<boolean>(true);
@@ -32,6 +34,11 @@ const HeaderView = ({ className = '' }: { className?: string }) => {
     settingsDB.set('editorView', editorView);
   }, [editorView]);
 
+  const setTrackedEditorView = view => {
+    trackEvent({ category: 'editor-view', action: 'set', name: view });
+    setEditorView(view);
+  };
+
   return (
     <nav className={cn(className, 'header-view')}>
       {Object.values(EDITOR_VIEWS).map(view => (
@@ -39,7 +46,7 @@ const HeaderView = ({ className = '' }: { className?: string }) => {
           className={cn('header-view__button', {
             'header-view__button--active': view === editorView,
           })}
-          onClick={() => setEditorView(view)}
+          onClick={() => setTrackedEditorView(view)}
         >
           <Icon className={cn('header-view__icon')} icon={`mdi/view-${view}`} />
         </button>

@@ -2,16 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Provider, useActions, useStoreState } from 'unistore-hooks';
+import { MatomoProvider, createInstance } from '@datapunt/matomo-tracker-react';
 
 import { actions, defaultFile, store } from '@store/index';
 import { State } from '@store/types';
 import { settingsDB } from '@store/idb';
+import { matomoSiteID, matomoURL } from '@utils/constants';
 
 import Header from '@app/Header/Header';
 import Main from '@app/Main/Main';
 import Footer from '@app/Footer/Footer';
 
 import './App.css';
+
+const matomoInstance = createInstance({
+  urlBase: matomoURL,
+  siteId: matomoSiteID,
+  linkTracking: true,
+});
 
 const App = () => {
   const [init, setInit] = React.useState<boolean>(false);
@@ -61,9 +69,18 @@ const App = () => {
   );
 };
 
+const MaybeMatomo = ({ children }) =>
+  !IS_DEV && matomoSiteID && matomoURL ? (
+    <MatomoProvider value={matomoInstance}>{children}</MatomoProvider>
+  ) : (
+    <React.Fragment>{children}</React.Fragment>
+  );
+
 ReactDOM.render(
-  <Provider value={store}>
-    <App />
-  </Provider>,
+  <MaybeMatomo>
+    <Provider value={store}>
+      <App />
+    </Provider>
+  </MaybeMatomo>,
   document.querySelector('#app')
 );
