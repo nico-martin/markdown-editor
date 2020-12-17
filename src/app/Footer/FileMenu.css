@@ -14,7 +14,10 @@
     padding: 0.7rem 1rem 0.6rem 1.4rem;
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
-    cursor: pointer;
+
+    &--button {
+      cursor: pointer;
+    }
 
     &:focus {
       @mixin a11y-focus;
@@ -88,6 +91,7 @@
       position: relative;
       text-indent: -9999px;
       border-radius: 50%;
+      cursor: pointer;
 
       &:focus {
         @mixin a11y-focus;

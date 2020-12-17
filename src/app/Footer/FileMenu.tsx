@@ -30,7 +30,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
       {files.map((file: File, index) => (
         <button
           onClick={() => setActiveFileIndex(index)}
-          className={cn('file-menu__element', {
+          className={cn('file-menu__element', 'file-menu__element--button', {
             'file-menu__element--active': index === activeFileIndex,
             'file-menu__element--tosave': file.content !== file.savedContent,
           })}
