@@ -25,23 +25,25 @@ const Main = ({
       ) : !featureCheck ? (
         <div className="main__error">
           <div className="main__error-inner">
+            <p>Hi there,</p>
             <p>
-              Your Browser does not support the{' '}
+              I am sorry to have to greet you directly with an error message.
+              However, this project is just a test to play around with the{' '}
               <a
                 target="_blank"
                 href="https://wicg.github.io/file-system-access/"
               >
                 File System Access API
               </a>
-              . This project is about demonstrating this API. Please try it with
-              a{' '}
+              . And it looks like your browser does not support this API (yet).
+              I would be very happy if you would try it again with{' '}
               <a
                 target="_blank"
                 href="https://caniuse.com/native-filesystem-api"
               >
-                different browser
-              </a>
-              .
+                a different browser
+              </a>{' '}
+              - Thanks!
             </p>
           </div>
         </div>
