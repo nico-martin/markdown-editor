@@ -1,0 +1,26 @@
+.header-settings {
+  position: relative;
+
+  &__button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0.2em;
+    border-radius: 50%;
+
+    &:focus {
+      @mixin a11y-focus;
+    }
+  }
+
+  &__panel {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translateY(calc(100% + var(--space))) translateX(var(--space));
+    background-color: var(--c-white);
+    padding: var(--space-grid);
+    box-shadow: 0 0 4px 0 rgba(60, 64, 67, 0.3);
+    border-radius: var(--border-radius);
+  }
+}
