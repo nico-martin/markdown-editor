@@ -54,7 +54,7 @@ export const actions = (store: Store<State>) => ({
         },
   setActiveFileIndex: async ({ files }, activeFileIndex) => {
     const activeFile = files[activeFileIndex];
-    if (!activeFile) {
+    if (!activeFile && activeFileIndex !== 'new') {
       return {};
     }
 

@@ -22,7 +22,9 @@ const Editor = ({ className = '' }: { className?: string }) => {
   const { trackEvent } = useMatomo();
   const editorRef = React.useRef(null);
   const [editorWidth, setEditorWidth] = React.useState<number | '100%'>(0);
-  const { updateActiveFile, createNewFile } = useActions(actions);
+  const { updateActiveFile, createNewFile, setActiveFileIndex } = useActions(
+    actions
+  );
   const { activeFileIndex, files, editorView } = useStoreState<State>([
     'activeFileIndex',
     'files',
@@ -53,7 +55,11 @@ const Editor = ({ className = '' }: { className?: string }) => {
   const loadActiveFile = async () => {
     if (!activeFile.handleLoaded) {
       const updatedFile = await getFileFromHandle(activeFile.handle);
-      updateActiveFile(updatedFile);
+      if (updatedFile) {
+        updateActiveFile(updatedFile);
+      } else {
+        setActiveFileIndex('new');
+      }
     }
   };
 

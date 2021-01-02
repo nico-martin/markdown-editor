@@ -17,20 +17,26 @@ export const openFileFromSystem = async (): Promise<Partial<File>> => {
 };
 
 export const getFileFromHandle = async (fileHandle): Promise<Partial<File>> => {
-  if ((await verifyPermission(fileHandle, false)) === false) {
+  const verify = await verifyPermission(fileHandle, false);
+  if (!verify) {
     alert('Permission denied');
     return;
   }
 
-  const file = await fileHandle.getFile();
-  const content = await file.text();
-  return {
-    title: file.name,
-    content,
-    savedContent: content,
-    handle: fileHandle,
-    handleLoaded: true,
-  };
+  try {
+    const file = await fileHandle.getFile();
+    const content = await file.text();
+    return {
+      title: file.name,
+      content,
+      savedContent: content,
+      handle: fileHandle,
+      handleLoaded: true,
+    };
+  } catch (e) {
+    alert('The file could not be read. Please make sure that it still exists.');
+    return;
+  }
 };
 
 export const saveFileToSystem = async (
@@ -72,14 +78,11 @@ async function verifyPermission(fileHandle, withWrite) {
       }
     : {};
 
-  // Check if we already have permission, if so, return true.
-  if ((await fileHandle.queryPermission(opts)) === 'granted') {
+  const permission = await fileHandle.queryPermission(opts);
+  if (permission === 'granted') {
     return true;
   }
-  // Request permission to the file, if the user grants permission, return true.
-  if ((await fileHandle.requestPermission(opts)) === 'granted') {
-    return true;
-  }
-  // The user did nt grant permission, return false.
-  return false;
+
+  const request = await fileHandle.requestPermission(opts);
+  return request === 'granted';
 }
