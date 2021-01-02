@@ -1,14 +1,14 @@
-# [md.edit]
+# \[md.edit\]
 
-[md.edit] is a web based markdown editor that uses modern progressive web app features to provide a great, cross-platform editing experience.
+\[md.edit\] is a web based markdown editor that uses modern progressive web app features to provide a great, cross-platform editing experience.
 
-[md.nico.dev](https://md.nico.dev)
+[md.nico.dev](https://md.nico.dev/)
 
 ## File System Access API
 
 The main goal of this project is to showcase the **[File System Access API](https://wicg.github.io/file-system-access/)**.
 
-This API allows a web app to access local files. That means files can be opened and saved directly in the browser.  
+This API allows a web app to access local files. That means files can be opened and saved directly in the browser.
 
 [https://web.dev/file-system-access/](https://web.dev/file-system-access/)
 

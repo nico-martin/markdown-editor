@@ -32,7 +32,7 @@ const EditorNew = ({
       e.preventDefault();
       await openFile();
       return;
-    } else if ((e.ctrlKey === true || e.metaKey === true) && e.key === 'c') {
+    } else if ((e.ctrlKey === true || e.metaKey === true) && e.key === 'i') {
       e.preventDefault();
       newFile();
       return;
@@ -58,7 +58,7 @@ const EditorNew = ({
       </button>
       <span className="editor-new__spacer">or</span>
 
-      <button className="editor-new__button" onClick={newFile} title="ctrl+c">
+      <button className="editor-new__button" onClick={newFile} title="ctrl+i">
         <Icon icon="mdi/new" className="editor-new__icon" />
         Create .md File
       </button>
