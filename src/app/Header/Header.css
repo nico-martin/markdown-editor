@@ -15,7 +15,7 @@
     margin-right: var(--space-grid-big);
   }
 
-  &__view {
-    margin-right: var(--space-grid);
+  &__settings {
+    margin-left: var(--space-grid);
   }
 }

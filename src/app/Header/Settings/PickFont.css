@@ -1,0 +1,22 @@
+.pick-font {
+  &__title {
+    font-weight: bold;
+  }
+
+  &__font {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0.2em;
+    border-radius: 50%;
+
+    &:focus {
+      @mixin a11y-focus;
+    }
+  }
+}
