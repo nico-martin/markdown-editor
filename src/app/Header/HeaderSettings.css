@@ -22,4 +22,15 @@
     box-shadow: 0 0 4px 0 rgba(60, 64, 67, 0.3);
     border-radius: var(--border-radius);
   }
+
+  &__input {
+    width: 100%;
+    background-color: var(--c-white);
+    border: 1px solid var(--c-border);
+    padding: 0.3em 0.5em;
+    border-radius: 5px;
+    &:focus {
+      @mixin a11y-focus;
+    }
+  }
 }

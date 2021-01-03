@@ -1,6 +1,6 @@
 .editor-markdown {
   border: none;
   background-color: transparent;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-editor-md);
   font-size: 1rem;
 }

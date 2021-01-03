@@ -4,19 +4,35 @@ import cn from '@utils/classnames';
 
 import './PickFont.css';
 
-const INITIAL_FONT_FAMILY = 'TEST';
+const INITIAL_FONTS = {
+  'font-editor-md': getComputedStyle(document.body).getPropertyValue(
+    `--font-editor-md`
+  ),
+  'font-editor-wysiwyg': getComputedStyle(document.body).getPropertyValue(
+    `--font-editor-wysiwyg`
+  ),
+};
 
 const PickFont = ({
   className = '',
+  inputClassName = '',
   title,
-  key,
+  settingsKey,
+  value,
+  setValue,
 }: {
   className?: string;
+  inputClassName?: string;
   title: string;
-  key: string;
+  settingsKey: string;
+  value: string;
+  setValue: Function;
 }) => {
-  const [font, setFont] = React.useState<string>(INITIAL_FONT_FAMILY);
   const [fontFamilies, setFontFamilies] = React.useState<string[]>([]);
+  const initialValue = React.useMemo(
+    () => (INITIAL_FONTS[settingsKey] || '').replace(/"/g, ''),
+    []
+  );
 
   const queryFonts = async () => {
     // @ts-ignore
@@ -39,22 +55,29 @@ const PickFont = ({
     <div className={cn(className, 'pick-font')}>
       <p className="pick-font__title">{title}</p>
       <select
-        onClick={queryFonts}
-        onChange={event =>
-          console.log((event.target as HTMLSelectElement).value)
-        }
+        onMouseDown={event => {
+          if (fontFamilies.length === 0) {
+            queryFonts().then(() => {
+              (event.target as HTMLSelectElement).blur();
+              // todo: rerendering the options does not update the options box height. Need to find a solution for that. issue #4
+            });
+          }
+        }}
+        onChange={event => setValue((event.target as HTMLSelectElement).value)}
+        value={value}
+        name={settingsKey}
+        id={settingsKey}
+        className={cn(inputClassName, 'pick-font__select')}
       >
-        {fontFamilies.length === 0 ? (
-          <option>{font}</option>
-        ) : (
-          <React.Fragment>
-            {fontFamilies.map(family => (
-              <option selected={font === family} value={family}>
+        <option value={initialValue}>{initialValue}</option>
+        {fontFamilies.length === 0
+          ? value &&
+            value !== initialValue && <option value={value}>{value}</option>
+          : fontFamilies.map((family, i) => (
+              <option style={{ fontFamily: family }} value={family} key={i}>
                 {family}
               </option>
             ))}
-          </React.Fragment>
-        )}
       </select>
     </div>
   );

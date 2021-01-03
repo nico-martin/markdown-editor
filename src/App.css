@@ -30,6 +30,7 @@
   &__footer {
     height: 3rem;
     background-color: var(--c-bkg-dark);
+    z-index: 4;
   }
 
   @mixin mobile {

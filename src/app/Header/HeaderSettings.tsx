@@ -8,15 +8,80 @@ import PickFont from '@app/Header/Settings/PickFont';
 
 import './HeaderSettings.css';
 import { fontAccessAPI } from '@utils/helpers';
+import { settingsDB } from '@store/idb';
+
+interface SettingsProps {
+  value: any;
+  setValue: Function;
+  settingsKey: string;
+}
 
 const HeaderSettings = ({ className = '' }: { className?: string }) => {
+  const [init, setInit] = React.useState<boolean>(false);
   const [open, setOpen] = React.useState<boolean>(false);
+  const [values, setValues] = React.useState<Record<string, any>>({});
+
+  React.useEffect(() => {
+    init && settingsDB.set('settings', values);
+  }, [values]);
+
+  const setFromDB = async () => {
+    const initialValues = await settingsDB.get('settings');
+    setValues(initialValues || {});
+    return;
+  };
+
+  React.useEffect(() => {
+    setFromDB()
+      .then(() => setInit(true))
+      .catch(() => setInit(true));
+  }, []);
+
+  React.useEffect(() => {
+    values['font-editor-wysiwyg'] &&
+      document.body.style.setProperty(
+        '--font-editor-wysiwyg',
+        values['font-editor-wysiwyg']
+      );
+  }, [values['font-editor-wysiwyg']]);
+
+  React.useEffect(() => {
+    values['font-editor-md'] &&
+      document.body.style.setProperty(
+        '--font-editor-md',
+        values['font-editor-md']
+      );
+  }, [values['font-editor-md']]);
 
   const elements = {
     ...(fontAccessAPI
       ? {
-          fontWysiwyg: () => <PickFont title="WYSIWYG Font" key="wysiwyg" />,
-          fontMd: () => <PickFont title="Markdown Font" key="md" />,
+          'font-editor-md': ({
+            value,
+            setValue,
+            settingsKey,
+          }: SettingsProps) => (
+            <PickFont
+              title="Markdown Font"
+              settingsKey={settingsKey}
+              value={value}
+              setValue={setValue}
+              inputClassName="header-settings__input header-settings__input--select"
+            />
+          ),
+          'font-editor-wysiwyg': ({
+            value,
+            setValue,
+            settingsKey,
+          }: SettingsProps) => (
+            <PickFont
+              title="WYSIWYG Font"
+              settingsKey={settingsKey}
+              value={value}
+              setValue={setValue}
+              inputClassName="header-settings__input header-settings__input--select"
+            />
+          ),
         }
       : {}),
   };
@@ -37,7 +102,12 @@ const HeaderSettings = ({ className = '' }: { className?: string }) => {
           className="header-settings__panel"
           outsideClick={() => setOpen(false)}
         >
-          <Settings className="header-settings__settings" elements={elements} />
+          <Settings
+            className="header-settings__settings"
+            elements={elements}
+            values={values}
+            setValues={setValues}
+          />
         </OutsideClickHandler>
       )}
     </div>
