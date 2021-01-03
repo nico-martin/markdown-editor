@@ -3,6 +3,7 @@ import React from 'react';
 import cn from '@utils/classnames';
 
 import './PickFont.css';
+import { FieldSelect } from '@theme';
 
 const INITIAL_FONTS = {
   'font-editor-md': getComputedStyle(document.body).getPropertyValue(
@@ -16,6 +17,7 @@ const INITIAL_FONTS = {
 const PickFont = ({
   className = '',
   inputClassName = '',
+  titleClassName = '',
   title,
   settingsKey,
   value,
@@ -23,6 +25,7 @@ const PickFont = ({
 }: {
   className?: string;
   inputClassName?: string;
+  titleClassName?: string;
   title: string;
   settingsKey: string;
   value: string;
@@ -51,10 +54,38 @@ const PickFont = ({
     setFontFamilies(fonts);
   };
 
+  const fontOptions = React.useMemo(() => {
+    const options = {
+      [initialValue]: {
+        name: initialValue,
+      },
+    };
+
+    if (value !== initialValue && fontFamilies.length === 0) {
+      options[value] = {
+        name: value,
+      };
+    }
+
+    fontFamilies.map(family => {
+      options[family] = {
+        name: family,
+        style: { fontFamily: family },
+      };
+    });
+
+    return options;
+  }, [fontFamilies]);
+
   return (
     <div className={cn(className, 'pick-font')}>
-      <p className="pick-font__title">{title}</p>
-      <select
+      <p className={cn(titleClassName)}>{title}</p>
+      <FieldSelect
+        options={fontOptions}
+        onChange={event => setValue((event.target as HTMLSelectElement).value)}
+        value={value}
+        name={settingsKey}
+        id={settingsKey}
         onMouseDown={event => {
           if (fontFamilies.length === 0) {
             queryFonts().then(() => {
@@ -63,22 +94,7 @@ const PickFont = ({
             });
           }
         }}
-        onChange={event => setValue((event.target as HTMLSelectElement).value)}
-        value={value}
-        name={settingsKey}
-        id={settingsKey}
-        className={cn(inputClassName, 'pick-font__select')}
-      >
-        <option value={initialValue}>{initialValue}</option>
-        {fontFamilies.length === 0
-          ? value &&
-            value !== initialValue && <option value={value}>{value}</option>
-          : fontFamilies.map((family, i) => (
-              <option style={{ fontFamily: family }} value={family} key={i}>
-                {family}
-              </option>
-            ))}
-      </select>
+      />
     </div>
   );
 };

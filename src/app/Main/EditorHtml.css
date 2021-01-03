@@ -1,6 +1,6 @@
 .editor-html {
-  background-color: #fff;
-  box-shadow: 0 0 10px 0 rgba(60, 64, 67, 0.3);
+  background-color: var(--c-bkg-light);
+  box-shadow: var(--shadow-paper);
   font-family: var(--font-editor-wysiwyg);
 
   & > * {

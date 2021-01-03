@@ -1,8 +1,4 @@
 .pick-font {
-  &__title {
-    font-weight: bold;
-  }
-
   &__font {
     display: flex;
     justify-content: space-between;

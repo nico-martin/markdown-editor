@@ -9,6 +9,7 @@ import PickFont from '@app/Header/Settings/PickFont';
 import './HeaderSettings.css';
 import { fontAccessAPI } from '@utils/helpers';
 import { settingsDB } from '@store/idb';
+import ColorScheme from '@app/Header/Settings/ColorScheme';
 
 interface SettingsProps {
   value: any;
@@ -53,6 +54,10 @@ const HeaderSettings = ({ className = '' }: { className?: string }) => {
       );
   }, [values['font-editor-md']]);
 
+  React.useEffect(() => {
+    document.body.setAttribute('color-scheme', values.colorScheme);
+  }, [values.colorScheme]);
+
   const elements = {
     ...(fontAccessAPI
       ? {
@@ -66,6 +71,7 @@ const HeaderSettings = ({ className = '' }: { className?: string }) => {
               settingsKey={settingsKey}
               value={value}
               setValue={setValue}
+              titleClassName="header-settings__title"
               inputClassName="header-settings__input header-settings__input--select"
             />
           ),
@@ -79,11 +85,21 @@ const HeaderSettings = ({ className = '' }: { className?: string }) => {
               settingsKey={settingsKey}
               value={value}
               setValue={setValue}
+              titleClassName="header-settings__title"
               inputClassName="header-settings__input header-settings__input--select"
             />
           ),
         }
       : {}),
+    colorScheme: ({ value, setValue, settingsKey }: SettingsProps) => (
+      <ColorScheme
+        settingsKey={settingsKey}
+        value={value}
+        setValue={setValue}
+        titleClassName="header-settings__title"
+        inputClassName="header-settings__input header-settings__input--radio"
+      />
+    ),
   };
 
   return Object.keys(elements).length === 0 ? null : (

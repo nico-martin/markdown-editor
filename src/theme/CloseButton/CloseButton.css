@@ -23,7 +23,7 @@
   }
 
   &:hover {
-    background-color: #e2e2e2;
+    background-color: var(--c-bkg-close-button-hover);
     opacity: 1;
   }
 
