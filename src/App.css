@@ -13,6 +13,7 @@
     height: calc(100vh - 7rem);
     box-shadow: 0 1px 4px 0 rgba(60, 64, 67, 0.1);
     position: relative;
+    z-index: 2;
 
     &::before {
       content: '';
@@ -29,6 +30,7 @@
   &__footer {
     height: 3rem;
     background-color: var(--c-bkg-dark);
+    z-index: 4;
   }
 
   @mixin mobile {

@@ -1,0 +1,10 @@
+.settings {
+  width: 200px;
+  margin: var(--space-grid);
+
+  &__element + &__element {
+    border-top: 1px solid var(--c-border);
+    margin-top: var(--space-half);
+    padding-top: var(--space-half);
+  }
+}

@@ -31,8 +31,7 @@
     padding: 0.6em 0.8em;
 
     &:focus {
-      outline: none;
-      border-color: var(--c-border-dark);
+      @mixin a11y-focus;
     }
 
     &--active {

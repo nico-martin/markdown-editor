@@ -3,7 +3,7 @@
 }
 
 .mce-content-body {
-  font-family: Segoe UI, system-ui, -apple-system, sans-serif;
+  font-family: var(--font-wysiwyg);
   height: 100%;
   padding: 0 var(--space-grid-big);
   font-size: var(--fs-base-editor);
@@ -31,7 +31,7 @@
   h1,
   h2,
   h3 {
-    font-family: Segoe UI, system-ui, -apple-system, sans-serif;
+    font-family: var(--font-wysiwyg);
     font-size: calc(2 * var(--fs-base-editor));
   }
 
