@@ -65,3 +65,7 @@ a {
 code {
   font-family: var(--font-mono);
 }
+
+button {
+  color: var(--c-p);
+}

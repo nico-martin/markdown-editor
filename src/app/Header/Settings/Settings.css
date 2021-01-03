@@ -4,7 +4,7 @@
 
   &__element + &__element {
     border-top: 1px solid var(--c-border);
-    margin-top: var(--space-half);
-    padding-top: var(--space-half);
+    margin-top: var(--space);
+    padding-top: var(--space);
   }
 }
