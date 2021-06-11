@@ -1,9 +1,12 @@
 import React from 'react';
+import { Provider, useActions, useStoreState } from 'unistore-hooks';
+import { actions, defaultFile, store } from '@store/index';
 
 import cn from '@utils/classnames';
 
 import './PickFont.css';
 import { FieldSelect } from '@theme';
+import { State } from '@store/types';
 
 const INITIAL_FONTS = {
   'font-editor-md': getComputedStyle(document.body).getPropertyValue(
@@ -31,7 +34,8 @@ const PickFont = ({
   value: string;
   setValue: Function;
 }) => {
-  const [fontFamilies, setFontFamilies] = React.useState<string[]>([]);
+  const { setFontFamilies } = useActions(actions);
+  const { fontFamilies } = useStoreState<State>(['fontFamilies']);
   const initialValue = React.useMemo(
     () => (INITIAL_FONTS[settingsKey] || '').replace(/"/g, ''),
     []
@@ -39,25 +43,22 @@ const PickFont = ({
 
   const queryFonts = async () => {
     // @ts-ignore
-    const queriedFonts = navigator.fonts.query();
-    const fonts = [];
-    try {
-      for await (const metadata of queriedFonts) {
-        if (fonts.indexOf(metadata.family) === -1) {
-          fonts.push(metadata.family);
-        }
-      }
-    } catch (err) {
-      console.error(err.name, err.message);
-    }
-
-    setFontFamilies(fonts);
+    navigator.fonts.query().then(queriedFonts => {
+      setFontFamilies(
+        queriedFonts.reduce(
+          (acc, font) =>
+            acc.indexOf(font.family) === -1 ? [...acc, font.family] : acc,
+          []
+        )
+      );
+    });
   };
 
   const fontOptions = React.useMemo(() => {
     const options = {
       [initialValue]: {
         name: initialValue,
+        style: { fontFamily: 'auto' },
       },
     };
 
@@ -86,14 +87,7 @@ const PickFont = ({
         value={value}
         name={settingsKey}
         id={settingsKey}
-        onMouseDown={event => {
-          if (fontFamilies.length === 0) {
-            queryFonts().then(() => {
-              (event.target as HTMLSelectElement).blur();
-              // todo: rerendering the options does not update the options box height. Need to find a solution for that. issue #4
-            });
-          }
-        }}
+        onMouseDown={() => fontFamilies.length === 0 && queryFonts()}
       />
     </div>
   );

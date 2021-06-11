@@ -11,6 +11,7 @@ export interface State {
   files: Array<File>;
   activeFileIndex: number | 'new';
   editorView: string;
+  fontFamilies: Array<string>;
 }
 
 export interface Actions {}

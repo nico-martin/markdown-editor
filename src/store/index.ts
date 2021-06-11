@@ -19,6 +19,7 @@ const initialState: State = {
   files: [],
   activeFileIndex: 'new',
   editorView: EDITOR_VIEWS.SPLIT,
+  fontFamilies: [],
 };
 
 export const actions = (store: Store<State>) => ({
@@ -90,6 +91,13 @@ export const actions = (store: Store<State>) => ({
     Object.values(EDITOR_VIEWS).indexOf(view) !== -1
       ? { editorView: view }
       : {},
+  setFontFamilies: (state, fonts: Array<string>) => ({
+    fontFamilies: fonts.reduce(
+      (acc, fontFamily) =>
+        acc.indexOf(fontFamily) === -1 ? [...acc, fontFamily] : acc,
+      state.fontFamilies
+    ),
+  }),
 });
 
 export const store = isDev
