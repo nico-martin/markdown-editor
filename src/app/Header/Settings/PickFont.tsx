@@ -43,7 +43,7 @@ const PickFont = ({
 
   const queryFonts = async () => {
     // @ts-ignore
-    navigator.fonts.query().then(queriedFonts => {
+    window.queryLocalFonts().then(queriedFonts => {
       setFontFamilies(
         queriedFonts.reduce(
           (acc, font) =>
