@@ -15,7 +15,6 @@ import workboxPlugin from 'workbox-webpack-plugin';
 import WebpackPwaManifest from 'webpack-pwa-manifest';
 
 import TerserJSPlugin from 'terser-webpack-plugin';
-import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 
 module.exports = (env, argv) => {
   const dirDist = path.resolve(__dirname, 'dist');
@@ -33,7 +32,7 @@ module.exports = (env, argv) => {
 
   return {
     optimization: {
-      minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+      minimizer: [new TerserJSPlugin({})],
     },
     entry: {
       app: `${dirSrc}/index.ts`,
@@ -62,12 +61,14 @@ module.exports = (env, argv) => {
           ? 'assets/[name].[id].css'
           : 'assets/[name].[id].[hash].css',
       }),
-      new CopyWebpackPlugin([
-        {
-          from: 'src/assets/static',
-          to: 'assets/static',
-        },
-      ]),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: 'src/assets/static',
+            to: 'assets/static',
+          },
+        ],
+      }),
       new HtmlWebpackPlugin({
         title: app.title,
         description: app.description,
@@ -135,7 +136,7 @@ module.exports = (env, argv) => {
         {
           test: /\.svg$/,
           exclude: /node_modules/,
-          loader: ['babel-loader', 'raw-loader'],
+          use: { loader: 'raw-loader' },
         },
         {
           test: /\.(ts|tsx)$/,
@@ -160,7 +161,7 @@ module.exports = (env, argv) => {
             {
               loader: MiniCssExtractPlugin.loader,
               options: {
-                hmr: dev,
+                //hmr: dev,
                 //reloadAll: true,
               },
             },
