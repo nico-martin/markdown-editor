@@ -18,6 +18,7 @@ export const FontAccessContextProvider: React.FC<{
   const queryFonts = async () => {
     if ('queryLocalFonts' in window) {
       window
+        // @ts-ignore
         .queryLocalFonts()
         .then((queriedFonts: Array<FontData>) =>
           setFontFamilies(

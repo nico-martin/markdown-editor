@@ -19,6 +19,7 @@ const Footer: React.FC<{ className?: string }> = ({ className = '' }) => {
             [styles.elementActive]: index === activeFileIndex,
             [styles.elementToSave]: file.content !== file.savedContent,
           })}
+          key={index}
         >
           <button
             onClick={() => setActiveFileIndex(index)}

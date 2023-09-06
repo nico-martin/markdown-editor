@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { ShadowBox } from '../index';
-import { SHADOW_BOX_SIZES } from './ShadowBox';
+import { SHADOW_BOX_SIZES } from './constants.ts';
 
 const Portal = ({ children }: { children?: React.JSX.Element }) =>
   ReactDOM.createPortal(children, document.querySelector('#shadowbox'));
