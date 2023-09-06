@@ -1,0 +1,26 @@
+.root {
+  padding: 0 var(--space-grid);
+  display: flex;
+  align-items: stretch;
+
+  @mixin mobile {
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.path {
+  font-size: var(--fs-small);
+}
+
+.fileMenu {
+}
+
+.nav {
+  margin-left: auto;
+
+  @mixin mobile {
+    margin-left: 0;
+    justify-content: center;
+  }
+}

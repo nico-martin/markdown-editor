@@ -1,43 +1,24 @@
-import React from 'react';
-import { useStoreState, useActions } from 'unistore-hooks';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
+import { Button } from '@theme';
+import React from 'react';
 
-import { actions, defaultFile } from '@store/index';
-import { State } from '@store/types';
+import useMobile from '@app/hooks/useMobile';
+
 import cn from '@utils/classnames';
 import { saveFileToSystem } from '@utils/fileAccess';
 
-import { Button } from '@theme';
+import { useFileContext } from '@store/FileContext.tsx';
 
-import './ButtonSave.css';
-import useMobile from '@app/hooks/useMobile';
+import styles from './ButtonSave.module.css';
 
-const ButtonSave = ({ className = '' }: { className?: string }) => {
+const ButtonSave: React.FC<{ className?: string }> = ({ className = '' }) => {
   const { trackEvent } = useMatomo();
-  const { updateActiveFile } = useActions(actions);
-  const { activeFileIndex, files } = useStoreState<State>([
-    'activeFileIndex',
-    'files',
-  ]);
-
   const { isMobile } = useMobile();
-
-  const activeFile = React.useMemo(
-    () => files[activeFileIndex] || defaultFile,
-    [files, activeFileIndex]
-  );
-
+  const { activeFile, updateActiveFile } = useFileContext();
   const canSave = React.useMemo(
     () => activeFile.content !== activeFile.savedContent,
     [activeFile.content, activeFile.savedContent]
   );
-
-  React.useEffect(() => {
-    window.addEventListener('keydown', keyEvent, false);
-    return () => {
-      window.removeEventListener('keydown', keyEvent);
-    };
-  }, [activeFile.handle, activeFile.content, canSave]);
 
   const keyEvent = async (e: KeyboardEvent) => {
     if ((e.ctrlKey === true || e.metaKey === true) && e.key === 's') {
@@ -46,6 +27,13 @@ const ButtonSave = ({ className = '' }: { className?: string }) => {
       return;
     }
   };
+
+  React.useEffect(() => {
+    window.addEventListener('keydown', keyEvent, false);
+    return () => {
+      window.removeEventListener('keydown', keyEvent);
+    };
+  }, [activeFile.handle, activeFile.content, canSave]);
 
   const saveFile = async () => {
     if (!canSave) {
@@ -58,8 +46,8 @@ const ButtonSave = ({ className = '' }: { className?: string }) => {
 
   return (
     <Button
-      className={cn(className)}
-      icon="mdi/save"
+      className={cn(className, styles.root)}
+      icon="save"
       onClick={saveFile}
       color={canSave ? 'primary' : 'black'}
       title="ctrl+s"

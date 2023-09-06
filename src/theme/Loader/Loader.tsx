@@ -1,9 +1,11 @@
 import React from 'react';
 
-import './Loader.css';
+import cn from '@utils/classnames.tsx';
 
-const Loader = ({ className = '' }: { className?: string }) => (
-  <div className={`loader ${className}`} />
+import styles from './Loader.module.css';
+
+const Loader: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <div className={cn(className, styles.root)} />
 );
 
 export default Loader;

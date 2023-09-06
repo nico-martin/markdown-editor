@@ -1,19 +1,27 @@
 import React from 'react';
+
 import cn from '@utils/classnames';
 
-import './Notification.css';
+import styles from './Notification.module.css';
 
-const Notification = ({
-  className = '',
-  type = 'message',
-  children,
-}: {
+export enum NOTIFICATION_TYPE {
+  MESSAGE = 'MESSAGE',
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR',
+}
+
+const Notification: React.FC<{
   className?: string;
-  type?: 'message' | 'success' | 'error';
+  type?: NOTIFICATION_TYPE;
   children: any;
-}) => (
-  <div className={cn(className, 'notification', `notification--type-${type}`)}>
-    <p className="notification__text">{children}</p>
+}> = ({ className = '', type = NOTIFICATION_TYPE.MESSAGE, children }) => (
+  <div
+    className={cn(className, styles.root, {
+      [styles.typeError]: type === NOTIFICATION_TYPE.ERROR,
+      [styles.typeSuccess]: type === NOTIFICATION_TYPE.SUCCESS,
+    })}
+  >
+    <p className={styles.text}>{children}</p>
   </div>
 );
 

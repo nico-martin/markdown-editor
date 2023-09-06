@@ -1,26 +1,24 @@
+import { FieldRadio } from '@theme';
 import React from 'react';
 
 import cn from '@utils/classnames';
 
-import './ColorScheme.css';
-import { FieldRadio } from '@theme';
+import './ColorScheme.module.css';
 
-const ColorScheme = ({
+const ColorScheme: React.FC<{
+  className?: string;
+  titleClassName?: string;
+  settingsKey: string;
+  value: string;
+  setValue: (value: string) => void;
+}> = ({
   className = '',
-  inputClassName = '',
   titleClassName = '',
   settingsKey,
   value,
   setValue,
-}: {
-  className?: string;
-  inputClassName?: string;
-  titleClassName?: string;
-  settingsKey: string;
-  value: string;
-  setValue: Function;
 }) => (
-  <div className={cn(className, 'color-scheme')}>
+  <div className={cn(className)}>
     <p className={cn(titleClassName)}>Color Preference</p>
     <div className="color-scheme__elements">
       {Object.entries({

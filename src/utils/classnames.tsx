@@ -1,12 +1,14 @@
-export default (...classes: Array<Record<string, boolean> | string>): string =>
+const cn = (...classes: Array<Record<string, boolean> | string>): string =>
   classes
-    .map(entry =>
+    .map((entry) =>
       typeof entry === 'string'
         ? entry
-        : Object.entries(entry)
-            .filter(([cl, append]) => append)
+        : Object.entries(entry || {})
+            .filter(([, append]) => append)
             .map(([cl]) => cl)
             .join(' ')
     )
-    .filter(e => e !== '')
+    .filter((e) => e !== '')
     .join(' ');
+
+export default cn;

@@ -1,0 +1,12 @@
+.root {
+  display: flex;
+  align-items: center;
+}
+
+.element {
+  font-size: 0.8rem;
+}
+
+.elementInstall {
+  margin-left: var(--space-grid-half);
+}

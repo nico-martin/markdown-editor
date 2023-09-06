@@ -1,9 +1,0 @@
-.content-modal {
-  &__loader {
-    font-size: 1.8rem;
-
-    &:after {
-      margin: 0 auto;
-    }
-  }
-}

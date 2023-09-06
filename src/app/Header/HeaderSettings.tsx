@@ -1,128 +1,104 @@
+import { Icon, OutsideClickHandler } from '@theme';
 import React from 'react';
 
-import cn from '@utils/classnames';
-
-import { Icon, OutsideClickHandler } from '@theme';
-import Settings from '@app/Header/Settings/Settings';
-import PickFont from '@app/Header/Settings/PickFont';
-
-import './HeaderSettings.css';
-import { fontAccessAPI } from '@utils/helpers';
-import { settingsDB } from '@store/idb';
 import ColorScheme from '@app/Header/Settings/ColorScheme';
+import PickFont from '@app/Header/Settings/PickFont';
+import Settings from '@app/Header/Settings/Settings';
 
-interface SettingsProps {
-  value: any;
-  setValue: Function;
+import cn from '@utils/classnames';
+import { fontAccessAPI } from '@utils/helpers';
+
+import { useAppSettings } from '@store/SettingsContext.tsx';
+
+import styles from './HeaderSettings.module.css';
+
+export interface SettingProps {
+  value: string;
+  setValue: (value: string) => void;
   settingsKey: string;
 }
 
-const HeaderSettings = ({ className = '' }: { className?: string }) => {
-  const [init, setInit] = React.useState<boolean>(false);
+const HeaderSettings: React.FC<{ className?: string }> = ({
+  className = '',
+}) => {
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
   const [open, setOpen] = React.useState<boolean>(false);
-  const [values, setValues] = React.useState<Record<string, any>>({});
+  const [appSettings, setAppSettings] = useAppSettings();
 
   React.useEffect(() => {
-    init && settingsDB.set('settings', values);
-  }, [values]);
-
-  const setFromDB = async () => {
-    const initialValues = await settingsDB.get('settings');
-    setValues(initialValues || {});
-    return;
-  };
-
-  React.useEffect(() => {
-    setFromDB()
-      .then(() => setInit(true))
-      .catch(() => setInit(true));
-  }, []);
-
-  React.useEffect(() => {
-    values['font-editor-wysiwyg'] &&
+    appSettings['font-editor-wysiwyg'] &&
       document.body.style.setProperty(
         '--font-editor-wysiwyg',
-        values['font-editor-wysiwyg']
+        appSettings['font-editor-wysiwyg']
       );
-  }, [values['font-editor-wysiwyg']]);
+  }, [appSettings['font-editor-wysiwyg']]);
 
   React.useEffect(() => {
-    values['font-editor-md'] &&
+    appSettings['font-editor-md'] &&
       document.body.style.setProperty(
         '--font-editor-md',
-        values['font-editor-md']
+        appSettings['font-editor-md']
       );
-  }, [values['font-editor-md']]);
+  }, [appSettings['font-editor-md']]);
 
   React.useEffect(() => {
-    document.body.setAttribute('color-scheme', values.colorScheme);
-  }, [values.colorScheme]);
+    document.body.setAttribute('color-scheme', appSettings.colorScheme);
+  }, [appSettings.colorScheme]);
 
-  const elements = {
-    ...(fontAccessAPI
-      ? {
-          'font-editor-md': ({
-            value,
-            setValue,
-            settingsKey,
-          }: SettingsProps) => (
-            <PickFont
-              title="Markdown Font"
-              settingsKey={settingsKey}
-              value={value}
-              setValue={setValue}
-              titleClassName="header-settings__title"
-              inputClassName="header-settings__input header-settings__input--select"
-            />
-          ),
-          'font-editor-wysiwyg': ({
-            value,
-            setValue,
-            settingsKey,
-          }: SettingsProps) => (
-            <PickFont
-              title="WYSIWYG Font"
-              settingsKey={settingsKey}
-              value={value}
-              setValue={setValue}
-              titleClassName="header-settings__title"
-              inputClassName="header-settings__input header-settings__input--select"
-            />
-          ),
-        }
-      : {}),
-    colorScheme: ({ value, setValue, settingsKey }: SettingsProps) => (
-      <ColorScheme
-        settingsKey={settingsKey}
-        value={value}
-        setValue={setValue}
-        titleClassName="header-settings__title"
-        inputClassName="header-settings__input header-settings__input--radio"
-      />
-    ),
-  };
+  const elements: Record<string, (props: SettingProps) => React.ReactElement> =
+    {
+      ...(fontAccessAPI
+        ? {
+            'font-editor-md': ({ value, setValue, settingsKey }) => (
+              <PickFont
+                title="Markdown Font"
+                settingsKey={settingsKey}
+                value={value}
+                setValue={setValue}
+                titleClassName={styles.title}
+              />
+            ),
+            'font-editor-wysiwyg': ({ value, setValue, settingsKey }) => (
+              <PickFont
+                title="WYSIWYG Font"
+                settingsKey={settingsKey}
+                value={value}
+                setValue={setValue}
+                titleClassName={styles.title}
+              />
+            ),
+          }
+        : {}),
+      colorScheme: ({ value, setValue, settingsKey }) => (
+        <ColorScheme
+          settingsKey={settingsKey}
+          value={value}
+          setValue={setValue}
+          titleClassName={styles.title}
+        />
+      ),
+    };
 
   return Object.keys(elements).length === 0 ? null : (
-    <div className={cn(className, 'header-settings')}>
+    <div className={cn(className, styles.root)}>
       <button
-        className="header-settings__button"
+        className={styles.button}
         onMouseDown={open ? null : () => setOpen(true)}
+        ref={buttonRef}
       >
-        <Icon
-          className={cn('header-settings__button-icon')}
-          icon="mdi/settings"
-        />
+        <Icon className={cn(styles.buttonIcon)} icon="settings" />
       </button>
       {open && (
         <OutsideClickHandler
-          className="header-settings__panel"
-          outsideClick={() => setOpen(false)}
+          className={styles.panel}
+          outsideClick={() => {
+            setOpen(false);
+          }}
         >
           <Settings
-            className="header-settings__settings"
             elements={elements}
-            values={values}
-            setValues={setValues}
+            values={appSettings}
+            setValues={setAppSettings}
           />
         </OutsideClickHandler>
       )}

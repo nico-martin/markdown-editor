@@ -1,24 +1,20 @@
-import React from 'react';
-import { useActions } from 'unistore-hooks';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
+import { Icon } from '@theme';
+import React from 'react';
 
-import { actions } from '@store/index';
 import cn from '@utils/classnames';
 import { openFileFromSystem } from '@utils/fileAccess';
 
-import { Icon } from '@theme';
+import { useFileContext } from '@store/FileContext.tsx';
 
-import './EditorNew.css';
+import styles from './EditorNew.module.css';
 
-const EditorNew = ({
-  className = '',
-  style,
-}: {
+const EditorNew: React.FC<{
   className?: string;
-  style: Object;
-}) => {
-  const { createNewFile } = useActions(actions);
+  style: React.CSSProperties;
+}> = ({ className = '', style }) => {
   const { trackEvent } = useMatomo();
+  const { createNewFile } = useFileContext();
 
   React.useEffect(() => {
     window.addEventListener('keydown', keyEvent, false);
@@ -51,15 +47,15 @@ const EditorNew = ({
   };
 
   return (
-    <div className={cn(className, 'editor-new')} style={style}>
-      <button className="editor-new__button" onClick={openFile} title="ctrl+o">
-        <Icon icon="mdi/open" className="editor-new__icon" />
+    <div className={cn(className, styles.root)} style={style}>
+      <button className={styles.button} onClick={openFile} title="ctrl+o">
+        <Icon icon="open" className={styles.icon} />
         Open .md File
       </button>
-      <span className="editor-new__spacer">or</span>
+      <span className={styles.spacer}>or</span>
 
-      <button className="editor-new__button" onClick={newFile} title="ctrl+i">
-        <Icon icon="mdi/new" className="editor-new__icon" />
+      <button className={styles.button} onClick={newFile} title="ctrl+i">
+        <Icon icon="new-icon" className={styles.icon} />
         Create .md File
       </button>
     </div>

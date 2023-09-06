@@ -1,0 +1,41 @@
+.root {
+  position: relative;
+}
+
+.button {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.2em;
+  border-radius: 50%;
+
+  &:focus {
+    @mixin a11y-focus;
+  }
+}
+
+.buttonIcon {
+}
+
+.panel {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  transform: translateY(calc(100% + var(--space))) translateX(var(--space));
+  background-color: var(--c-bkg-light);
+  box-shadow: var(--shadow-panel);
+  border-radius: var(--border-radius);
+}
+
+.title {
+  font-weight: bold;
+  margin-bottom: var(--space-half);
+}
+
+.input {
+  font-weight: bold;
+  margin-bottom: var(--space-half);
+}
+
+.settings {
+}

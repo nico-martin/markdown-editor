@@ -1,0 +1,11 @@
+.root {
+  background-color: var(--c-bkg-light);
+  box-shadow: var(--shadow-paper);
+  font-family: var(--font-editor-wysiwyg);
+
+  & > * {
+    &:focus {
+      outline: none;
+    }
+  }
+}

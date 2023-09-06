@@ -4,20 +4,19 @@ import cn from '@utils/classnames';
 import { appTitle } from '@utils/constants';
 import { featureCheck } from '@utils/helpers';
 
-import HeaderView from '@app/Header/HeaderView';
-import ButtonSave from '@app/Header/Controls/ButtonSave';
-import HeaderSettings from '@app/Header/HeaderSettings';
+import ButtonSave from './Controls/ButtonSave';
+import styles from './Header.module.css';
+import HeaderSettings from './HeaderSettings';
+import HeaderView from './HeaderView';
 
-import './Header.css';
-
-const Header = ({ className = '' }: { className?: string }) => (
-  <header className={cn(className, 'header')}>
-    <h1 className="header__title">{appTitle}</h1>
+const Header: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <header className={cn(className, styles.root)}>
+    <h1 className={styles.title}>{appTitle}</h1>
     {featureCheck && (
       <React.Fragment>
-        <ButtonSave className="header__save" />
-        <HeaderView className="header__view" />
-        <HeaderSettings className="header__settings" />
+        <ButtonSave className={styles.save} />
+        <HeaderView className={styles.view} />
+        <HeaderSettings className={styles.settings} />
       </React.Fragment>
     )}
   </header>

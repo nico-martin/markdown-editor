@@ -1,0 +1,87 @@
+.root {
+  display: flex;
+  margin-top: var(--space-grid-half);
+  margin-bottom: var(--space-grid);
+  position: relative;
+}
+
+.column {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  padding: var(--space-grid-half);
+  margin: 0 var(--space-grid);
+
+  @mixin mobile {
+    padding: var(--space-grid-half) 0;
+  }
+}
+
+.columnHtml {
+}
+
+.columnMarkup {
+  flex-grow: 0;
+}
+
+.editor {
+  overflow: auto;
+  height: 100%;
+  width: 100%;
+  max-width: 70vh;
+  justify-self: center;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    transition: background-color 200ms;
+    will-change: background-color;
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &:focus,
+  &[data-focus='true'] {
+    border: 0;
+    outline: none;
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--c-border-dark);
+    }
+  }
+}
+
+.new {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+  background-color: var(--c-bkg);
+  z-index: 500;
+
+  &::after,
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 1px;
+    height: 10px;
+    background-color: var(--c-bkg);
+    transform: translateY(100%);
+  }
+
+  &::before {
+    transform: translateY(-100%);
+    top: 1px;
+    bottom: auto;
+  }
+}

@@ -1,0 +1,50 @@
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  @mixin mobile {
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+.header {
+  height: 4rem;
+  position: relative;
+  z-index: 20;
+}
+
+.main {
+  height: calc(100vh - 7rem);
+  box-shadow: 0 1px 4px 0 var(--c-shadow);
+  position: relative;
+  z-index: 2;
+
+  @mixin mobile {
+    height: calc(100vh - 8.2rem);
+    min-height: auto;
+  }
+
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -2px;
+    height: 4px;
+    background-color: var(--c-bkg);
+  }
+}
+
+.footer {
+  height: 3rem;
+  background-color: var(--c-bkg-dark);
+  z-index: 4;
+
+  @mixin mobile {
+    margin-top: auto;
+    height: 4.2rem;
+  }
+}

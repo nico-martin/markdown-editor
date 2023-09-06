@@ -1,0 +1,33 @@
+.button {
+  position: relative;
+  width: 1.5em;
+  height: 1.5em;
+  text-indent: -9999px;
+  cursor: pointer;
+  border-radius: 50%;
+
+  &::after,
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%) rotate(45deg);
+    width: 60%;
+    height: 1px;
+    background-color: currentColor;
+  }
+
+  &::before {
+    transform: translateY(-50%) translateX(-50%) rotate(-45deg);
+  }
+
+  &:hover {
+    background-color: var(--c-bkg-close-button-hover);
+    opacity: 1;
+  }
+
+  &:focus {
+    @mixin a11y-focus;
+  }
+}

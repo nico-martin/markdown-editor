@@ -1,11 +1,11 @@
 export { default as Button } from './Button/Button';
 export { default as CloseButton } from './CloseButton/CloseButton';
 export { default as ShadowBox } from './ShadowBox/ShadowBox';
+export { SHADOW_BOX_SIZES } from './ShadowBox/constants.ts';
 export { default as PortalBox } from './ShadowBox/PortalBox';
 export { default as SVG } from './SVG/SVG';
 export { default as Icon } from './SVG/Icon';
 export { default as Loader } from './Loader/Loader';
-export { default as ContentModal } from './ContentModal/ContentModal';
 export { default as Notification } from './Misc/Notification';
 export { default as OutsideClickHandler } from './Misc/OutsideClickHandler';
 export { default as FieldSelect } from './Form/FieldSelect';

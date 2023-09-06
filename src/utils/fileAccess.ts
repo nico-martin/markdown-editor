@@ -1,7 +1,6 @@
 import { File } from '@store/types';
 
 export const openFileFromSystem = async (): Promise<Partial<File>> => {
-  // @ts-ignore
   const [handle] = await window.showOpenFilePicker({
     types: [
       {
@@ -16,7 +15,9 @@ export const openFileFromSystem = async (): Promise<Partial<File>> => {
   return await getFileFromHandle(handle);
 };
 
-export const getFileFromHandle = async (fileHandle): Promise<Partial<File>> => {
+export const getFileFromHandle = async (
+  fileHandle: FileSystemFileHandle
+): Promise<Partial<File>> => {
   const verify = await verifyPermission(fileHandle, false);
   if (!verify) {
     alert('Permission denied');
@@ -45,7 +46,6 @@ export const saveFileToSystem = async (
   let handle = toSave.handle;
   if (!handle) {
     // if no handle exists it must be a new file. So we create a new handle
-    // @ts-ignore
     handle = await window.showSaveFilePicker({
       types: [
         {
@@ -70,8 +70,11 @@ export const saveFileToSystem = async (
   };
 };
 
-async function verifyPermission(fileHandle, withWrite) {
-  const opts = withWrite
+async function verifyPermission(
+  fileHandle: FileSystemFileHandle,
+  withWrite: boolean
+) {
+  const opts: FileSystemHandlePermissionDescriptor = withWrite
     ? {
         writable: true,
         mode: 'readwrite',

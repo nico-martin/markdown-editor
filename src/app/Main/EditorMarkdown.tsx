@@ -1,27 +1,40 @@
 import React from 'react';
 
-import { File } from '@store/types';
 import cn from '@utils/classnames';
 
-import './EditorMarkdown.css';
+import { File } from '@store/types';
 
-const EditorMarkup = ({
-  className = '',
-  activeFile,
-  updateActiveFile,
-}: {
+import styles from './EditorMarkdown.module.css';
+
+const EditorMarkup: React.FC<{
   className?: string;
   activeFile: File;
-  updateActiveFile: Function;
-}) => (
-  <textarea
-    className={cn(className, 'editor-markdown')}
-    onKeyUp={e =>
-      updateActiveFile({ content: (e.target as HTMLTextAreaElement).value })
+  updateActiveFile: (file: Partial<File>) => void;
+}> = ({ className = '', activeFile, updateActiveFile }) => {
+  const ref = React.useRef<HTMLTextAreaElement>(null);
+  const [isEdit, setIsEdit] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (!isEdit && ref.current) {
+      ref.current.value = activeFile.content;
     }
-    placeholder="start typing.."
-    value={activeFile.content}
-  />
-);
+  }, [isEdit, ref, activeFile.content]);
+
+  return (
+    <textarea
+      ref={ref}
+      className={cn(className, styles.root)}
+      onKeyUp={(e) =>
+        updateActiveFile({
+          content: (e.target as HTMLTextAreaElement).value,
+        })
+      }
+      placeholder="start typing.."
+      defaultValue={activeFile.content}
+      onFocus={() => setIsEdit(true)}
+      onBlur={() => setIsEdit(false)}
+    />
+  );
+};
 
 export default EditorMarkup;

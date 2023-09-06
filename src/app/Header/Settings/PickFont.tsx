@@ -1,14 +1,13 @@
+import { FieldSelect } from '@theme';
 import React from 'react';
-import { Provider, useActions, useStoreState } from 'unistore-hooks';
-import { actions, defaultFile, store } from '@store/index';
 
 import cn from '@utils/classnames';
 
-import './PickFont.css';
-import { FieldSelect } from '@theme';
-import { State } from '@store/types';
+import { useFontAccessContext } from '@store/FontAccessContext.tsx';
 
-const INITIAL_FONTS = {
+import styles from './PickFont.module.css';
+
+const INITIAL_FONTS: Record<string, string> = {
   'font-editor-md': getComputedStyle(document.body).getPropertyValue(
     `--font-editor-md`
   ),
@@ -19,7 +18,6 @@ const INITIAL_FONTS = {
 
 const PickFont = ({
   className = '',
-  inputClassName = '',
   titleClassName = '',
   title,
   settingsKey,
@@ -27,37 +25,29 @@ const PickFont = ({
   setValue,
 }: {
   className?: string;
-  inputClassName?: string;
   titleClassName?: string;
   title: string;
   settingsKey: string;
   value: string;
-  setValue: Function;
+  setValue: (value: string) => void;
 }) => {
-  const { setFontFamilies } = useActions(actions);
-  const { fontFamilies } = useStoreState<State>(['fontFamilies']);
   const initialValue = React.useMemo(
-    () => (INITIAL_FONTS[settingsKey] || '').replace(/"/g, ''),
+    () =>
+      (settingsKey in INITIAL_FONTS ? INITIAL_FONTS[settingsKey] : '').replace(
+        /"/g,
+        ''
+      ),
     []
   );
+  const { fontFamilies, queryFonts } = useFontAccessContext();
 
-  const queryFonts = async () => {
-    // @ts-ignore
-    window.queryLocalFonts().then(queriedFonts => {
-      setFontFamilies(
-        queriedFonts.reduce(
-          (acc, font) =>
-            acc.indexOf(font.family) === -1 ? [...acc, font.family] : acc,
-          []
-        )
-      );
-    });
-  };
-
-  const fontOptions = React.useMemo(() => {
+  const fontOptions: Record<
+    string,
+    { name: string; style: React.CSSProperties }
+  > = React.useMemo(() => {
     const options = {
       [initialValue]: {
-        name: initialValue,
+        name: initialValue.split(',')[0],
         style: { fontFamily: 'auto' },
       },
     };
@@ -65,10 +55,11 @@ const PickFont = ({
     if (value !== initialValue && fontFamilies.length === 0) {
       options[value] = {
         name: value,
+        style: { fontFamily: value },
       };
     }
 
-    fontFamilies.map(family => {
+    fontFamilies.map((family) => {
       options[family] = {
         name: family,
         style: { fontFamily: family },
@@ -79,11 +70,13 @@ const PickFont = ({
   }, [fontFamilies]);
 
   return (
-    <div className={cn(className, 'pick-font')}>
+    <div className={cn(className, styles.root)}>
       <p className={cn(titleClassName)}>{title}</p>
       <FieldSelect
         options={fontOptions}
-        onChange={event => setValue((event.target as HTMLSelectElement).value)}
+        onChange={(event) =>
+          setValue((event.target as HTMLSelectElement).value)
+        }
         value={value}
         name={settingsKey}
         id={settingsKey}

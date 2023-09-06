@@ -1,0 +1,165 @@
+.root {
+  display: flex;
+  align-items: flex-start;
+
+  @mixin mobile {
+    overflow-y: hidden;
+    overflow-x: auto;
+  }
+}
+
+.element {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 0.7rem 1rem 0.6rem 1.4rem;
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+
+  &::after {
+    content: '';
+    position: absolute;
+    height: 50%;
+    width: 1px;
+    background-color: currentColor;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.15;
+  }
+
+  &:first-child {
+    &::after {
+      display: none;
+    }
+  }
+}
+
+.elementActive + .element {
+  &::after {
+    display: none;
+  }
+}
+
+.elementActive {
+  background-color: var(--c-bkg);
+  box-shadow: 0 1px 4px 0 rgba(60, 64, 67, 0.1);
+  padding: 0.5rem 1rem 0.8rem 1rem;
+
+  &:focus {
+    box-shadow: none;
+  }
+
+  &::after {
+    display: none;
+  }
+
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    height: 4px;
+    top: -3px;
+    left: 0;
+    right: 0;
+    background-color: var(--c-bkg);
+  }
+}
+
+.elementToSave {
+  font-weight: bold;
+}
+
+.elementNew {
+}
+
+.buttonNew {
+  width: 1em;
+  height: 1em;
+  position: relative;
+  text-indent: -9999px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &:focus {
+    @mixin a11y-focus;
+    outline: none;
+  }
+
+  &:hover {
+    background-color: var(--c-border-light);
+  }
+
+  &::after,
+  &::before {
+    content: '';
+    display: block;
+    width: 1px;
+    background-color: currentColor;
+    height: 60%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%) rotate(0);
+  }
+
+  &::before {
+    transform: translateY(-50%) translateX(-50%) rotate(90deg);
+  }
+}
+
+.button {
+  line-height: 1;
+  font-size: var(--fs-small);
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.delete {
+  width: 1em;
+  height: 1em;
+  position: relative;
+  text-indent: -9999px;
+  cursor: pointer;
+  border-radius: 50%;
+  transform: scale(0.8);
+  background-color: var(--c-border-light);
+  margin-left: 0.5em;
+
+  &:focus {
+    @mixin a11y-focus;
+    outline: none;
+  }
+
+  &::after,
+  &::before {
+    content: '';
+    display: block;
+    width: 1px;
+    background-color: currentColor;
+    height: 60%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%) rotate(45deg);
+  }
+
+  &::before {
+    transform: translateY(-50%) translateX(-50%) rotate(-45deg);
+  }
+}
+
+/*
+
+
+
+&__
+}
+*/

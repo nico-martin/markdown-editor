@@ -1,0 +1,8 @@
+.root {
+  text-align: center;
+
+  &::after {
+    content: '';
+    @mixin spinner;
+  }
+}

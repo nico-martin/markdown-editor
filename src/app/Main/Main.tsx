@@ -1,30 +1,25 @@
+import { Loader } from '@theme';
 import React from 'react';
 
 import cn from '@utils/classnames';
-import { Loader } from '@theme';
 import { featureCheck } from '@utils/helpers';
-import useMobile from '@app/hooks/useMobile';
+
+import { useFileContext } from '@store/FileContext.tsx';
 
 import Editor from './Editor';
+import styles from './Main.module.css';
 
-import './Main.css';
-
-const Main = ({
-  className = '',
-  init,
-}: {
+const Main: React.FC<{
   className?: string;
-  init: boolean;
-}) => {
-  const { isMobile } = useMobile();
-
+}> = ({ className = '' }) => {
+  const { init } = useFileContext();
   return (
-    <main className={cn(className, 'main')}>
+    <main className={cn(className, styles.root)}>
       {!init ? (
-        <Loader className="main__loader" />
+        <Loader className={styles.loader} />
       ) : !featureCheck ? (
-        <div className="main__error">
-          <div className="main__error-inner">
+        <div className={styles.error}>
+          <div className={styles.error__inner}>
             <p>Hi there,</p>
             <p>
               I am sorry to have to greet you directly with an error message.
@@ -48,7 +43,7 @@ const Main = ({
           </div>
         </div>
       ) : (
-        <Editor className="main__editor" />
+        <Editor className={styles.editor} />
       )}
     </main>
   );
