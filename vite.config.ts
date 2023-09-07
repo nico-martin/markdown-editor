@@ -28,6 +28,15 @@ const icons = [
     type: 'image/png',
     purpose: 'maskable',
   })),
+  {
+    src: 'icon.svg',
+    type: 'image/svg+xml',
+    sizes: '512x512',
+  },
+  {
+    src: 'favicon.ico',
+    sizes: '72x72 96x96 128x128 256x256',
+  },
 ];
 
 export default defineConfig({
