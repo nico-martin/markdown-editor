@@ -25,7 +25,7 @@ const ColorScheme: React.FC<{
         system: 'Default',
         dark: 'Dark',
         light: 'Light',
-      }).map(([color, title]) => (
+      }).map(([color, title], i) => (
         <FieldRadio
           label={title}
           onChange={() => setValue(color)}
@@ -34,6 +34,7 @@ const ColorScheme: React.FC<{
           name={settingsKey}
           id={`${settingsKey}-${color}`}
           checked={value === color || (!value && color === 'system')}
+          key={i}
         />
       ))}
     </div>

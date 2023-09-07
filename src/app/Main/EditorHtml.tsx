@@ -48,6 +48,7 @@ const EditorHtml: React.FC<{
       style={style}
     >
       <Editor
+        initialValue={html}
         init={{
           height: 500,
           menubar: false,

@@ -15,7 +15,21 @@ import app from './app.json';
 
 dotenv.config();
 
-// https://vitejs.dev/config/
+const icons = [
+  ...app.iconSizes.map((size) => ({
+    src: `pwa-${size}x${size}.png`,
+    sizes: `${size}x${size}`,
+    type: 'image/png',
+    purpose: 'any',
+  })),
+  ...app.iconSizes.map((size) => ({
+    src: `maskable-icon-${size}x${size}.png`,
+    sizes: `${size}x${size}`,
+    type: 'image/png',
+    purpose: 'maskable',
+  })),
+];
+
 export default defineConfig({
   css: {
     postcss: {
@@ -56,30 +70,7 @@ export default defineConfig({
         theme_color: app.color,
         background_color: app.colorbkg,
         start_url: '/',
-        icons: [
-          {
-            src: 'pwa-64x64.png',
-            sizes: '64x64',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any',
-          },
-          {
-            src: 'maskable-icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable',
-          },
-        ],
+        icons,
         file_handlers: [
           {
             action: '/',

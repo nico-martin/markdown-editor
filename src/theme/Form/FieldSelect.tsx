@@ -29,8 +29,8 @@ const FieldSelect: React.FC<{
     id={id}
     onMouseDown={onMouseDown}
   >
-    {Object.entries(options).map(([value, { name, style = {} }]) => (
-      <option value={value} style={style}>
+    {Object.entries(options).map(([value, { name, style = {} }], i) => (
+      <option value={value} style={style} key={i}>
         {name}
       </option>
     ))}

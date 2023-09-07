@@ -13,10 +13,9 @@ const Settings: React.FC<{
   setValues: (value: Record<string, string>) => void;
 }> = ({ className = '', elements, values, setValues }) => (
   <ul className={cn(className, styles.root)}>
-    {Object.entries(elements).map(([key, Component]) => (
-      <li className={styles.element}>
+    {Object.entries(elements).map(([key, Component], i) => (
+      <li className={styles.element} key={i}>
         <Component
-          // @ts-ignore
           value={values[key] || null}
           setValue={(value) => setValues({ ...values, [key]: value })}
           settingsKey={key}
