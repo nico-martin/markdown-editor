@@ -1,22 +1,19 @@
 import React from 'react';
 
+import FileMenu from '@app/Footer/FileMenu';
+import FooterNav from '@app/Footer/FooterNav';
+
 import cn from '@utils/classnames';
 import { featureCheck } from '@utils/helpers';
-import FooterNav from '@app/Footer/FooterNav';
-import FileMenu from '@app/Footer/FileMenu';
 
-import './Footer.css';
+import styles from './Footer.module.css';
 
-const Footer = ({
-  className = '',
-  init,
-}: {
+const Footer: React.FC<{
   className?: string;
-  init: boolean;
-}) => (
-  <footer className={cn(className, 'footer')}>
-    {init && featureCheck && <FileMenu className="footer__files" />}
-    <FooterNav className="footer__nav" />
+}> = ({ className = '' }) => (
+  <footer className={cn(className, styles.root)}>
+    {featureCheck && <FileMenu className={styles.fileMenu} />}
+    <FooterNav className={styles.nav} />
   </footer>
 );
 

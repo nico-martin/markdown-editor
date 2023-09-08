@@ -1,15 +1,14 @@
 import React from 'react';
 
-import './CloseButton.css';
+import cn from '@utils/classnames.tsx';
 
-const CloseButton = ({
-  className = '',
-  onClick,
-}: {
+import styles from './CloseButton.module.css';
+
+const CloseButton: React.FC<{
   className?: string;
   onClick: Function;
-}) => (
-  <button className={`close-button ${className}`} onClick={() => onClick()}>
+}> = ({ className = '', onClick }) => (
+  <button className={cn(styles.button, className)} onClick={() => onClick()}>
     close
   </button>
 );

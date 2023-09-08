@@ -1,56 +1,34 @@
 import React from 'react';
-import { useStoreState, useActions } from 'unistore-hooks';
 import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
-import { useMatomo } from '@datapunt/matomo-tracker-react';
 
-import { actions, defaultFile } from '@store/index';
-import { State } from '@store/types';
-import { EDITOR_VIEWS } from '@utils/constants';
+import EditorNew from '@app/Main/EditorNew';
+import useMobile from '@app/hooks/useMobile';
+import useWindowSize from '@app/hooks/useWindowSize';
+
 import cn from '@utils/classnames';
 import { getFileFromHandle } from '@utils/fileAccess';
 
-import useWindowSize from '@app/hooks/useWindowSize';
-import useMobile from '@app/hooks/useMobile';
+import { useFileContext } from '@store/FileContext.tsx';
+import { EDITOR_VIEWS, useEditorView } from '@store/SettingsContext.tsx';
 
-import EditorMarkdown from './EditorMarkdown';
+import styles from './Editor.module.css';
 import EditorHtml from './EditorHtml';
-import EditorNew from '@app/Main/EditorNew';
-
-import './Editor.css';
+import EditorMarkdown from './EditorMarkdown';
 
 const Editor = ({ className = '' }: { className?: string }) => {
-  const { trackEvent } = useMatomo();
   const editorRef = React.useRef(null);
   const [editorWidth, setEditorWidth] = React.useState<number | '100%'>(0);
-  const { updateActiveFile, createNewFile, setActiveFileIndex } = useActions(
-    actions
-  );
-  const { activeFileIndex, files, editorView } = useStoreState<State>([
-    'activeFileIndex',
-    'files',
-    'editorView',
-  ]);
+  const {
+    activeFileIndex,
+    setActiveFileIndex,
+    updateActiveFile,
+    activeFile,
+    files,
+  } = useFileContext();
   const windowSize = useWindowSize();
   const { isMobile } = useMobile();
 
-  const activeFile = React.useMemo(
-    () => files[activeFileIndex] || defaultFile,
-    [files, activeFileIndex]
-  );
-
-  React.useEffect(() => {
-    if ('launchQueue' in window) {
-      // @ts-ignore
-      window.launchQueue.setConsumer(async launchParams => {
-        if (launchParams.files.length) {
-          const fileHandle = launchParams.files[0];
-          const file = await getFileFromHandle(fileHandle);
-          trackEvent({ category: 'file-action', action: 'create-from-queue' });
-          createNewFile(file);
-        }
-      });
-    }
-  }, []);
+  const [editorView] = useEditorView();
 
   const loadActiveFile = async () => {
     if (!activeFile.handleLoaded) {
@@ -66,6 +44,19 @@ const Editor = ({ className = '' }: { className?: string }) => {
   React.useEffect(() => {
     loadActiveFile();
   }, [activeFile]);
+
+  const maybePreventClose = (e: BeforeUnloadEvent) => {
+    if (files.filter((file) => file.content !== file.savedContent).length > 0) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  };
+
+  React.useEffect(() => {
+    window.addEventListener('beforeunload', maybePreventClose, false);
+    return () =>
+      window.removeEventListener('beforeunload', maybePreventClose, false);
+  }, [files]);
 
   React.useEffect(() => {
     setTimeout(() => {
@@ -85,31 +76,18 @@ const Editor = ({ className = '' }: { className?: string }) => {
     }, 1);
   }, [editorRef.current, activeFileIndex, editorView, windowSize]);
 
-  const maybePreventClose = e => {
-    if (files.filter(file => file.content !== file.savedContent).length > 0) {
-      e.preventDefault();
-      e.returnValue = '';
-    }
-  };
-
-  React.useEffect(() => {
-    window.addEventListener('beforeunload', maybePreventClose, false);
-    return () =>
-      window.removeEventListener('beforeunload', maybePreventClose, false);
-  }, [files]);
-
   return (
     <ScrollSync>
-      <div className={cn(className, 'editor')}>
+      <div className={cn(className, styles.root)}>
         <EditorNew
-          className="editor__new"
+          className={styles.new}
           style={{ display: activeFileIndex === 'new' ? 'flex' : 'none' }}
         />
         {editorView !== EDITOR_VIEWS.HTML && (
-          <div className="editor__column editor__column--markup">
+          <div className={cn(styles.column, styles.columnMarkup)}>
             <ScrollSyncPane>
               <EditorMarkdown
-                className={cn('editor__editor', 'editor__editor--markdown')}
+                className={cn(styles.editor)}
                 activeFile={activeFile}
                 updateActiveFile={updateActiveFile}
               />
@@ -117,10 +95,10 @@ const Editor = ({ className = '' }: { className?: string }) => {
           </div>
         )}
         {editorView !== EDITOR_VIEWS.MD && (
-          <div className="editor__column editor__column--html" ref={editorRef}>
+          <div className={cn(styles.column, styles.columnHtml)} ref={editorRef}>
             <ScrollSyncPane>
               <EditorHtml
-                className={cn('editor__editor', 'editor__editor--html')}
+                className={cn(styles.editor)}
                 activeFile={activeFile}
                 updateActiveFile={updateActiveFile}
                 style={{ width: editorWidth }}

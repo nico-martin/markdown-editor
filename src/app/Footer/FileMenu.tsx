@@ -1,49 +1,47 @@
 import React from 'react';
-import { useStoreState, useActions } from 'unistore-hooks';
-
-import { actions } from '@store/index';
-import { File, State } from '@store/types';
 
 import cn from '@utils/classnames';
-import { maxOpenFiles } from '@utils/constants';
+import { MAX_OPEN_FILES } from '@utils/constants';
 
-import './FileMenu.css';
+import { useFileContext } from '@store/FileContext.tsx';
+import { File } from '@store/types';
 
-const Footer = ({ className = '' }: { className?: string }) => {
-  const { activeFileIndex, files } = useStoreState<State>([
-    'activeFileIndex',
-    'files',
-  ]);
-  const { setActiveFileIndex, closeFileByIndex, openFileSelect } = useActions(
-    actions
-  );
+import styles from './FileMenu.module.css';
 
+const Footer: React.FC<{ className?: string }> = ({ className = '' }) => {
+  const { files, setActiveFileIndex, activeFileIndex, closeFileByIndex } =
+    useFileContext();
   return (
-    <div className={cn(className, 'file-menu')}>
+    <div className={cn(className, styles.root)}>
       {files.map((file: File, index) => (
-        <button
-          onClick={() => setActiveFileIndex(index)}
-          className={cn('file-menu__element', 'file-menu__element--button', {
-            'file-menu__element--active': index === activeFileIndex,
-            'file-menu__element--tosave': file.content !== file.savedContent,
+        <div
+          className={cn(styles.element, {
+            [styles.elementActive]: index === activeFileIndex,
+            [styles.elementToSave]: file.content !== file.savedContent,
           })}
+          key={index}
         >
-          <span className={cn('file-menu__text')}>{file.title}</span>
+          <button
+            onClick={() => setActiveFileIndex(index)}
+            className={cn(styles.button)}
+          >
+            {file.title}
+          </button>
           <button
             onClick={() => closeFileByIndex(index)}
-            className={cn('file-menu__delete')}
+            className={cn(styles.delete)}
           >
             delete
           </button>
-        </button>
+        </div>
       ))}
       {activeFileIndex !== 'new' &&
-        files.length < maxOpenFiles &&
+        files.length < MAX_OPEN_FILES &&
         files.length !== 0 && (
-          <div className={cn('file-menu__element', 'file-menu__element--new')}>
+          <div className={cn(styles.element, styles.elementNew)}>
             <button
-              onClick={() => openFileSelect()}
-              className={cn('file-menu__button', 'file-menu__button--new')}
+              onClick={() => setActiveFileIndex('new')}
+              className={cn(styles.buttonNew)}
             >
               new File
             </button>

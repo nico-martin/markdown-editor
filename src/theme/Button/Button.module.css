@@ -1,0 +1,204 @@
+.button {
+  cursor: pointer;
+  font-weight: 400;
+  line-height: 1;
+  padding: 0.6em 0.8em;
+  position: relative;
+  color: var(--c-p);
+  display: flex;
+  align-items: center;
+  transition: all 200ms ease-in-out;
+}
+
+.bkg {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+  background-color: currentColor;
+  opacity: 0.8;
+  will-change: opacity;
+  transition: opacity 200ms;
+}
+
+.loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 1em;
+  height: 1em;
+  color: #fff;
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 200ms ease-in-out;
+  pointer-events: none;
+}
+
+.icon {
+  color: #fff;
+  will-change: opacity;
+  transition: opacity 200ms ease-in-out;
+  display: block;
+
+  &.iconLeft {
+    margin-right: 0.4em;
+  }
+
+  &.iconRight {
+    margin-left: 0.4em;
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  opacity: 1;
+  will-change: opacity;
+  transition: opacity 200ms ease-in-out;
+}
+
+/* States */
+
+.button:hover {
+  .bkg {
+    opacity: 1;
+  }
+}
+
+.button:focus {
+  outline: none;
+  @mixin a11y-focus;
+}
+
+/* Variants */
+
+.buttonLayoutEmpty {
+  .bkg {
+    background-color: transparent;
+    opacity: 0.7;
+    border: none;
+  }
+
+  .content,
+  .icon,
+  .loader {
+    color: currentColor;
+  }
+
+  .icon {
+    transform: scale(1.3);
+  }
+}
+
+.buttonIsRound {
+  border-radius: 5rem;
+
+  .bkg {
+    border-radius: 5rem;
+  }
+}
+
+.buttonIsDisabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.buttonIsLoading {
+  .loader {
+    opacity: 1;
+  }
+
+  .content,
+  .icon {
+    opacity: 0;
+  }
+}
+
+.buttonHasNoText {
+  padding: 0.5em;
+
+  .iconLeft {
+    margin-right: 0;
+  }
+
+  .iconRight {
+    margin-left: 0;
+  }
+}
+
+.buttonColorPrimary {
+  color: var(--c-primary);
+}
+
+/*
+
+
+.notext {
+  padding: 0.5em;
+
+  .iconLeft {
+    margin-right: 0;
+  }
+
+  .iconRight {
+    margin-left: 0;
+  }
+}
+
+
+
+
+
+
+
+&--color-primary {
+  color: var(--c-primary);
+}
+
+/*
+
+
+  &__loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 1em;
+    height: 1em;
+    color: #fff;
+    opacity: 0;
+    will-change: opacity;
+    transition: opacity 200ms ease-in-out;
+    pointer-events: none;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    opacity: 1;
+    will-change: opacity;
+    transition: opacity 200ms ease-in-out;
+  }
+
+  &--loading {
+    .button {
+      &__loader {
+        opacity: 1;
+      }
+
+      &__content,
+      &__icon {
+        opacity: 0;
+      }
+    }
+  }
+
+  &--color-primary {
+    color: var(--c-primary);
+  }
+}
+*/

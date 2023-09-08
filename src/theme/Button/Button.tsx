@@ -1,77 +1,65 @@
 import React from 'react';
 
 import cn from '@utils/classnames';
-import { Loader, Icon } from '../index';
 
-import './Button.css';
+import { IconType } from '../SVG/icons.ts';
+import { Icon, Loader } from '../index';
+import styles from './Button.module.css';
 
-const Button = ({
+const Button: React.FC<{
+  children?: React.JSX.Element | React.JSX.Element[] | string;
+  className?: string;
+  onClick?: Function;
+  layout?: 'solid' | 'empty';
+  round?: boolean;
+  icon?: IconType;
+  iconRight?: boolean;
+  iconCircle?: boolean;
+  loading?: boolean;
+  disabled?: boolean;
+  color?: 'black' | 'primary';
+  [key: string]: any;
+}> = ({
   children = '',
   className = '',
   onClick = () => {},
   layout = 'solid',
   round = false,
-  icon = '',
+  icon = null,
   iconRight = false,
   iconCircle = false,
-  size = 'medium',
   loading = false,
   disabled = false,
   color = 'black',
-  zeroPadding = false,
-  fontWeight = 'bold',
   ...props
-}: {
-  children?: React.JSX.Element | React.JSX.Element[] | string;
-  className?: string;
-  onClick?: Function;
-  layout?: 'solid' | 'ghost' | 'empty';
-  round?: boolean;
-  icon?: string;
-  iconRight?: boolean;
-  iconCircle?: boolean;
-  size?: 'medium' | 'small' | 'large';
-  loading?: boolean;
-  disabled?: boolean;
-  color?: 'black' | 'primary';
-  zeroPadding?: boolean;
-  fontWeight?: 'normal' | 'bold';
-  [key: string]: any;
 }) => {
   return (
     <button
       {...props}
       disabled={disabled}
-      className={cn(
-        className,
-        'button',
-        `button--type-${layout}`,
-        `button--size-${size}`,
-        `button--color-${color}`,
-        `button--fontWeight-${fontWeight}`,
-        {
-          'button--round': round,
-          'button--loading': loading,
-          'button--disabled': disabled,
-          'button--zeropadding': zeroPadding,
-          'button--notext': children === '',
-        }
-      )}
+      className={cn(className, styles.button, `button--color-${color}`, {
+        [styles.buttonLayoutEmpty]: layout === 'empty',
+        [styles.buttonIsRound]: round,
+        [styles.buttonIsDisabled]: disabled,
+        [styles.buttonIsLoading]: loading,
+        [styles.buttonHasNoText]: children === '',
+        [styles.buttonColorPrimary]: color === 'primary',
+      })}
       onClick={() => onClick()}
     >
-      <div className="button__bkg" />
-      <Loader className="button__loader" />
-      {icon !== '' && !iconRight && (
+      <div className={styles.bkg} />
+      <Loader className={styles.loader} />
+      {Boolean(icon) && !iconRight && (
         <Icon
-          className="button__icon button__icon--left"
+          className={cn(styles.icon, styles.iconLeft)}
           icon={icon}
           circle={iconCircle}
         />
       )}
-      <span className="button__content">{children}</span>
-      {icon !== '' && iconRight && (
+      <span className={styles.content}>{children}</span>
+      {Boolean(icon) && iconRight && (
         <Icon
-          className="button__icon button__icon--right"
+          className={cn(styles.icon, styles.iconRight)}
           icon={icon}
           circle={iconCircle}
         />

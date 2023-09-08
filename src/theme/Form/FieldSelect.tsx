@@ -2,35 +2,35 @@ import React from 'react';
 
 import cn from '@utils/classnames';
 
-import './FieldSelect.css';
+import styles from './FieldSelect.module.css';
 
-const FieldSelect = ({
+const FieldSelect: React.FC<{
+  className?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  name: string;
+  id: string;
+  options: Record<string, { name: string; style: React.CSSProperties }>;
+  onMouseDown?: React.MouseEventHandler<HTMLSelectElement>;
+}> = ({
   className = '',
   value,
   onChange,
   name,
   id,
   options,
-  ...props
-}: {
-  className?: string;
-  value: string;
-  onChange: Function;
-  name: string;
-  id: string;
-  options: Record<string, { name: string; [key: string]: any }>;
-  [key: string]: any;
+  onMouseDown = null,
 }) => (
   <select
-    className={cn(className, 'field-select')}
+    className={cn(className, styles.root)}
     value={value}
-    onChange={e => onChange(e)}
+    onChange={onChange}
     name={name}
     id={id}
-    {...props}
+    onMouseDown={onMouseDown}
   >
-    {Object.entries(options).map(([value, { name, ...atts }]) => (
-      <option value={value} {...atts}>
+    {Object.entries(options).map(([value, { name, style = {} }], i) => (
+      <option value={value} style={style} key={i}>
         {name}
       </option>
     ))}

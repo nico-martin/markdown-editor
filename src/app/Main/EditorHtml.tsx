@@ -1,41 +1,38 @@
+import { Editor } from '@tinymce/tinymce-react';
 import React from 'react';
 import showdown from 'showdown';
+import { Editor as TinyMCEEditor } from 'tinymce';
 import TurndownService from 'turndown';
-import { Editor } from '@tinymce/tinymce-react';
+
+import cn from '@utils/classnames';
+import { TINYMCE_KEY } from '@utils/constants';
 
 import { File } from '@store/types';
-import { tinymceKey } from '@utils/constants';
-import cn from '@utils/classnames';
 
-import './EditorHtml.css';
+import styles from './EditorHtml.module.css';
 
 const showdownConverter = new showdown.Converter();
 const turndownConverter = new TurndownService({
   headingStyle: 'atx',
 });
 
-const EditorHtml = ({
-  className = '',
-  activeFile,
-  updateActiveFile,
-  style,
-}: {
+const EditorHtml: React.FC<{
   className?: string;
   activeFile: File;
-  updateActiveFile: Function;
-  style: Object;
-}) => {
-  const [editor, setEditor] = React.useState(null);
-  const [isEdit, setIsEdit] = React.useState(false);
+  updateActiveFile: (file: Partial<File>) => void;
+  style: React.CSSProperties;
+}> = ({ className = '', activeFile, updateActiveFile, style }) => {
+  const [editor, setEditor] = React.useState<TinyMCEEditor>(null);
+  const [isEdit, setIsEdit] = React.useState<boolean>(false);
 
-  const html = React.useMemo(
+  const html: string = React.useMemo(
     () => showdownConverter.makeHtml(activeFile.content),
     [activeFile.content]
   );
 
   React.useEffect(() => {
     editor && !isEdit && editor.setContent(html);
-  }, [editor, html]);
+  }, [editor, html, isEdit]);
 
   React.useEffect(() => {
     editor && editor.on('focus', () => setIsEdit(true));
@@ -46,7 +43,7 @@ const EditorHtml = ({
 
   return (
     <div
-      className={cn(className, 'editor-html')}
+      className={cn(className, styles.root)}
       data-focus={isEdit}
       style={style}
     >
@@ -56,22 +53,36 @@ const EditorHtml = ({
           height: 500,
           menubar: false,
           plugins: [
-            'autolink lists link image charmap print preview anchor',
-            'searchreplace visualblocks code fullscreen',
-            'insertdatetime media table paste code help wordcount',
+            'autolink',
+            'lists',
+            'link',
+            'image',
+            'charmap',
+            'preview',
+            'anchor',
+            'searchreplace',
+            'visualblocks',
+            'code',
+            'fullscreen',
+            'insertdatetime',
+            'media',
+            'table',
+            'code',
+            'help',
+            'wordcount',
           ],
           toolbar:
             'formatselect | bold italic | link | bullist numlist | removeformat |',
           inline: true,
           block_formats:
             'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3; Preformatted=code',
-          setup: e => setEditor(e),
+          setup: (e) => setEditor(e),
         }}
-        onEditorChange={markup => {
+        onEditorChange={(markup: string) => {
           isEdit &&
             updateActiveFile({ content: turndownConverter.turndown(markup) });
         }}
-        apiKey={tinymceKey}
+        apiKey={TINYMCE_KEY}
       />
     </div>
   );

@@ -3,5 +3,16 @@
   "short": "Markdown Editor",
   "description": "A markdown editor web app based on the File System Access API",
   "color": "#106672",
-  "colorbkg": "#eaeaea"
+  "colorbkg": "#eaeaea",
+  "iconImages": [
+    "public/icon.svg"
+  ],
+  "iconSizes": [
+    96,
+    128,
+    192,
+    256,
+    384,
+    512
+  ]
 }

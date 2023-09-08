@@ -1,4 +1,5 @@
 import React from 'react';
+
 import useWindowSize from './useWindowSize';
 
 const styles = getComputedStyle(document.documentElement);

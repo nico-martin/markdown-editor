@@ -1,23 +1,18 @@
-import React from 'react';
-import { useStoreState, useActions } from 'unistore-hooks';
 import { useMatomo } from '@datapunt/matomo-tracker-react';
+import { Icon } from '@theme';
+import React from 'react';
 
-import { actions } from '@store/index';
-import { State } from '@store/types';
-import cn from '@utils/classnames';
-import { settingsDB } from '@store/idb';
 import useMobile from '@app/hooks/useMobile';
 
-import { EDITOR_VIEWS } from '@utils/constants';
-import { Icon } from '@theme';
+import cn from '@utils/classnames';
 
-import './HeaderView.css';
+import { EDITOR_VIEWS, useEditorView } from '@store/SettingsContext.tsx';
 
-const HeaderView = ({ className = '' }: { className?: string }) => {
+import styles from './HeaderView.module.css';
+
+const HeaderView: React.FC<{ className?: string }> = ({ className = '' }) => {
   const { trackEvent } = useMatomo();
-  const { setEditorView } = useActions(actions);
-  const { editorView } = useStoreState<State>(['editorView']);
-  const [firstRender, setFirstRender] = React.useState<boolean>(true);
+  const [editorView, setEditorView] = useEditorView();
   const { isMobile } = useMobile();
 
   React.useEffect(() => {
@@ -26,29 +21,22 @@ const HeaderView = ({ className = '' }: { className?: string }) => {
       setEditorView(EDITOR_VIEWS.HTML);
   }, [isMobile, editorView]);
 
-  React.useEffect(() => {
-    if (firstRender) {
-      settingsDB.get('editorView').then(view => view && setEditorView(view));
-      setFirstRender(false);
-    }
-    settingsDB.set('editorView', editorView);
-  }, [editorView]);
-
-  const setTrackedEditorView = view => {
+  const setTrackedEditorView = (view: EDITOR_VIEWS) => {
     trackEvent({ category: 'editor-view', action: 'set', name: view });
     setEditorView(view);
   };
 
   return (
-    <nav className={cn(className, 'header-view')}>
-      {Object.values(EDITOR_VIEWS).map(view => (
+    <nav className={cn(className, styles.root)}>
+      {Object.values(EDITOR_VIEWS).map((view) => (
         <button
-          className={cn('header-view__button', {
-            'header-view__button--active': view === editorView,
+          className={cn(styles.button, {
+            [styles.buttonActive]: view === editorView,
           })}
           onClick={() => setTrackedEditorView(view)}
+          key={view}
         >
-          <Icon className={cn('header-view__icon')} icon={`mdi/view-${view}`} />
+          <Icon className={cn(styles.icon)} icon={`view-${view}`} />
         </button>
       ))}
     </nav>

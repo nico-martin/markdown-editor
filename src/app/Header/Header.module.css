@@ -1,0 +1,24 @@
+.root {
+  padding: 0 var(--space-grid);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.title {
+  font-family: var(--font-mono);
+  font-weight: 999;
+}
+
+.save {
+  margin-left: auto;
+  margin-right: var(--space-grid-big);
+}
+
+.view {
+}
+
+.settings {
+  margin-left: var(--space-grid);
+}

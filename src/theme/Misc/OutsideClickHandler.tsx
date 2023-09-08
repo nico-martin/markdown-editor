@@ -1,20 +1,14 @@
 import React from 'react';
 
-const OutsideClickHandler = ({
-  tag = 'div',
-  outsideClick,
-  children,
-  ...props
-}: {
+const OutsideClickHandler: React.FC<{
   tag?: string;
-  outsideClick: Function;
-  children: any;
-  [key: string]: any;
-}) => {
+  outsideClick: () => void;
+  children: React.ReactElement;
+  className?: string;
+}> = ({ tag = 'div', outsideClick, children, className = '' }) => {
   const node = React.useRef(null);
 
-  const handleClick = e => {
-    // @ts-ignore
+  const handleClick = (e: Event) => {
     if (node.current && node.current.contains(e.target)) {
       return;
     }
@@ -23,12 +17,15 @@ const OutsideClickHandler = ({
   };
 
   React.useEffect(() => {
-    document.addEventListener('mousedown', handleClick);
+    window.setTimeout(
+      () => document.addEventListener('mousedown', handleClick),
+      10
+    );
     return () => {
       document.removeEventListener('mousedown', handleClick);
     };
   }, []);
-  return React.createElement(tag, { ...props, ref: node }, children);
+  return React.createElement(tag, { className, ref: node }, children);
 };
 
 export default OutsideClickHandler;

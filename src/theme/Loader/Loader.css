@@ -1,8 +1,0 @@
-.loader {
-  text-align: center;
-
-  &::after {
-    content: '';
-    @mixin spinner;
-  }
-}

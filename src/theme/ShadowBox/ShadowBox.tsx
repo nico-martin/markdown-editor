@@ -1,56 +1,76 @@
 import React from 'react';
-import cn from '@utils/classnames';
 
-import './ShadowBox.css';
+import cn from '@utils/classnames.tsx';
+
 import { CloseButton } from '../index';
+import styles from './ShadowBox.module.css';
+import { SHADOW_BOX_SIZES } from './constants.ts';
 
-export default ({
-  title,
-  children,
-  close,
-  size = 'large',
-  className = '',
-}: {
+const ShadowBox: React.FC<{
   title?: string;
+  subtitle?: string;
   children?: React.JSX.Element | React.JSX.Element[] | string;
-  close: Function;
-  size?: 'large' | 'small';
+  size?: SHADOW_BOX_SIZES;
   className?: string;
+  classNameBox?: string;
+  show: boolean;
+  setShow: (show: boolean) => void;
+  preventClose?: boolean;
+}> = ({
+  title,
+  subtitle = '',
+  children,
+  size = SHADOW_BOX_SIZES.LARGE,
+  className = '',
+  classNameBox = '',
+  show,
+  setShow,
+  preventClose = false,
 }) => {
-  const [show, setShow] = React.useState<boolean>(false);
-  const [shadow, setShadow] = React.useState<boolean>(false);
+  const [mounted, setMounted] = React.useState<boolean>(false);
+  const [visible, setVisible] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    setShow(true);
-    return () => {
-      setShow(false);
-    };
-  }, []);
+    if (show) {
+      setMounted(true);
+      window.setTimeout(() => setVisible(true), 10);
+    } else {
+      setVisible(false);
+      window.setTimeout(() => setMounted(false), 150);
+    }
+  }, [show]);
 
-  const onClose = () => {
-    setShow(false);
-    window.setTimeout(() => {
-      close();
-    }, 200);
-  };
+  const close = () => (preventClose ? {} : setShow(false));
 
-  return (
+  return mounted ? (
     <div
-      className={cn(className, 'shadowbox', `shadowbox--${size}`)}
-      data-visible={show}
+      className={cn(className, styles.root, {
+        [styles.isSmall]: size === SHADOW_BOX_SIZES.SMALL,
+      })}
+      data-visible={visible}
     >
-      <div className="shadowbox__shadow" onClick={onClose} />
-      <article className="shadowbox__box">
-        <header
-          className={cn('shadowbox__header', {
-            'shadowbox__header--shadow': shadow,
-          })}
-        >
-          {title !== null && <h1 className="shadowbox__title">{title}</h1>}{' '}
-          <CloseButton className="shadowbox__close" onClick={onClose} />
+      <div
+        className={cn(styles.shadow, {
+          [styles.shadowNoPointer]: preventClose,
+        })}
+        onClick={close}
+      />
+      <article className={cn(styles.box, classNameBox)}>
+        <header className={cn(styles.header)}>
+          {title !== null && (
+            <div className={styles.titleContainer}>
+              <h2 className={styles.title}>{title}</h2>
+              {subtitle !== '' && <p className={styles.subtitle}>{subtitle}</p>}
+            </div>
+          )}{' '}
+          {!preventClose && (
+            <CloseButton className={styles.close} onClick={close} />
+          )}
         </header>
-        <div className="shadowbox__content">{children}</div>
+        <div className={styles.content}>{children}</div>
       </article>
     </div>
-  );
+  ) : null;
 };
+
+export default ShadowBox;

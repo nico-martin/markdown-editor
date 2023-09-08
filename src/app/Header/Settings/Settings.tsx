@@ -1,26 +1,23 @@
 import React from 'react';
 
+import { SettingProps } from '@app/Header/HeaderSettings.tsx';
+
 import cn from '@utils/classnames';
 
-import './Settings.css';
+import styles from './Settings.module.css';
 
-const Settings = ({
-  className = '',
-  elements,
-  values,
-  setValues,
-}: {
+const Settings: React.FC<{
   className?: string;
-  elements: Record<string, any>;
-  values: Record<string, any>;
-  setValues: Function;
-}) => (
-  <ul className={cn(className, 'settings')}>
-    {Object.entries(elements).map(([key, Component]) => (
-      <li className="settings__element">
+  elements: Record<string, (props: SettingProps) => React.ReactElement>;
+  values: Record<string, string>;
+  setValues: (value: Record<string, string>) => void;
+}> = ({ className = '', elements, values, setValues }) => (
+  <ul className={cn(className, styles.root)}>
+    {Object.entries(elements).map(([key, Component], i) => (
+      <li className={styles.element} key={i}>
         <Component
           value={values[key] || null}
-          setValue={value => setValues({ ...values, [key]: value })}
+          setValue={(value) => setValues({ ...values, [key]: value })}
           settingsKey={key}
         />
       </li>

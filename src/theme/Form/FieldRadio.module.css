@@ -1,0 +1,43 @@
+.root {
+  position: relative;
+}
+
+.input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+
+  &:checked + .label::after {
+    opacity: 1;
+  }
+}
+
+.label {
+  display: block;
+  padding-left: 1.5em;
+  position: relative;
+  cursor: pointer;
+
+  &::after,
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    width: 1em;
+    height: 1em;
+  }
+
+  &::after {
+    background-color: var(--c-border-dark);
+    transform: translateY(-50%) scale(0.5);
+    opacity: 0;
+  }
+
+  &::before {
+    background-color: var(--c-bkg-light);
+    border: 1px solid var(--c-border-dark);
+  }
+}

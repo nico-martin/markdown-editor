@@ -1,0 +1,93 @@
+.root {
+  --transition-speed: 150ms;
+
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+  z-index: 9000;
+  transition: opacity 100ms ease-in;
+  will-change: opacity;
+}
+
+.shadow {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+  background-color: #000;
+  cursor: pointer;
+}
+
+.shadowNoPointer {
+  cursor: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: var(--c-bkg-light);
+  padding: var(--spacing);
+  z-index: 10;
+}
+
+.title {
+  display: flex;
+  vertical-align: center;
+  font-size: var(--fs-xlarge);
+}
+
+.subtitle {
+  margin-top: 0.5rem;
+  color: var(--c-p-light);
+  font-size: var(--fs-large);
+  font-style: italic;
+}
+
+.close {
+  font-size: 1.5rem;
+}
+
+.box {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-40%) scale(0.8);
+  max-height: calc(100vh - (var(--spacing) * 2));
+  width: 1100px;
+  max-width: calc(100vw - (var(--spacing) * 2));
+  background-color: var(--c-bkg-light);
+  will-change: transform;
+  overflow: auto;
+}
+
+.content {
+  padding: 0 var(--spacing) var(--spacing) var(--spacing);
+}
+
+.box,
+.shadow {
+  opacity: 0;
+  will-change: opacity;
+  transition: all var(--transition-speed) ease-in-out;
+}
+
+.isSmall .box {
+  width: 500px;
+}
+
+.root[data-visible='true'] {
+  .box {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) scale(1);
+  }
+
+  .shadow {
+    opacity: 0.7;
+  }
+}

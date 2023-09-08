@@ -5,13 +5,3 @@ export interface File {
   handle: any;
   handleLoaded: boolean;
 }
-
-export interface State {
-  offline: boolean;
-  files: Array<File>;
-  activeFileIndex: number | 'new';
-  editorView: string;
-  fontFamilies: Array<string>;
-}
-
-export interface Actions {}
