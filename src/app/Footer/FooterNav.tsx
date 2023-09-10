@@ -42,7 +42,7 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
           title="Credits"
           size={SHADOW_BOX_SIZES.SMALL}
         >
-          <div className="content">
+          <div className={styles.content}>
             <p>
               <b>{appTitle}</b> is a project by Nico Martin:{' '}
               <a
@@ -99,55 +99,12 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
 
             <h2>Dependencies</h2>
 
-            <ul>
-              <li>
-                <a
-                  rel="noreferrer noopener"
-                  href="https://preactjs.com/"
-                  target="_blank"
-                >
-                  Preact v10.5.4
-                </a>
-                : A small but powerful, react-like frontend framework.
-              </li>
-              <li>
-                <a
-                  rel="noreferrer noopener"
-                  href="https://github.com/developit/unistore"
-                  target="_blank"
-                >
-                  unistore v3.5.2
-                </a>
-                : A super small global state management.
-              </li>
-              <li>
-                <a
-                  rel="noreferrer noopener"
-                  href="https://developers.google.com/web/tools/workbox"
-                  target="_blank"
-                >
-                  WorkBox
-                </a>
-                : A library that allows easy handling of the Service Worker
-                cache
-              </li>
-              <li>
-                <a
-                  rel="noreferrer noopener"
-                  href="https://www.tiny.cloud/"
-                  target="_blank"
-                >
-                  TinyMCE
-                </a>
-                : The Most Advanced WYSIWYG HTML Editor
-              </li>
-              <li>
-                …a lot of other great open-source projects:{' '}
-                <a href="https://github.com/nico-martin/markdown-editor/blob/main/package.json">
-                  https://github.com/nico-martin/markdown-editor/blob/main/package.json
-                </a>
-              </li>
-            </ul>
+            <p>
+              <a href="https://github.com/nico-martin/markdown-editor/blob/main/package.json">
+                https://github.com/nico-martin/markdown-editor/blob/main/package.json
+              </a>
+            </p>
+
             <h2>Open Source</h2>
             <p>
               The directory is publicly available on GitHub and is{' '}
@@ -173,7 +130,7 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
           title="Legal"
           size={SHADOW_BOX_SIZES.SMALL}
         >
-          <div className="content">
+          <div className={styles.content}>
             <h2>Privacy</h2>
             <p>
               This web app does not collect any personal data. We use a{' '}
