@@ -7,14 +7,14 @@ import { useFontAccessContext } from '@store/FontAccessContext.tsx';
 
 import styles from './PickFont.module.css';
 
-const INITIAL_FONTS: Record<string, string> = {
+const getInitialFont: () => Record<string, string> = () => ({
   'font-editor-md': getComputedStyle(document.body).getPropertyValue(
     `--font-editor-md`
   ),
   'font-editor-wysiwyg': getComputedStyle(document.body).getPropertyValue(
     `--font-editor-wysiwyg`
   ),
-};
+});
 
 const PickFont = ({
   className = '',
@@ -31,15 +31,13 @@ const PickFont = ({
   value: string;
   setValue: (value: string) => void;
 }) => {
-  const initialValue = React.useMemo(
-    () =>
-      (settingsKey in INITIAL_FONTS ? INITIAL_FONTS[settingsKey] : '').replace(
-        /"/g,
-        ''
-      ),
-    []
-  );
-  const { fontFamilies, queryFonts } = useFontAccessContext();
+  const initialValue = React.useMemo(() => {
+    const initialFont = getInitialFont();
+    return (settingsKey in initialFont ? initialFont[settingsKey] : '')
+      .replace(/"/g, '')
+      .replace(/'/g, '');
+  }, []);
+  const { fontFamilies } = useFontAccessContext();
 
   const fontOptions: Record<
     string,
@@ -52,13 +50,6 @@ const PickFont = ({
       },
     };
 
-    if (value !== initialValue && fontFamilies.length === 0) {
-      options[value] = {
-        name: value,
-        style: { fontFamily: value },
-      };
-    }
-
     fontFamilies.map((family) => {
       options[family] = {
         name: family,
@@ -67,7 +58,7 @@ const PickFont = ({
     });
 
     return options;
-  }, [fontFamilies]);
+  }, [fontFamilies, initialValue]);
 
   return (
     <div className={cn(className, styles.root)}>
@@ -80,7 +71,6 @@ const PickFont = ({
         value={value}
         name={settingsKey}
         id={settingsKey}
-        onMouseDown={() => fontFamilies.length === 0 && queryFonts()}
       />
     </div>
   );

@@ -9,8 +9,8 @@ import styles from './Button.module.css';
 const Button: React.FC<{
   children?: React.JSX.Element | React.JSX.Element[] | string;
   className?: string;
-  onClick?: Function;
-  layout?: 'solid' | 'empty';
+  onClick?: () => void;
+  layout?: 'solid' | 'empty' | 'outline';
   round?: boolean;
   icon?: IconType;
   iconRight?: boolean;
@@ -39,6 +39,7 @@ const Button: React.FC<{
       disabled={disabled}
       className={cn(className, styles.button, `button--color-${color}`, {
         [styles.buttonLayoutEmpty]: layout === 'empty',
+        [styles.buttonLayoutOutline]: layout === 'outline',
         [styles.buttonIsRound]: round,
         [styles.buttonIsDisabled]: disabled,
         [styles.buttonIsLoading]: loading,

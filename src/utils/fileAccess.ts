@@ -76,7 +76,6 @@ async function verifyPermission(
 ) {
   const opts: FileSystemHandlePermissionDescriptor = withWrite
     ? {
-        writable: true,
         mode: 'readwrite',
       }
     : {};

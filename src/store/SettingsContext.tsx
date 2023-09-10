@@ -57,7 +57,7 @@ export const useEditorView = (): [
 ] => {
   const { editorView, setEditorView } =
     React.useContext<SettingsContext>(settingsContext);
-  return [editorView, setEditorView];
+  return [editorView || EDITOR_VIEWS.SPLIT, setEditorView];
 };
 
 export const useAppSettings = (): [

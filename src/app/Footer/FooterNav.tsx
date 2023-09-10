@@ -1,5 +1,5 @@
 import { useMatomo } from '@datapunt/matomo-tracker-react';
-import { Button, SHADOW_BOX_SIZES, ShadowBox } from '@theme';
+import { Button, PortalBox, SHADOW_BOX_SIZES } from '@theme';
 import React from 'react';
 
 import cn from '@utils/classnames';
@@ -36,7 +36,7 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
             {title}
           </Button>
         ))}
-        <ShadowBox
+        <PortalBox
           show={activeBox === 'credits'}
           setShow={(show) => setActiveBox(show ? 'credits' : null)}
           title="Credits"
@@ -166,8 +166,8 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
               </a>
             </p>
           </div>
-        </ShadowBox>
-        <ShadowBox
+        </PortalBox>
+        <PortalBox
           show={activeBox === 'legal'}
           setShow={(show) => setActiveBox(show ? 'legal' : null)}
           title="Legal"
@@ -201,7 +201,7 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
               <a href="mailto:nico@sayhello.ch">nico@sayhello.ch</a>
             </p>
           </div>
-        </ShadowBox>
+        </PortalBox>
       </nav>
     </React.Fragment>
   );

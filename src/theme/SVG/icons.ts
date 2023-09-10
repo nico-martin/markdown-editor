@@ -1,5 +1,6 @@
 /* This file was generated automatically with the ./generate.js script */
 
+import formatFont from './icons/formatFont.svg';
 import install from './icons/install.svg';
 import newIcon from './icons/new-icon.svg';
 import open from './icons/open.svg';
@@ -11,6 +12,7 @@ import viewMd from './icons/view-md.svg';
 import viewSplit from './icons/view-split.svg';
 
 const icons = {
+  'formatFont': formatFont,
   'install': install,
   'new-icon': newIcon,
   'open': open,

@@ -3,7 +3,7 @@ import React from 'react';
 const OutsideClickHandler: React.FC<{
   tag?: string;
   outsideClick: () => void;
-  children: React.ReactElement;
+  children: React.ReactElement | Array<React.ReactElement>;
   className?: string;
 }> = ({ tag = 'div', outsideClick, children, className = '' }) => {
   const node = React.useRef(null);
