@@ -1,6 +1,6 @@
-import { skipWaiting, clientsClaim } from 'workbox-core';
-import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
-import { registerRoute, NavigationRoute } from 'workbox-routing';
+import { clientsClaim, skipWaiting } from 'workbox-core';
+import { createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching';
+import { NavigationRoute, registerRoute } from 'workbox-routing';
 import { CacheFirst } from 'workbox-strategies';
 
 skipWaiting();

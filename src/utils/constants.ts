@@ -1,6 +1,6 @@
 export const appTitle = '[md.edit]';
 export const appDescription = '';
-export const TINYMCE_KEY = import.meta.env.VITE_TINYMCE_KEY;
+export const TINYMCE_URL = '/tinymce/tinymce.min.js';
 export const MATOMO_SITE_ID: number = parseInt(
   import.meta.env.VITE_MATOMO_SITEID
 );

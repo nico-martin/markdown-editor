@@ -5,7 +5,7 @@ import { Editor as TinyMCEEditor } from 'tinymce';
 import TurndownService from 'turndown';
 
 import cn from '@utils/classnames';
-import { TINYMCE_KEY } from '@utils/constants';
+import { TINYMCE_URL } from '@utils/constants';
 
 import { File } from '@store/types';
 
@@ -30,6 +30,11 @@ const EditorHtml: React.FC<{
     [activeFile.content]
   );
 
+  const initialHtml: string = React.useMemo(
+    () => showdownConverter.makeHtml(activeFile.content),
+    []
+  );
+
   React.useEffect(() => {
     editor && !isEdit && editor.setContent(html);
   }, [editor, html, isEdit]);
@@ -48,7 +53,8 @@ const EditorHtml: React.FC<{
       style={style}
     >
       <Editor
-        initialValue={html}
+        tinymceScriptSrc={TINYMCE_URL}
+        initialValue={initialHtml}
         init={{
           height: 500,
           menubar: false,
@@ -82,7 +88,6 @@ const EditorHtml: React.FC<{
           isEdit &&
             updateActiveFile({ content: turndownConverter.turndown(markup) });
         }}
-        apiKey={TINYMCE_KEY}
       />
     </div>
   );
