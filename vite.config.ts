@@ -156,10 +156,6 @@ export default defineConfig({
         },
         {
           name: 'twitter:image',
-          content: 'en_US',
-        },
-        {
-          name: 'twitter:type',
           content: '/twitter.jpg',
         },
       ],
