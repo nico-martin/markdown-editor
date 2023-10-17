@@ -17,24 +17,24 @@ dotenv.config();
 
 const icons = [
   ...app.iconSizes.map((size) => ({
-    src: `pwa-${size}x${size}.png`,
+    src: `fav/icon/pwa-${size}x${size}.png`,
     sizes: `${size}x${size}`,
     type: 'image/png',
     purpose: 'any',
   })),
   ...app.iconSizes.map((size) => ({
-    src: `maskable-icon-${size}x${size}.png`,
+    src: `fav/icon/maskable-icon-${size}x${size}.png`,
     sizes: `${size}x${size}`,
     type: 'image/png',
     purpose: 'maskable',
   })),
   {
-    src: 'icon.svg',
+    src: 'fav/icon/icon.svg',
     type: 'image/svg+xml',
     sizes: '512x512',
   },
   {
-    src: 'favicon.ico',
+    src: 'fav/icon/favicon.ico',
     sizes: '72x72 96x96 128x128 256x256',
   },
 ];
@@ -95,6 +95,18 @@ export default defineConfig({
             src: '/facebook.jpg',
             type: 'image/png',
             sizes: '1200x630',
+          },
+        ],
+        shortcuts: [
+          {
+            name: 'Open New File',
+            short_name: 'New File',
+            description: 'Open an empty markdown file',
+            url: '/#new-file',
+            icons: app.iconSizes.map((size) => ({
+              src: `fav/newFile/pwa-${size}x${size}.png`,
+              sizes: `${size}x${size}`,
+            })),
           },
         ],
       },

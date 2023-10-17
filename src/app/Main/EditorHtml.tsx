@@ -24,20 +24,13 @@ const EditorHtml: React.FC<{
 }> = ({ className = '', activeFile, updateActiveFile, style }) => {
   const [editor, setEditor] = React.useState<TinyMCEEditor>(null);
   const [isEdit, setIsEdit] = React.useState<boolean>(false);
-
-  const html: string = React.useMemo(
-    () => showdownConverter.makeHtml(activeFile.content),
-    [activeFile.content]
-  );
-
-  const initialHtml: string = React.useMemo(
-    () => showdownConverter.makeHtml(activeFile.content),
-    []
-  );
+  const [html, setHtml] = React.useState<string>('');
 
   React.useEffect(() => {
-    editor && !isEdit && editor.setContent(html);
-  }, [editor, html, isEdit]);
+    editor &&
+      !isEdit &&
+      setHtml(showdownConverter.makeHtml(activeFile.content));
+  }, [editor, activeFile.content, isEdit]);
 
   React.useEffect(() => {
     editor && editor.on('focus', () => setIsEdit(true));
@@ -54,7 +47,7 @@ const EditorHtml: React.FC<{
     >
       <Editor
         tinymceScriptSrc={TINYMCE_URL}
-        initialValue={initialHtml}
+        initialValue={html}
         init={{
           height: 500,
           menubar: false,

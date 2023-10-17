@@ -38,6 +38,7 @@ export const FontAccessContextProvider: React.FC<{
         // @ts-ignore
         .queryLocalFonts()
         .then((queriedFonts: Array<FontData>) => {
+          console.log(queriedFonts);
           setFontFamilies(
             queriedFonts.reduce(
               (acc, font) =>

@@ -22,8 +22,7 @@
     "react-dom": "^18.2.0",
     "react-scroll-sync": "^0.11.0",
     "showdown": "^2.1.0",
-    "turndown": "^7.1.2",
-    "vite-plugin-html-config": "^1.0.11"
+    "turndown": "^7.1.2"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
@@ -49,6 +48,7 @@
     "prettier": "^2.8.8",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
+    "vite-plugin-html-config": "^1.0.11",
     "vite-plugin-pwa": "^0.16.4",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0"

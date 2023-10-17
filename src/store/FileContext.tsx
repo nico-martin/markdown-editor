@@ -63,6 +63,10 @@ export const FileContextProvider: React.FC<{
     setFromDB().finally(() => {
       setInit(true);
       windowInit = true;
+      console.log('window.location.hash', window.location.hash);
+      if (window.location.hash === '#new-file') {
+        createNewFile();
+      }
     });
   }, []);
 
@@ -91,6 +95,16 @@ export const FileContextProvider: React.FC<{
   }, []);
 
   React.useEffect(() => {
+    const changedFilesCount: number = files.fileList.filter(
+      ({ content, savedContent }) => content !== savedContent
+    ).length;
+
+    if (changedFilesCount === 0) {
+      navigator.clearAppBadge();
+    } else {
+      navigator.setAppBadge(changedFilesCount);
+    }
+
     if (init) {
       settingsDB.set('activeFileIndex', files.activeFileIndex);
       settingsDB.set(
@@ -98,6 +112,10 @@ export const FileContextProvider: React.FC<{
         files.fileList.map(({ handle }) => handle).filter((handle) => !!handle)
       );
     }
+
+    return () => {
+      navigator.clearAppBadge();
+    };
   }, [files]);
 
   const updateActiveFile = (updatedFile: Partial<File>) =>
