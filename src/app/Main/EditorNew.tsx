@@ -46,6 +46,7 @@ const EditorNew: React.FC<{
         const file = (e.target as HTMLInputElement).files[0];
 
         fileReader.onload = () => {
+          trackEvent({ category: 'file-action', action: 'open-legacy' });
           createNewFile({
             title: file.name.replace('.md', ''),
             content: fileReader.result as string,

@@ -45,6 +45,7 @@ const ButtonSave: React.FC<{ className?: string }> = ({ className = '' }) => {
 
   const saveFile = async () => {
     if (!BROWSER_SUPPORT.fileSystem) {
+      trackEvent({ category: 'file-action', action: 'save-legacy' });
       setDownloadModal(true);
       return;
     }
