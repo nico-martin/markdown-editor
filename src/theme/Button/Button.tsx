@@ -18,6 +18,7 @@ const Button: React.FC<{
   loading?: boolean;
   disabled?: boolean;
   color?: 'black' | 'primary';
+  onlyIconMobile?: boolean;
   [key: string]: any;
 }> = ({
   children = '',
@@ -31,6 +32,7 @@ const Button: React.FC<{
   loading = false,
   disabled = false,
   color = 'black',
+  onlyIconMobile = false,
   ...props
 }) => {
   return (
@@ -45,6 +47,8 @@ const Button: React.FC<{
         [styles.buttonIsLoading]: loading,
         [styles.buttonHasNoText]: children === '',
         [styles.buttonColorPrimary]: color === 'primary',
+        [styles.buttonOnlyIconMobile]: onlyIconMobile,
+        [styles.buttonHasIcon]: Boolean(icon),
       })}
       onClick={() => onClick()}
     >

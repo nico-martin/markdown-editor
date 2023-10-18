@@ -1,7 +1,11 @@
 .root {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-grid);
+
+  @mixin mobile {
+    gap: var(--space);
+  }
 }
 
 .clearButton {

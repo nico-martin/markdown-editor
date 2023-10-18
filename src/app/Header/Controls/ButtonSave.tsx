@@ -107,7 +107,10 @@ const ButtonSave: React.FC<{ className?: string }> = ({ className = '' }) => {
           }}
           round
           layout="empty"
-          icon="vacuum"
+          icon="eraser-variant"
+          onlyIconMobile
+          disabled={!canSave}
+          title="clear"
         >
           clear
         </Button>
@@ -121,6 +124,7 @@ const ButtonSave: React.FC<{ className?: string }> = ({ className = '' }) => {
         round
         layout={canSave ? 'solid' : 'empty'}
         disabled={!canSave}
+        onlyIconMobile
       >
         {isMobile ? '' : 'Save'}
       </Button>

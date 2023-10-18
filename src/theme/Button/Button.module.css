@@ -138,6 +138,17 @@
   color: var(--c-primary);
 }
 
+.buttonOnlyIconMobile.buttonHasIcon {
+  @mixin mobile {
+    .content {
+      display: none;
+    }
+    .icon {
+      margin: 0;
+    }
+  }
+}
+
 /*
 
 

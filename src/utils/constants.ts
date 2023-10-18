@@ -1,4 +1,5 @@
 export const appTitle = '[md.edit]';
+export const appTitleSmall = '[md]';
 export const appDescription = '';
 export const TINYMCE_URL = '/tinymce/tinymce.min.js';
 export const MATOMO_SITE_ID: number = parseInt(

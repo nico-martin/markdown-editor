@@ -11,6 +11,22 @@
   font-weight: 999;
 }
 
+.titleDesktop {
+  display: block;
+}
+.titleMobile {
+  display: none;
+}
+
+@mixin mobile {
+  .titleDesktop {
+    display: none;
+  }
+  .titleMobile {
+    display: block;
+  }
+}
+
 .save {
   margin-left: auto;
   margin-right: var(--space-grid-big);
