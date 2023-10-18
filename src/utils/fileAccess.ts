@@ -88,3 +88,9 @@ async function verifyPermission(
   const request = await fileHandle.requestPermission(opts);
   return request === 'granted';
 }
+
+export const stringToFileName = (str: string): string =>
+  str
+    .replace(/[^a-zA-Z0-9-]/g, '-')
+    .replace(/-{2,}/g, '-')
+    .toLowerCase();

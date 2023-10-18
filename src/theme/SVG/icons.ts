@@ -7,6 +7,7 @@ import open from './icons/open.svg';
 import pen from './icons/pen.svg';
 import save from './icons/save.svg';
 import settings from './icons/settings.svg';
+import vacuum from './icons/vacuum.svg';
 import viewHtml from './icons/view-html.svg';
 import viewMd from './icons/view-md.svg';
 import viewSplit from './icons/view-split.svg';
@@ -19,6 +20,7 @@ const icons = {
   'pen': pen,
   'save': save,
   'settings': settings,
+  'vacuum': vacuum,
   'view-html': viewHtml,
   'view-md': viewMd,
   'view-split': viewSplit

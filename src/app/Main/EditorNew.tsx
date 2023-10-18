@@ -3,6 +3,7 @@ import { Icon } from '@theme';
 import React from 'react';
 
 import cn from '@utils/classnames';
+import { BROWSER_SUPPORT } from '@utils/constants.ts';
 import { openFileFromSystem } from '@utils/fileAccess';
 
 import { useFileContext } from '@store/FileContext.tsx';
@@ -36,6 +37,26 @@ const EditorNew: React.FC<{
   };
 
   const openFile = async () => {
+    if (!BROWSER_SUPPORT.fileSystem) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.md';
+      input.onchange = async (e) => {
+        const fileReader = new FileReader();
+        const file = (e.target as HTMLInputElement).files[0];
+
+        fileReader.onload = () => {
+          createNewFile({
+            title: file.name.replace('.md', ''),
+            content: fileReader.result as string,
+          });
+        };
+
+        fileReader.readAsText(file);
+      };
+      input.click();
+      return;
+    }
     const file = await openFileFromSystem();
     trackEvent({ category: 'file-action', action: 'open' });
     createNewFile(file);

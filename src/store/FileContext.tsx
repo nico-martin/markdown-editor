@@ -1,6 +1,7 @@
 import { useMatomo } from '@datapunt/matomo-tracker-react';
 import React from 'react';
 
+import { BROWSER_SUPPORT } from '@utils/constants.ts';
 import { getFileFromHandle } from '@utils/fileAccess.ts';
 
 import { EMPTY_FILE } from '@store/constants.ts';
@@ -100,9 +101,9 @@ export const FileContextProvider: React.FC<{
     ).length;
 
     if (changedFilesCount === 0) {
-      navigator.clearAppBadge();
+      BROWSER_SUPPORT.badging && navigator.clearAppBadge();
     } else {
-      navigator.setAppBadge(changedFilesCount);
+      BROWSER_SUPPORT.badging && navigator.setAppBadge(changedFilesCount);
     }
 
     if (init) {
@@ -114,7 +115,7 @@ export const FileContextProvider: React.FC<{
     }
 
     return () => {
-      navigator.clearAppBadge();
+      BROWSER_SUPPORT.badging && navigator.clearAppBadge();
     };
   }, [files]);
 

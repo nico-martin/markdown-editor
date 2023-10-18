@@ -1,2 +1,10 @@
 .root {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.clearButton {
+  margin-right: 0;
+  margin-left: auto;
 }

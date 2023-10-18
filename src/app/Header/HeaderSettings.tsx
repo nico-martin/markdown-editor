@@ -1,14 +1,23 @@
-import { Button, Icon, OutsideClickHandler } from '@theme';
+import {
+  Button,
+  Icon,
+  Notification,
+  OutsideClickHandler,
+  PortalBox,
+  SHADOW_BOX_SIZES,
+} from '@theme';
 import React from 'react';
 
 import ColorScheme from '@app/Header/Settings/ColorScheme';
 import PickFont from '@app/Header/Settings/PickFont';
 
 import cn from '@utils/classnames';
+import { BROWSER_SUPPORT } from '@utils/constants.ts';
 
 import { useFontAccessContext } from '@store/FontAccessContext.tsx';
 import { useAppSettings } from '@store/SettingsContext.tsx';
 
+import { NOTIFICATION_TYPE } from '../../theme/Misc/Notification.tsx';
 import styles from './HeaderSettings.module.css';
 
 const HeaderSettings: React.FC<{ className?: string }> = ({
@@ -16,6 +25,8 @@ const HeaderSettings: React.FC<{ className?: string }> = ({
 }) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const [open, setOpen] = React.useState<boolean>(false);
+  const [fontSupportedModal, setFontSupportedModal] =
+    React.useState<boolean>(false);
   const [appSettings, setAppSettings] = useAppSettings();
   const { queried, queryFonts, isQuerying, checkPermission } =
     useFontAccessContext();
@@ -54,6 +65,27 @@ const HeaderSettings: React.FC<{ className?: string }> = ({
       >
         <Icon className={cn(styles.buttonIcon)} icon="settings" />
       </button>
+      {fontSupportedModal && (
+        <PortalBox
+          title="Browser support"
+          setShow={setFontSupportedModal}
+          show={fontSupportedModal}
+          size={SHADOW_BOX_SIZES.SMALL}
+        >
+          <Notification type={NOTIFICATION_TYPE.ERROR}>
+            <p>
+              The{' '}
+              <a
+                href="https://developer.chrome.com/articles/local-fonts/"
+                target="_blank"
+              >
+                Local Font Access API
+              </a>{' '}
+              is not supported in your browser
+            </p>
+          </Notification>
+        </PortalBox>
+      )}
       {open && (
         <OutsideClickHandler
           className={styles.panel}
@@ -62,51 +94,53 @@ const HeaderSettings: React.FC<{ className?: string }> = ({
           }}
         >
           <ul className={cn(className, styles.settings)}>
-            {'queryLocalFonts' in window ? (
-              queried ? (
-                <React.Fragment>
-                  <li className={styles.settingsElement} key="font-editor-md">
-                    <PickFont
-                      title="Markdown Font"
-                      settingsKey="font-editor-md"
-                      value={appSettings['font-editor-md'] || null}
-                      setValue={(value) =>
-                        setAppSettings({ 'font-editor-md': value })
-                      }
-                      titleClassName={styles.title}
-                    />
-                  </li>
-                  <li
-                    className={styles.settingsElement}
-                    key="font-editor-wysiwyg"
-                  >
-                    <PickFont
-                      title="WYSIWYG Font"
-                      settingsKey="font-editor-wysiwyg"
-                      value={appSettings['font-editor-wysiwyg'] || null}
-                      setValue={(value) =>
-                        setAppSettings({ 'font-editor-wysiwyg': value })
-                      }
-                      titleClassName={styles.title}
-                    />
-                  </li>
-                </React.Fragment>
-              ) : (
-                <li className={styles.settingsElement} key="queryFonts">
-                  <p className={styles.title}>Fonts</p>
-                  <Button
-                    round
-                    layout="outline"
-                    color="black"
-                    icon="formatFont"
-                    onClick={() => queryFonts()}
-                    loading={isQuerying}
-                  >
-                    query Fonts
-                  </Button>
+            {queried ? (
+              <React.Fragment>
+                <li className={styles.settingsElement} key="font-editor-md">
+                  <PickFont
+                    title="Markdown Font"
+                    settingsKey="font-editor-md"
+                    value={appSettings['font-editor-md'] || null}
+                    setValue={(value) =>
+                      setAppSettings({ 'font-editor-md': value })
+                    }
+                    titleClassName={styles.title}
+                  />
                 </li>
-              )
-            ) : null}
+                <li
+                  className={styles.settingsElement}
+                  key="font-editor-wysiwyg"
+                >
+                  <PickFont
+                    title="WYSIWYG Font"
+                    settingsKey="font-editor-wysiwyg"
+                    value={appSettings['font-editor-wysiwyg'] || null}
+                    setValue={(value) =>
+                      setAppSettings({ 'font-editor-wysiwyg': value })
+                    }
+                    titleClassName={styles.title}
+                  />
+                </li>
+              </React.Fragment>
+            ) : (
+              <li className={styles.settingsElement} key="queryFonts">
+                <p className={styles.title}>Fonts</p>
+                <Button
+                  round
+                  layout="outline"
+                  color="black"
+                  icon="formatFont"
+                  onClick={() =>
+                    BROWSER_SUPPORT.queryFonts
+                      ? queryFonts()
+                      : setFontSupportedModal(true)
+                  }
+                  loading={isQuerying}
+                >
+                  query Fonts
+                </Button>
+              </li>
+            )}
 
             <li className={styles.settingsElement} key="colorScheme">
               <ColorScheme

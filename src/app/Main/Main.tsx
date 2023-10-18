@@ -2,7 +2,6 @@ import { Loader } from '@theme';
 import React from 'react';
 
 import cn from '@utils/classnames';
-import { featureCheck } from '@utils/helpers';
 
 import { useFileContext } from '@store/FileContext.tsx';
 
@@ -16,8 +15,7 @@ const Main: React.FC<{
   return (
     <main className={cn(className, styles.root)}>
       {!init ? (
-        <Loader className={styles.loader} />
-      ) : !featureCheck ? (
+        <Loader className={styles.loader} /> /*: !featureCheck ? (
         <div className={styles.error}>
           <div className={styles.error__inner}>
             <p>Hi there,</p>
@@ -42,6 +40,7 @@ const Main: React.FC<{
             </p>
           </div>
         </div>
+      )*/
       ) : (
         <Editor className={styles.editor} />
       )}

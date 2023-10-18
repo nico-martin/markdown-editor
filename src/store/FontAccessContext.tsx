@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { BROWSER_SUPPORT } from '@utils/constants.ts';
+
 interface FontAccessContext {
   fontFamilies: Array<string>;
   queryFonts: () => Promise<void>;
@@ -24,6 +26,9 @@ export const FontAccessContextProvider: React.FC<{
   const [isQuerying, setIsQuerying] = React.useState<boolean>(false);
 
   const checkPermission = async (): Promise<PermissionState> => {
+    if (!BROWSER_SUPPORT.queryFonts) {
+      return null;
+    }
     const permission = await navigator.permissions.query({
       // @ts-ignore
       name: 'local-fonts',
@@ -32,7 +37,7 @@ export const FontAccessContextProvider: React.FC<{
   };
 
   const queryFonts = async () => {
-    if ('queryLocalFonts' in window) {
+    if (BROWSER_SUPPORT.queryFonts) {
       setIsQuerying(true);
       window
         // @ts-ignore

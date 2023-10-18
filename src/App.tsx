@@ -11,8 +11,12 @@ import Header from '@app/Header/Header';
 import Main from '@app/Main/Main';
 
 import cn from '@utils/classnames.tsx';
-import { IS_DEV, MATOMO_SITE_ID, MATOMO_URL } from '@utils/constants';
-import { featureCheck } from '@utils/helpers';
+import {
+  BROWSER_SUPPORT,
+  IS_DEV,
+  MATOMO_SITE_ID,
+  MATOMO_URL,
+} from '@utils/constants';
 
 import { FileContextProvider } from '@store/FileContext.tsx';
 import { FontAccessContextProvider } from '@store/FontAccessContext.tsx';
@@ -33,10 +37,12 @@ const App = () => {
   const { trackEvent } = useMatomo();
 
   React.useEffect(() => {
-    trackEvent({
-      category: 'feature-check',
-      action: 'fileAPI',
-      name: featureCheck ? 'supported' : 'not-supported',
+    Object.entries(BROWSER_SUPPORT).map(([action, supported]) => {
+      trackEvent({
+        category: 'feature-check',
+        action,
+        name: supported ? 'supported' : 'not-supported',
+      });
     });
   }, []);
 
