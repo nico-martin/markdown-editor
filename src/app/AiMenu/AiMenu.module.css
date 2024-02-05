@@ -1,0 +1,31 @@
+.root {
+  background-color: #fff;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.list {
+}
+
+.item {
+  &:nth-of-type(2) {
+    border-top: 1px solid #eee;
+  }
+
+  &:first-of-type .button {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  &:last-of-type .button {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+}
+
+.button {
+  font-size: 0.85rem;
+  padding: 1em;
+  outline: none;
+}

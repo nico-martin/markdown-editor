@@ -17,10 +17,10 @@
     "@datapunt/matomo-tracker-react": "^0.5.1",
     "@tinymce/tinymce-react": "^3.8.3",
     "@types/wicg-file-system-access": "^2020.9.6",
+    "easy-scroll-sync": "^2.0.0",
     "idb": "^7.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scroll-sync": "^0.11.0",
     "showdown": "^2.1.0",
     "turndown": "^7.1.2"
   },

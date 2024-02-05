@@ -23,7 +23,7 @@ const EditorMarkup: React.FC<{
   return (
     <textarea
       ref={ref}
-      className={cn(className, styles.root)}
+      className={cn(className, styles.root, 'scroll-sync')}
       onKeyUp={(e) =>
         updateActiveFile({
           content: (e.target as HTMLTextAreaElement).value,

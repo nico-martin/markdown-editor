@@ -4,6 +4,8 @@ import showdown from 'showdown';
 import { Editor as TinyMCEEditor } from 'tinymce';
 import TurndownService from 'turndown';
 
+import AiMenu from '@app/AiMenu/AiMenu.tsx';
+
 import cn from '@utils/classnames';
 import { TINYMCE_URL } from '@utils/constants';
 
@@ -20,8 +22,7 @@ const EditorHtml: React.FC<{
   className?: string;
   activeFile: File;
   updateActiveFile: (file: Partial<File>) => void;
-  style: React.CSSProperties;
-}> = ({ className = '', activeFile, updateActiveFile, style }) => {
+}> = ({ className = '', activeFile, updateActiveFile }) => {
   const [editor, setEditor] = React.useState<TinyMCEEditor>(null);
   const [isEdit, setIsEdit] = React.useState<boolean>(false);
   const [html, setHtml] = React.useState<string>('');
@@ -40,49 +41,51 @@ const EditorHtml: React.FC<{
   // todo: inline controls wrong position
 
   return (
-    <div
-      className={cn(className, styles.root)}
-      data-focus={isEdit}
-      style={style}
-    >
-      <Editor
-        tinymceScriptSrc={TINYMCE_URL}
-        initialValue={html}
-        init={{
-          height: 500,
-          menubar: false,
-          plugins: [
-            'autolink',
-            'lists',
-            'link',
-            'image',
-            'charmap',
-            'preview',
-            'anchor',
-            'searchreplace',
-            'visualblocks',
-            'code',
-            'fullscreen',
-            'insertdatetime',
-            'media',
-            'table',
-            'code',
-            'help',
-            'wordcount',
-          ],
-          toolbar:
-            'formatselect | bold italic | link | bullist numlist | removeformat |',
-          inline: true,
-          block_formats:
-            'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3; Preformatted=code',
-          setup: (e) => setEditor(e),
-        }}
-        onEditorChange={(markup: string) => {
-          isEdit &&
-            updateActiveFile({ content: turndownConverter.turndown(markup) });
-        }}
-      />
-    </div>
+    <React.Fragment>
+      <AiMenu className={styles.aiMenu} />
+      <div
+        className={cn(className, styles.root, 'scroll-sync')}
+        data-focus={isEdit}
+      >
+        <Editor
+          tinymceScriptSrc={TINYMCE_URL}
+          initialValue={html}
+          init={{
+            height: 500,
+            menubar: false,
+            plugins: [
+              'autolink',
+              'lists',
+              'link',
+              'image',
+              'charmap',
+              'preview',
+              'anchor',
+              'searchreplace',
+              'visualblocks',
+              'code',
+              'fullscreen',
+              'insertdatetime',
+              'media',
+              'table',
+              'code',
+              'help',
+              'wordcount',
+            ],
+            toolbar:
+              'formatselect | bold italic | link | bullist numlist | removeformat |',
+            inline: true,
+            block_formats:
+              'Paragraph=p; Header 1=h1; Header 2=h2; Header 3=h3; Preformatted=code',
+            setup: (e) => setEditor(e),
+          }}
+          onEditorChange={(markup: string) => {
+            isEdit &&
+              updateActiveFile({ content: turndownConverter.turndown(markup) });
+          }}
+        />
+      </div>
+    </React.Fragment>
   );
 };
 

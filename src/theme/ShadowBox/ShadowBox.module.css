@@ -82,6 +82,10 @@
   width: 500px;
 }
 
+.isMedium .box {
+  width: 700px;
+}
+
 .root[data-visible='true'] {
   .box {
     opacity: 1;

@@ -15,32 +15,7 @@ const Main: React.FC<{
   return (
     <main className={cn(className, styles.root)}>
       {!init ? (
-        <Loader className={styles.loader} /> /*: !featureCheck ? (
-        <div className={styles.error}>
-          <div className={styles.error__inner}>
-            <p>Hi there,</p>
-            <p>
-              I am sorry to have to greet you directly with an error message.
-              However, this project is just a test to play around with the{' '}
-              <a
-                target="_blank"
-                href="https://wicg.github.io/file-system-access/"
-              >
-                File System Access API
-              </a>
-              . And it looks like your browser does not support this API (yet).
-              I would be very happy if you would try it again with{' '}
-              <a
-                target="_blank"
-                href="https://caniuse.com/native-filesystem-api"
-              >
-                a different browser
-              </a>{' '}
-              - Thanks!
-            </p>
-          </div>
-        </div>
-      )*/
+        <Loader className={styles.loader} />
       ) : (
         <Editor className={styles.editor} />
       )}

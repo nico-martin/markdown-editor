@@ -46,6 +46,7 @@ const ShadowBox: React.FC<{
     <div
       className={cn(className, styles.root, {
         [styles.isSmall]: size === SHADOW_BOX_SIZES.SMALL,
+        [styles.isMedium]: size === SHADOW_BOX_SIZES.MEDIUM,
       })}
       data-visible={visible}
     >

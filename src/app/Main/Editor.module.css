@@ -18,10 +18,11 @@
 }
 
 .columnHtml {
+  position: relative;
 }
 
 .columnMarkup {
-  flex-grow: 1;
+  flex: 0 0 50%;
 }
 
 .editor {
