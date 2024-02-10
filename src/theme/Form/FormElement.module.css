@@ -1,0 +1,85 @@
+.container {
+  display: flex;
+  vertical-align: top;
+  & + .container {
+    margin-top: var(--space);
+  }
+}
+
+.containerStacked {
+  display: block;
+}
+
+.labelContainer {
+  width: 25%;
+  min-width: 180px;
+  margin-right: var(--space-half);
+  display: flex;
+  align-items: flex-start;
+}
+
+.containerStacked .labelContainer {
+  margin-right: 0;
+  width: 100%;
+  margin-bottom: var(--space-half);
+}
+
+.description {
+  color: #676767;
+  margin-top: 0.2em;
+
+  p {
+    font-size: 0.8em;
+  }
+}
+
+.label {
+  //font-weight: bold;
+  padding-top: 0.3em;
+}
+
+.content {
+  flex: 1 1 auto;
+  width: 300px;
+}
+
+.containerStacked .content {
+  width: 100%;
+}
+
+.input:not([type='checkbox']) {
+  width: 100%;
+  max-width: 100%;
+}
+
+.error {
+  color: #dc3232;
+  font-size: 0.8em !important;
+}
+
+/*
+ checkbox
+ */
+.containerIsCheckBox .label {
+  padding-top: 0;
+}
+
+.containerIsCheckBox.containerIsStacked.containerIsActive {
+  flex-direction: row;
+
+  .labelContainer {
+    position: relative;
+    transform: translateY(0) scale(1);
+    top: auto;
+    left: auto;
+    pointer-events: auto;
+  }
+
+  .label {
+    margin-right: 1em;
+
+    &:after {
+      content: ':';
+    }
+  }
+}

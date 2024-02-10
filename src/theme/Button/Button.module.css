@@ -1,13 +1,19 @@
 .button {
+  --button-padding-h: 1.4em;
+  --button-padding-v: 0.8em;
   cursor: pointer;
   font-weight: 400;
   line-height: 1;
-  padding: 0.6em 0.8em;
+  padding: var(--button-padding-v) var(--button-padding-h);
   position: relative;
   color: var(--c-p);
   display: flex;
   align-items: center;
   transition: all 200ms ease-in-out;
+
+  &:disabled {
+    pointer-events: none;
+  }
 }
 
 .bkg {
@@ -27,13 +33,31 @@
   left: 50%;
   top: 50%;
   transform: translateX(-50%) translateY(-50%);
-  width: 1em;
   height: 1em;
+  width: 100%;
+  padding: 0 var(--button-padding-h);
   color: #fff;
   opacity: 0;
   will-change: opacity;
   transition: opacity 200ms ease-in-out;
   pointer-events: none;
+  display: flex;
+  gap: 0.5em;
+
+  &:not(:has(.progress)) {
+    justify-content: center;
+  }
+}
+
+.loaderIcon {
+}
+
+.buttonIconRight .loader {
+  flex-direction: row-reverse;
+}
+
+.progress {
+  width: 100%;
 }
 
 .icon {
@@ -41,6 +65,7 @@
   will-change: opacity;
   transition: opacity 200ms ease-in-out;
   display: block;
+  pointer-events: none;
 
   &.iconLeft {
     margin-right: 0.4em;
@@ -53,11 +78,12 @@
 
 .content {
   position: relative;
-  z-index: 1;
+  //z-index: 1;
   color: #fff;
   opacity: 1;
   will-change: opacity;
   transition: opacity 200ms ease-in-out;
+  white-space: nowrap;
 }
 
 /* States */
@@ -143,6 +169,7 @@
     .content {
       display: none;
     }
+
     .icon {
       margin: 0;
     }

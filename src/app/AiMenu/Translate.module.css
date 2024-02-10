@@ -1,0 +1,11 @@
+.root {
+}
+
+.form {
+  margin-top: var(--space);
+  width: 250px;
+}
+
+.labelContainer {
+  min-width: auto;
+}

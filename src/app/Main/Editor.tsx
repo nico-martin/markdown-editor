@@ -67,7 +67,7 @@ const Editor = ({ className = '' }: { className?: string }) => {
       if (editorRef.current) {
         document.documentElement.style.setProperty(
           '--fs-base-editor',
-          editorRef.current.clientHeight * (isMobile ? 0.022 : 0.018) + 'px'
+          editorRef.current.clientHeight * (isMobile ? 0.022 : 0.014) + 'px'
         );
         setEditorWidth(
           isMobile

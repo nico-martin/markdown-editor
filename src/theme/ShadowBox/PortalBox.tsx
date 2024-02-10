@@ -14,7 +14,7 @@ export default ({
   size,
   ...props
 }: {
-  children?: React.JSX.Element | React.JSX.Element[] | string;
+  children?: React.ReactElement | Array<React.ReactElement | string> | string;
   show: boolean;
   setShow: (show: boolean) => void;
   size?: SHADOW_BOX_SIZES;

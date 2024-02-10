@@ -1,7 +1,10 @@
 /* This file was generated automatically with the ./generate.js script */
 
+import check from './icons/check.svg';
 import commentTextOutline from './icons/comment-text-outline.svg';
 import creation from './icons/creation.svg';
+import downloadOutline from './icons/download-outline.svg';
+import download from './icons/download.svg';
 import eraserVariant from './icons/eraser-variant.svg';
 import formatFont from './icons/formatFont.svg';
 import install from './icons/install.svg';
@@ -22,8 +25,11 @@ import viewMd from './icons/view-md.svg';
 import viewSplit from './icons/view-split.svg';
 
 const icons = {
+  'check': check,
   'comment-text-outline': commentTextOutline,
   'creation': creation,
+  'download-outline': downloadOutline,
+  'download': download,
   'eraser-variant': eraserVariant,
   'formatFont': formatFont,
   'install': install,

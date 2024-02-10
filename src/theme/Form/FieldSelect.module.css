@@ -1,4 +1,4 @@
-.root {
+/*.root {
   width: 100%;
   background-color: var(--c-bkg-light);
   border: 1px solid var(--c-border);
@@ -8,5 +8,24 @@
 
   &:focus {
     @mixin a11y-focus;
+  }
+}
+*/
+
+.root {
+  .control {
+    width: 100%;
+    background-color: var(--c-bkg-light);
+    border: 1px solid var(--c-border);
+    //padding: 0.3em 0.5em;
+    border-radius: 5px;
+    color: var(--c-p);
+  }
+
+  .menu {
+    margin-top: 0;
+  }
+
+  .menuList {
   }
 }

@@ -9,7 +9,7 @@ import { SHADOW_BOX_SIZES } from './constants.ts';
 const ShadowBox: React.FC<{
   title?: string;
   subtitle?: string;
-  children?: React.JSX.Element | React.JSX.Element[] | string;
+  children?: React.ReactElement | Array<React.ReactElement | string> | string;
   size?: SHADOW_BOX_SIZES;
   className?: string;
   classNameBox?: string;

@@ -1,0 +1,82 @@
+.root {
+  display: flex;
+  align-items: center;
+  padding: var(--space);
+  gap: var(--space);
+  border-radius: var(--border-radius);
+  border: 2px solid var(--c-border-light);
+  cursor: pointer;
+
+  &:has(input[type='radio']:checked) {
+    border-color: var(--c-primary);
+    background-color: var(--c-primary-bkg);
+  }
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+}
+
+.visualInput {
+  color: var(--c-border-light);
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  position: relative;
+
+  &:after {
+    content: '';
+    inset: 0;
+    position: absolute;
+    background-color: currentColor;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    border-radius: 50%;
+    scale: 1.5;
+    opacity: 0;
+  }
+}
+
+.input:checked + .visualInput {
+  color: var(--c-primary);
+
+  &:after {
+    opacity: 1;
+  }
+}
+
+.input:focus + .visualInput {
+  color: var(--c-primary);
+}
+
+.input:disabled + .visualInput {
+  opacity: 0.5;
+}
+
+.about {
+}
+
+.aboutTitle {
+}
+
+.controls {
+  margin-left: auto;
+}
+
+.controlsInstalled {
+  display: flex;
+  gap: var(--space-half);
+  align-items: center;
+}
+
+.iconLoaded {
+  color: var(--c-primary);
+}

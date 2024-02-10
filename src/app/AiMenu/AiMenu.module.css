@@ -1,7 +1,7 @@
 .root {
-  background-color: #fff;
-  border: 2px solid #eee;
-  border-radius: 10px;
+  background-color: var(--c-bkg-light);
+  border: 2px solid var(--c-border-light);
+  border-radius: var(--border-radius);
   box-shadow: none;
 }
 
@@ -10,17 +10,45 @@
 
 .item {
   &:nth-of-type(2) {
-    border-top: 1px solid #eee;
+    border-top: 2px solid var(--c-border-light);
   }
 
   &:first-of-type .button {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
   }
 
   &:last-of-type .button {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+  }
+
+  position: relative;
+}
+
+.menu {
+  position: absolute;
+  background-color: var(--c-bkg-light);
+  border: 2px solid var(--c-border-light);
+  border-radius: var(--border-radius);
+  left: 0;
+  top: -8px;
+  padding: var(--space);
+  transform: translateX(calc(-100% - var(--space)));
+
+  &:after {
+    content: '';
+    display: block;
+    width: 0.75rem;
+    height: 0.75rem;
+    background-color: var(--c-bkg-light);
+    border-right: 2px solid var(--c-border-light);
+    border-top: 2px solid var(--c-border-light);
+    position: absolute;
+    right: 0;
+    top: 20px;
+    rotate: 45deg;
+    translate: 60%;
   }
 }
 

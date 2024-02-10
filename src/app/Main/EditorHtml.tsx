@@ -42,7 +42,7 @@ const EditorHtml: React.FC<{
 
   return (
     <React.Fragment>
-      <AiMenu className={styles.aiMenu} />
+      <AiMenu className={styles.aiMenu} editor={editor} />
       <div
         className={cn(className, styles.root, 'scroll-sync')}
         data-focus={isEdit}
