@@ -2,6 +2,11 @@ export const TRANSLATIONS_MODEL_WORKER_EVENT = 'translationsModelWorkerEvent';
 export const TRANSLATIONS_TRANSLATION_WORKER_EVENT =
   'translationsModelTranslationEvent';
 
+export const SPEECHRECOGNITION_MODEL_WORKER_EVENT =
+  'speechrecognitionModelWorkerEvent';
+export const SPEECHRECOGNITION_TRANSCRIBE_WORKER_EVENT =
+  'speechrecognitionModelTranscribeEvent';
+
 export const FLORES_200_CODES = {
   ace_Arab: 'Acehnese (Arabic script)',
   ace_Latn: 'Acehnese (Latin script)',

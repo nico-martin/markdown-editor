@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { TranslateModel } from './static/types.ts';
+import { SpeechRecognitionModel, TranslateModel } from './static/types.ts';
 
 export interface AiSettings {
   translateModal: string;
+  speechRecognitionModel: string;
   translateFrom: string;
   translateTo: string;
 }
@@ -11,6 +12,8 @@ export interface AiSettings {
 interface Context {
   activeTranslateModel: TranslateModel;
   setActiveTranslateModel: (model: TranslateModel) => void;
+  activeSpeechRecognitionModel: SpeechRecognitionModel;
+  setActiveSpeechRecognitionModel: (model: SpeechRecognitionModel) => void;
   aiSettings: AiSettings;
   setAiSettings: (settings: Partial<AiSettings>) => void;
 }
@@ -18,6 +21,13 @@ interface Context {
 export const context = React.createContext<Context>({
   activeTranslateModel: null,
   setActiveTranslateModel: () => {},
-  aiSettings: { translateModal: null, translateFrom: null, translateTo: null },
+  activeSpeechRecognitionModel: null,
+  setActiveSpeechRecognitionModel: () => {},
+  aiSettings: {
+    translateModal: null,
+    speechRecognitionModel: null,
+    translateFrom: null,
+    translateTo: null,
+  },
   setAiSettings: () => {},
 });

@@ -1,22 +1,25 @@
 import React from 'react';
 
 import {
-  TRANSLATIONS_MODEL_WORKER_EVENT,
-  TRANSLATIONS_TRANSLATION_WORKER_EVENT,
-} from '../static/constants.ts';
-import { TranslateModel } from '../static/types.ts';
-import { TRANSLATIONS_WORKER_STATUS } from '../static/types.ts';
-import useAiSettings from '../useAiSettings.ts';
-import { context } from './translationsContext';
+  SPEECHRECOGNITION_MODEL_WORKER_EVENT,
+  SPEECHRECOGNITION_TRANSCRIBE_WORKER_EVENT,
+} from '@store/ai/static/constants.ts';
+import {
+  SpeechRecognitionModel,
+  WHISPER_WORKER_STATUS,
+} from '@store/ai/static/types.ts';
+import useAiSettings from '@store/ai/useAiSettings.ts';
+
+import { context } from './whisperContext';
 
 let instance = 0;
 
-const TranslationsContextProvider: React.FC<{
+const WhisperContextProvider: React.FC<{
   children: React.ReactElement;
 }> = ({ children }) => {
   const [ready, setReady] = React.useState<boolean>(null);
   const [busy, setBusy] = React.useState(false);
-  const { activeTranslateModel } = useAiSettings();
+  const { activeSpeechRecognitionModel } = useAiSettings();
   const [progressItems, setProgressItems] = React.useState<
     Array<{
       file: string;
@@ -25,24 +28,25 @@ const TranslationsContextProvider: React.FC<{
       status: string;
     }>
   >([]);
+
   const workerEventKey = React.useMemo(() => {
     instance++;
-    return `${TRANSLATIONS_MODEL_WORKER_EVENT}-${instance}`;
+    return `${SPEECHRECOGNITION_MODEL_WORKER_EVENT}-${instance}`;
   }, []);
-  const translationEventKey = React.useMemo(() => {
+  const transcribeEventKey = React.useMemo(() => {
     instance++;
-    return `${TRANSLATIONS_TRANSLATION_WORKER_EVENT}-${instance}`;
+    return `${SPEECHRECOGNITION_TRANSCRIBE_WORKER_EVENT}-${instance}`;
   }, []);
 
-  const dispatchWorkerEvent = (state: TRANSLATIONS_WORKER_STATUS) => {
+  const dispatchWorkerEvent = (state: WHISPER_WORKER_STATUS) => {
     const event = new CustomEvent(workerEventKey, {
       detail: state,
     });
     document.dispatchEvent(event);
   };
 
-  const dispatchTranslationEvent = (output: string, done: boolean = false) => {
-    const event = new CustomEvent(translationEventKey, {
+  const dispatchTranscribeEvent = (output: string, done: boolean = false) => {
+    const event = new CustomEvent(transcribeEventKey, {
       detail: { output, done },
     });
     document.dispatchEvent(event);
@@ -57,7 +61,6 @@ const TranslationsContextProvider: React.FC<{
       });
     }
 
-    // Create a callback function for messages from the worker thread.
     const onMessageReceived = (e: MessageEvent) => {
       switch (e.data.status) {
         case 'initiate':
@@ -92,15 +95,15 @@ const TranslationsContextProvider: React.FC<{
 
         case 'update':
           // Generation update: update the output text.
-          dispatchTranslationEvent(e.data.output, false);
+          dispatchTranscribeEvent(e.data.output, false);
           break;
 
         case 'complete':
           // Generation complete: re-enable the "Translate" button
           setBusy(false);
           Boolean(e.data.output) &&
-            dispatchTranslationEvent(e.data.output[0].translation_text, true);
-          dispatchWorkerEvent(TRANSLATIONS_WORKER_STATUS.COMPLETE);
+            dispatchTranscribeEvent(e.data.output[0].translation_text, true);
+          dispatchWorkerEvent(WHISPER_WORKER_STATUS.COMPLETE);
           break;
       }
     };
@@ -113,18 +116,20 @@ const TranslationsContextProvider: React.FC<{
       worker.current.removeEventListener('message', onMessageReceived);
   }, []);
 
-  const initialize = (model: TranslateModel): Promise<boolean> =>
+  const initialize = (model: SpeechRecognitionModel): Promise<boolean> =>
     new Promise((resolve) => {
       setBusy(true);
-      dispatchWorkerEvent(TRANSLATIONS_WORKER_STATUS.LOADING);
+      dispatchWorkerEvent(WHISPER_WORKER_STATUS.LOADING);
       worker.current.postMessage({
         model: model.path,
+        quantized: model.quantized,
       });
       document.addEventListener(
         workerEventKey,
         (e) => {
-          const status = (e as CustomEvent<TRANSLATIONS_WORKER_STATUS>).detail;
-          if (status === TRANSLATIONS_WORKER_STATUS.COMPLETE) {
+          console.log('addEventListener', e);
+          const status = (e as CustomEvent<WHISPER_WORKER_STATUS>).detail;
+          if (status === WHISPER_WORKER_STATUS.COMPLETE) {
             resolve(true);
           }
         },
@@ -132,24 +137,24 @@ const TranslationsContextProvider: React.FC<{
       );
     });
 
-  const translate = (
-    src_lang: string,
-    tgt_lang: string,
-    text: string,
-    cb: (output: string) => void = null
+  const transcribe = (
+    language: string,
+    multilingual: string,
+    quantized: boolean,
+    cb?: (output: string) => void
   ): Promise<string> =>
     new Promise((resolve) => {
       setBusy(true);
-      dispatchWorkerEvent(TRANSLATIONS_WORKER_STATUS.LOADING);
-      dispatchTranslationEvent('');
+      dispatchWorkerEvent(WHISPER_WORKER_STATUS.LOADING);
+      dispatchTranscribeEvent('');
       worker.current.postMessage({
-        model: activeTranslateModel.path,
-        text,
-        src_lang,
-        tgt_lang,
+        model: activeSpeechRecognitionModel.path,
+        language,
+        multilingual,
+        quantized,
       });
       document.addEventListener(
-        translationEventKey,
+        transcribeEventKey,
         (e) => {
           const { output, done } = (
             e as CustomEvent<{
@@ -169,12 +174,12 @@ const TranslationsContextProvider: React.FC<{
   return (
     <context.Provider
       value={{
-        activeModel: activeTranslateModel,
-        initialize,
-        translate,
         ready,
         busy,
         progressItems,
+        initialize,
+        transcribe,
+        activeModel: activeSpeechRecognitionModel,
       }}
     >
       {children}
@@ -182,4 +187,4 @@ const TranslationsContextProvider: React.FC<{
   );
 };
 
-export default TranslationsContextProvider;
+export default WhisperContextProvider;

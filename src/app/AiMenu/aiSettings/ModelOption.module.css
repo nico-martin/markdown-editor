@@ -80,3 +80,30 @@
 .iconLoaded {
   color: var(--c-primary);
 }
+
+.downloadProgress {
+  position: relative;
+  padding: 0.2em 1em;
+  font-size: 0.6rem;
+  border-radius: 500px;
+  overflow: hidden;
+  border: 1px solid var(--c-primary);
+  background-color: #fff;
+  margin-top: 0.5rem;
+}
+
+.downloadProgressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  background-color: var(--c-primary);
+  color: #fff;
+  padding: 0.2em 1em;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.downloadProgressFile {
+  position: relative;
+}

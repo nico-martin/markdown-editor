@@ -1,6 +1,6 @@
 import { FLORES_200_CODES } from '@store/ai/static/constants.ts';
 
-import { TranslateModel } from './types.ts';
+import { SpeechRecognitionModel, TranslateModel } from './types.ts';
 
 export const TRANSLATION_MODELS: Array<TranslateModel> = [
   {
@@ -37,5 +37,50 @@ export const TRANSLATION_MODELS: Array<TranslateModel> = [
     size: 57381512,
     inputLanguages: { eng_Latn: 'English' },
     outputLanguages: { fra_Latn: 'French' },
+  },
+];
+
+export const SPEECH_RECOGNITION_MODELS: Array<SpeechRecognitionModel> = [
+  {
+    key: 'Xenova-whisper-tiny-quantized',
+    name: 'whisper-tiny',
+    path: 'Xenova/whisper-tiny',
+    size: 43120515,
+    quantized: true,
+  },
+  {
+    key: 'Xenova-whisper-tiny',
+    name: 'whisper-tiny',
+    path: 'Xenova/whisper-tiny',
+    size: 151667488,
+    quantized: false,
+  },
+  {
+    key: 'Xenova-whisper-base-quantized',
+    name: 'whisper-base',
+    path: 'Xenova/whisper-base',
+    size: 77002795,
+    quantized: true,
+  },
+  {
+    key: 'Xenova-whisper-base',
+    name: 'whisper-base',
+    path: 'Xenova/whisper-base',
+    size: 293589457,
+    quantized: false,
+  },
+  {
+    key: 'Xenova-whisper-small-quantized',
+    name: 'whisper-small',
+    path: 'Xenova/whisper-small',
+    size: 251613279,
+    quantized: true,
+  },
+  {
+    key: 'Xenova-whisper-medium-quantized',
+    name: 'whisper-medium',
+    path: 'Xenova/whisper-medium',
+    size: 750874576,
+    quantized: true,
   },
 ];

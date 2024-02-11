@@ -21,7 +21,8 @@ const AiMenu: React.FC<{ className?: string; editor: TinyMCEEditor }> = ({
   editor,
 }) => {
   const [modal, setModal] = React.useState<boolean>(false);
-  const { activeTranslateModel } = useAiSettings();
+  const { activeTranslateModel, activeSpeechRecognitionModel } =
+    useAiSettings();
 
   const [openMenu, setOpenMenu] = React.useState<AiMenuItems>(null);
 
@@ -55,14 +56,16 @@ const AiMenu: React.FC<{ className?: string; editor: TinyMCEEditor }> = ({
             )}
           </li>
         )}
-        <li className={cn(styles.item)}>
-          <Button
-            onClick={() => toggleMenu(AiMenuItems.SPEECH_TO_TEXT)}
-            className={styles.button}
-            layout="empty"
-            icon="microphone-outline"
-          />
-        </li>
+        {activeSpeechRecognitionModel && (
+          <li className={cn(styles.item)}>
+            <Button
+              onClick={() => toggleMenu(AiMenuItems.SPEECH_TO_TEXT)}
+              className={styles.button}
+              layout="empty"
+              icon="microphone-outline"
+            />
+          </li>
+        )}
         <li className={cn(styles.item)}>
           <Button
             onClick={() => toggleMenu(AiMenuItems.PROMPT)}

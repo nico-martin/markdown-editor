@@ -23,6 +23,7 @@ import { FontAccessContextProvider } from '@store/FontAccessContext.tsx';
 import { SettingsContextProvider } from '@store/SettingsContext.tsx';
 import AiContextProvider from '@store/ai/AiContextProvider.tsx';
 import TranslationsContextProvider from '@store/ai/translations/TranslationsContextProvider.tsx';
+import WhisperContextProvider from '@store/ai/whisper/WhisperContextProvider.tsx';
 
 import styles from './App.module.css';
 
@@ -77,7 +78,9 @@ root &&
           <FileContextProvider>
             <AiContextProvider>
               <TranslationsContextProvider>
-                <App />
+                <WhisperContextProvider>
+                  <App />
+                </WhisperContextProvider>
               </TranslationsContextProvider>
             </AiContextProvider>
           </FileContextProvider>

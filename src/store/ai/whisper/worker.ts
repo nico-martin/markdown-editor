@@ -1,6 +1,12 @@
-import { TranslationPipeline, pipeline } from '@xenova/transformers';
+import {
+  AutomaticSpeechRecognitionPipeline,
+  env,
+  pipeline,
+} from '@xenova/transformers';
 
-const showLog = false;
+env.allowLocalModels = false;
+
+const showLog = true;
 const log = (...e: Array<any>) =>
   showLog ? console.log('[WORKER]', ...e) : null;
 
@@ -49,11 +55,11 @@ type PipelineEvent =
   | TranslateUpdateEvent
   | CompleteEvent;
 
-// based on https://github.com/xenova/transformers.js/blob/main/examples/react-translator/src/worker.js
 class PipelineInstance {
-  private model = '';
+  private model: string = null;
+  private quantized: boolean = null;
   private static instance: PipelineInstance = null;
-  public pipeline: TranslationPipeline = null;
+  public pipeline: AutomaticSpeechRecognitionPipeline = null;
 
   public static getInstance() {
     if (!this.instance) {
@@ -64,6 +70,7 @@ class PipelineInstance {
 
   public async loadPipeline(
     model: string,
+    quantized: boolean,
     progress_callback: (e: any) => void
   ) {
     log('this.pipeline', {
@@ -77,51 +84,41 @@ class PipelineInstance {
       await this.pipeline.dispose();
     }
     this.model = model;
-    this.pipeline = await pipeline<'translation'>('translation', this.model, {
-      progress_callback,
-    });
+    this.quantized = quantized;
+    this.pipeline = await pipeline<'automatic-speech-recognition'>(
+      'automatic-speech-recognition',
+      this.model,
+      {
+        quantized: this.quantized,
+        progress_callback,
+        // For medium models, we need to load the `no_attentions` revision to avoid running out of memory
+        revision: this.model.includes('/whisper-medium')
+          ? 'no_attentions'
+          : 'main',
+      }
+    );
     return this.pipeline;
   }
 }
 
-// Listen for messages from the main thread
 self.addEventListener('message', async (event) => {
   const instance = PipelineInstance.getInstance();
   log('event.data.text', event.data.text);
-  const translator = await instance.loadPipeline(
+
+  const transcriber = await instance.loadPipeline(
     event.data.model,
-    (x: PipelineEvent) => self.postMessage(x)
+    event.data.quantized,
+    (x: PipelineEvent) => {
+      log(x);
+      self.postMessage(x);
+    }
   );
 
-  if (!event.data.text) {
-    // if there is no text, we don't need to translate and we're done
+  if (!event.data.audio) {
+    // if there is no audio, we don't need to translate and we're done
     self.postMessage({
       status: 'complete',
     });
     return;
   }
-
-  // Actually perform the translation
-  const output = await translator(event.data.text, {
-    // @ts-ignore
-    tgt_lang: event.data.tgt_lang,
-    //src_lang: event.data.src_lang,
-    callback_function: (x: any) => {
-      log('translation cb', x);
-      self.postMessage({
-        status: 'update',
-        output: translator.tokenizer.decode(x[0].output_token_ids, {
-          skip_special_tokens: true,
-        }),
-      });
-    },
-  });
-
-  log('translation complete', output);
-
-  // Send the output back to the main thread
-  self.postMessage({
-    status: 'complete',
-    output: output,
-  });
 });

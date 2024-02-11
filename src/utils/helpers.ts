@@ -26,3 +26,7 @@ export const getFirstXChars = (str: string, x: number): string => {
 export const removeBracketsAndWordsInside = (str: string): string => {
   return str.replace(/ *\([^)]*\) */g, '');
 };
+
+export const getLastElementOfPath = (path: string): string => {
+  return path.split('/').pop();
+};
