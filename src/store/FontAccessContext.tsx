@@ -56,8 +56,8 @@ export const FontAccessContextProvider: React.FC<{
           } else {
             setQueried(true);
           }
-          setIsQuerying(false);
-        });
+        })
+        .finally(() => setIsQuerying(false));
     }
   };
 

@@ -8,9 +8,6 @@ import {
 } from '@theme';
 import React from 'react';
 
-import ColorScheme from '@app/Header/Settings/ColorScheme';
-import PickFont from '@app/Header/Settings/PickFont';
-
 import cn from '@utils/classnames';
 import { BROWSER_SUPPORT } from '@utils/constants.ts';
 
@@ -19,6 +16,8 @@ import { useAppSettings } from '@store/SettingsContext.tsx';
 
 import { NOTIFICATION_TYPE } from '../../theme/Misc/Notification.tsx';
 import styles from './HeaderSettings.module.css';
+import ColorScheme from './Settings/ColorScheme';
+import PickFont from './Settings/PickFont';
 
 const HeaderSettings: React.FC<{ className?: string }> = ({
   className = '',

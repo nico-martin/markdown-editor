@@ -1,9 +1,9 @@
-import React, { ChangeEventHandler } from 'react';
+import React from 'react';
 import Select from 'react-select';
 import {
   Group,
   Option,
-  OptionsOrGroups,
+  OptionsOrGroups, // @ts-ignore
 } from 'react-select/dist/declarations/src/types';
 
 import cn from '@utils/classnames';
@@ -16,9 +16,8 @@ const FieldSelect: React.FC<{
   onChange?: (value: string) => void;
   name: string;
   id: string;
-  //options: Record<string, { name: string; style: React.CSSProperties }>;
   options: OptionsOrGroups<Option, Group>;
-  onMouseDown?: React.MouseEventHandler<HTMLSelectElement>;
+  fontStyling?: boolean;
 }> = ({
   className = '',
   value,
@@ -26,7 +25,7 @@ const FieldSelect: React.FC<{
   name,
   id,
   options,
-  onMouseDown = null,
+  fontStyling = false,
 }) => {
   const allOptions = React.useMemo(
     () =>
@@ -54,12 +53,18 @@ const FieldSelect: React.FC<{
       id={id}
       className={cn(className, styles.root)}
       name={name}
+      styles={{
+        option: (provided, state) => ({
+          ...provided,
+          // @ts-ignore
+          ...(fontStyling ? { fontFamily: state?.value || '' } : {}),
+        }),
+      }}
       classNames={{
         control: () => styles.control,
         menu: () => styles.menu,
         menuList: () => styles.menuList,
       }}
-      //menuIsOpen
     />
   );
 };

@@ -39,38 +39,25 @@ const PickFont = ({
   }, []);
   const { fontFamilies } = useFontAccessContext();
 
-  const fontOptions: Record<
-    string,
-    { name: string; style: React.CSSProperties }
-  > = React.useMemo(() => {
-    const options = {
-      [initialValue]: {
-        name: initialValue.split(',')[0],
-        style: { fontFamily: 'auto' },
-      },
-    };
-
-    fontFamilies.map((family) => {
-      options[family] = {
-        name: family,
-        style: { fontFamily: family },
-      };
-    });
-
-    return options;
-  }, [fontFamilies, initialValue]);
+  const fontOptions: Array<{ value: string; label: string }> = React.useMemo(
+    () =>
+      fontFamilies.map((family) => ({
+        value: family,
+        label: family,
+      })),
+    [fontFamilies, initialValue]
+  );
 
   return (
     <div className={cn(className, styles.root)}>
       <p className={cn(titleClassName)}>{title}</p>
       <FieldSelect
         options={fontOptions}
-        onChange={(event) =>
-          setValue((event.target as HTMLSelectElement).value)
-        }
+        onChange={(value) => setValue(value)}
         value={value}
         name={settingsKey}
         id={settingsKey}
+        fontStyling
       />
     </div>
   );
