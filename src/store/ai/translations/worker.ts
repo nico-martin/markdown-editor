@@ -1,4 +1,6 @@
-import { TranslationPipeline, pipeline } from '@xenova/transformers';
+import { TranslationPipeline, env, pipeline } from '@xenova/transformers';
+
+env.allowLocalModels = false;
 
 const showLog = false;
 const log = (...e: Array<any>) =>

@@ -1,0 +1,15 @@
+.button {
+  &:hover {
+    .buttonIcon {
+      color: var(--c-primary) !important;
+    }
+  }
+}
+
+.buttonIcon {
+  margin-right: 0.75rem !important;
+
+  @mixin mobile {
+    margin-right: 0 !important;
+  }
+}

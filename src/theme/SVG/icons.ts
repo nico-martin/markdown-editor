@@ -1,6 +1,7 @@
 /* This file was generated automatically with the ./generate.js script */
 
 import check from './icons/check.svg';
+import close from './icons/close.svg';
 import commentTextOutline from './icons/comment-text-outline.svg';
 import creation from './icons/creation.svg';
 import downloadOutline from './icons/download-outline.svg';
@@ -26,6 +27,7 @@ import viewSplit from './icons/view-split.svg';
 
 const icons = {
   'check': check,
+  'close': close,
   'comment-text-outline': commentTextOutline,
   'creation': creation,
   'download-outline': downloadOutline,

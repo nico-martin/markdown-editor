@@ -13,6 +13,7 @@ export { default as Notification } from './Misc/Notification';
 export { default as OutsideClickHandler } from './Misc/OutsideClickHandler';
 export { default as FieldSelect } from './Form/FieldSelect';
 export { default as FieldInput } from './Form/FieldInput';
+export { default as FieldTextarea } from './Form/FieldTextarea.tsx';
 export { default as FieldRadio } from './Form/FieldRadio';
 export { default as FormControls } from './Form/FormControls.tsx';
 export { default as FormElement } from './Form/FormElement.tsx';

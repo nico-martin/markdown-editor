@@ -64,7 +64,6 @@ export const FileContextProvider: React.FC<{
     setFromDB().finally(() => {
       setInit(true);
       windowInit = true;
-      console.log('window.location.hash', window.location.hash);
       if (window.location.hash === '#new-file') {
         createNewFile();
       }

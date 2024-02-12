@@ -11,6 +11,7 @@ const Button = React.forwardRef<
   {
     children?: React.JSX.Element | React.JSX.Element[] | string;
     className?: string;
+    classNameIcon?: string;
     onClick?: () => void;
     layout?: 'solid' | 'empty' | 'outline';
     round?: boolean;
@@ -22,6 +23,8 @@ const Button = React.forwardRef<
     color?: 'black' | 'primary';
     onlyIconMobile?: boolean;
     progress?: number;
+    noPadding?: boolean;
+    size?: 'small' | 'medium';
     [key: string]: any;
   }
 >(
@@ -29,6 +32,7 @@ const Button = React.forwardRef<
     {
       children = '',
       className = '',
+      classNameIcon = '',
       onClick = () => {},
       layout = 'solid',
       round = false,
@@ -40,6 +44,8 @@ const Button = React.forwardRef<
       disabled = false,
       color = 'black',
       onlyIconMobile = false,
+      noPadding = false,
+      size = 'medium',
       ...props
     },
     ref
@@ -59,6 +65,8 @@ const Button = React.forwardRef<
           [styles.buttonOnlyIconMobile]: onlyIconMobile,
           [styles.buttonHasIcon]: Boolean(icon),
           [styles.buttonIconRight]: Boolean(iconRight),
+          [styles.buttonNoPadding]: noPadding,
+          [styles.buttonSizeSmall]: size === 'small',
         })}
         onClick={() => onClick()}
         ref={ref}
@@ -71,7 +79,7 @@ const Button = React.forwardRef<
 
         {Boolean(icon) && !iconRight && (
           <Icon
-            className={cn(styles.icon, styles.iconLeft)}
+            className={cn(styles.icon, styles.iconLeft, classNameIcon)}
             icon={icon}
             circle={iconCircle}
           />
@@ -79,7 +87,7 @@ const Button = React.forwardRef<
         <span className={styles.content}>{children}</span>
         {Boolean(icon) && iconRight && (
           <Icon
-            className={cn(styles.icon, styles.iconRight)}
+            className={cn(styles.icon, styles.iconRight, classNameIcon)}
             icon={icon}
             circle={iconCircle}
           />

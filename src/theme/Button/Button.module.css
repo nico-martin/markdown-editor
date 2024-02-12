@@ -176,6 +176,14 @@
   }
 }
 
+.buttonNoPadding {
+  padding: 0;
+}
+
+.buttonSizeSmall {
+  font-size: 0.65rem;
+}
+
 /*
 
 

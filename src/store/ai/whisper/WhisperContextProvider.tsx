@@ -1,6 +1,11 @@
 import React from 'react';
 
 import {
+  getAudioFromRecording,
+  getFloat32FromAudioBuffer,
+} from '@utils/helpers.ts';
+
+import {
   SPEECHRECOGNITION_MODEL_WORKER_EVENT,
   SPEECHRECOGNITION_TRANSCRIBE_WORKER_EVENT,
 } from '@store/ai/static/constants.ts';
@@ -45,9 +50,9 @@ const WhisperContextProvider: React.FC<{
     document.dispatchEvent(event);
   };
 
-  const dispatchTranscribeEvent = (output: string, done: boolean = false) => {
+  const dispatchTranscribeEvent = (text: string, done: boolean = false) => {
     const event = new CustomEvent(transcribeEventKey, {
-      detail: { output, done },
+      detail: { text, done },
     });
     document.dispatchEvent(event);
   };
@@ -95,14 +100,14 @@ const WhisperContextProvider: React.FC<{
 
         case 'update':
           // Generation update: update the output text.
-          dispatchTranscribeEvent(e.data.output, false);
+          dispatchTranscribeEvent(e.data.data[0], false);
           break;
 
         case 'complete':
           // Generation complete: re-enable the "Translate" button
           setBusy(false);
-          Boolean(e.data.output) &&
-            dispatchTranscribeEvent(e.data.output[0].translation_text, true);
+          Boolean(e.data.data) &&
+            dispatchTranscribeEvent(e.data.data.text, true);
           dispatchWorkerEvent(WHISPER_WORKER_STATUS.COMPLETE);
           break;
       }
@@ -127,7 +132,6 @@ const WhisperContextProvider: React.FC<{
       document.addEventListener(
         workerEventKey,
         (e) => {
-          console.log('addEventListener', e);
           const status = (e as CustomEvent<WHISPER_WORKER_STATUS>).detail;
           if (status === WHISPER_WORKER_STATUS.COMPLETE) {
             resolve(true);
@@ -139,36 +143,39 @@ const WhisperContextProvider: React.FC<{
 
   const transcribe = (
     language: string,
-    multilingual: string,
-    quantized: boolean,
-    cb?: (output: string) => void
+    multilingual: boolean,
+    blob: Blob,
+    cb?: (text: string) => void
   ): Promise<string> =>
     new Promise((resolve) => {
       setBusy(true);
       dispatchWorkerEvent(WHISPER_WORKER_STATUS.LOADING);
       dispatchTranscribeEvent('');
-      worker.current.postMessage({
-        model: activeSpeechRecognitionModel.path,
-        language,
-        multilingual,
-        quantized,
+      getAudioFromRecording(blob).then((audioData) => {
+        worker.current.postMessage({
+          model: activeSpeechRecognitionModel.path,
+          language,
+          multilingual,
+          quantized: activeSpeechRecognitionModel.quantized,
+          audio: getFloat32FromAudioBuffer(audioData.buffer),
+        });
+        document.addEventListener(
+          transcribeEventKey,
+          (e) => {
+            const { text, done } = (
+              e as CustomEvent<{
+                text: string;
+                done: boolean;
+              }>
+            ).detail;
+            cb && cb(text);
+            if (done) {
+              resolve(text);
+            }
+          },
+          false
+        );
       });
-      document.addEventListener(
-        transcribeEventKey,
-        (e) => {
-          const { output, done } = (
-            e as CustomEvent<{
-              output: string;
-              done: boolean;
-            }>
-          ).detail;
-          cb && cb(output);
-          if (done) {
-            resolve(output);
-          }
-        },
-        false
-      );
     });
 
   return (

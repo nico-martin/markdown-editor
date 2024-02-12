@@ -7,8 +7,8 @@ export const context = React.createContext<{
   initialize: (model: SpeechRecognitionModel) => Promise<boolean>;
   transcribe: (
     language: string,
-    multilingual: string,
-    quantized: boolean,
+    multilingual: boolean,
+    blob: Blob,
     cb?: (output: string) => void
   ) => Promise<string>;
   ready: boolean;

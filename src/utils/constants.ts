@@ -18,3 +18,5 @@ export const BROWSER_SUPPORT = {
     'showSaveFilePicker' in window &&
     'showDirectoryPicker' in window,
 };
+
+export const AUDIO_SAMPLING_RATE = 16000;

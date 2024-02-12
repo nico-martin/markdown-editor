@@ -7,6 +7,7 @@ export interface AiSettings {
   speechRecognitionModel: string;
   translateFrom: string;
   translateTo: string;
+  transcribeSourceLanguage: string;
 }
 
 interface Context {
@@ -28,6 +29,7 @@ export const context = React.createContext<Context>({
     speechRecognitionModel: null,
     translateFrom: null,
     translateTo: null,
+    transcribeSourceLanguage: null,
   },
   setAiSettings: () => {},
 });

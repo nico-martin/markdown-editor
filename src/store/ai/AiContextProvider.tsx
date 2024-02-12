@@ -22,6 +22,7 @@ const AiContextProvider: React.FC<{ children: React.ReactElement }> = ({
     speechRecognitionModel: null,
     translateFrom: null,
     translateTo: null,
+    transcribeSourceLanguage: null,
   });
 
   React.useEffect(() => {
@@ -31,6 +32,7 @@ const AiContextProvider: React.FC<{ children: React.ReactElement }> = ({
         speechRecognitionModel: settings?.speechRecognitionModel || null,
         translateFrom: settings?.translateFrom || null,
         translateTo: settings?.translateTo || null,
+        transcribeSourceLanguage: settings?.transcribeSourceLanguage || null,
       });
     });
   }, []);
@@ -57,7 +59,6 @@ const AiContextProvider: React.FC<{ children: React.ReactElement }> = ({
   }, [activeTranslateModel]);
 
   React.useEffect(() => {
-    console.log(activeSpeechRecognitionModel);
     setAiSettings((settings) => ({
       ...settings,
       speechRecognitionModel: activeSpeechRecognitionModel?.key,

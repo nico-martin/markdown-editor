@@ -1,18 +1,23 @@
-import { Button } from '@theme';
+import { Button, Icon } from '@theme';
 import React from 'react';
 import { Editor as TinyMCEEditor } from 'tinymce';
 
+import TextGenerator from '@app/AiMenu/TextGenerator.tsx';
+import Transcribe from '@app/AiMenu/Transcribe.tsx';
+import useWindowSize from '@app/hooks/useWindowSize.tsx';
+
 import cn from '@utils/classnames.tsx';
 
+import { useFileContext } from '@store/FileContext.tsx';
+import { EDITOR_VIEWS, useEditorView } from '@store/SettingsContext.tsx';
 import useAiSettings from '@store/ai/useAiSettings.ts';
 
 import styles from './AiMenu.module.css';
 import Translate from './Translate.tsx';
-import AiSettingsModal from './aiSettings/AiSettingsModal.tsx';
 
 enum AiMenuItems {
   TRANSLATE = 'translate',
-  SPEECH_TO_TEXT = 'speechToText',
+  TRANSCRIPTION = 'transcription',
   PROMPT = 'prompt',
 }
 
@@ -20,62 +25,85 @@ const AiMenu: React.FC<{ className?: string; editor: TinyMCEEditor }> = ({
   className = '',
   editor,
 }) => {
-  const [modal, setModal] = React.useState<boolean>(false);
   const { activeTranslateModel, activeSpeechRecognitionModel } =
     useAiSettings();
-
+  const menuRef = React.useRef<HTMLDivElement>(null);
+  const { width } = useWindowSize();
+  const [editorView] = useEditorView();
   const [openMenu, setOpenMenu] = React.useState<AiMenuItems>(null);
-
+  const [menuLeft, setMenuLeft] = React.useState<boolean>(false);
+  const { activeFileIndex } = useFileContext();
   const toggleMenu = (menu: AiMenuItems) =>
     setOpenMenu((open) => (open === menu ? null : menu));
 
+  React.useEffect(() => {
+    window.setTimeout(() => {
+      if (!menuRef.current) return;
+      const rect = menuRef.current.getBoundingClientRect();
+      const right = window.innerWidth - rect.left - rect.width;
+      setMenuLeft(right < 270);
+    }, 50);
+  }, [menuRef, width, editorView]);
+
   return (
-    <div className={cn(className, styles.root)}>
-      <AiSettingsModal show={modal} setShow={setModal} />
-      <ul className={cn(styles.list)}>
-        <li className={cn(styles.item)}>
-          <Button
-            onClick={() => setModal(true)}
-            className={styles.button}
-            layout="empty"
-            icon="creation"
-            title="AI Settings"
-          />
-        </li>
-        {activeTranslateModel && (
+    (editorView === EDITOR_VIEWS.SPLIT || editorView === EDITOR_VIEWS.HTML) &&
+    activeFileIndex !== 'new' &&
+    (activeTranslateModel || activeSpeechRecognitionModel) && (
+      <div className={cn(className, styles.root)} ref={menuRef}>
+        <ul className={cn(styles.list)}>
+          <li className={cn(styles.item)}>
+            <Icon icon="creation" className={styles.headingIcon} />
+          </li>
+          {activeTranslateModel && (
+            <li className={cn(styles.item)}>
+              <Button
+                onClick={() => toggleMenu(AiMenuItems.TRANSLATE)}
+                className={styles.button}
+                layout="empty"
+                icon="translate"
+                title="translate"
+              />
+              {openMenu === AiMenuItems.TRANSLATE && (
+                <Translate
+                  className={cn(styles.menu, { [styles.menuLeft]: menuLeft })}
+                  editor={editor}
+                />
+              )}
+            </li>
+          )}
+          {activeSpeechRecognitionModel && (
+            <li className={cn(styles.item)}>
+              <Button
+                onClick={() => toggleMenu(AiMenuItems.TRANSCRIPTION)}
+                className={styles.button}
+                layout="empty"
+                icon="microphone-outline"
+              />
+              {openMenu === AiMenuItems.TRANSCRIPTION && (
+                <Transcribe
+                  className={cn(styles.menu, { [styles.menuLeft]: menuLeft })}
+                  editor={editor}
+                />
+              )}
+            </li>
+          )}
           <li className={cn(styles.item)}>
             <Button
-              onClick={() => toggleMenu(AiMenuItems.TRANSLATE)}
+              onClick={() => toggleMenu(AiMenuItems.PROMPT)}
               className={styles.button}
               layout="empty"
-              icon="translate"
-              title="translate"
+              icon="comment-text-outline"
             />
-            {openMenu === AiMenuItems.TRANSLATE && (
-              <Translate className={styles.menu} editor={editor} />
+            {openMenu === AiMenuItems.PROMPT && (
+              <TextGenerator
+                className={cn(styles.menu, { [styles.menuLeft]: menuLeft })}
+                editor={editor}
+              />
             )}
           </li>
-        )}
-        {activeSpeechRecognitionModel && (
-          <li className={cn(styles.item)}>
-            <Button
-              onClick={() => toggleMenu(AiMenuItems.SPEECH_TO_TEXT)}
-              className={styles.button}
-              layout="empty"
-              icon="microphone-outline"
-            />
-          </li>
-        )}
-        <li className={cn(styles.item)}>
-          <Button
-            onClick={() => toggleMenu(AiMenuItems.PROMPT)}
-            className={styles.button}
-            layout="empty"
-            icon="comment-text-outline"
-          />
-        </li>
-      </ul>
-    </div>
+        </ul>
+      </div>
+    )
   );
 };
 

@@ -9,8 +9,12 @@
 }
 
 .item {
+  border-top: 1px solid var(--c-border-light);
+
   &:nth-of-type(2) {
     border-top: 2px solid var(--c-border-light);
+    margin-top: 0.1em;
+    //padding-top: 0.25em;
   }
 
   &:first-of-type .button {
@@ -31,10 +35,11 @@
   background-color: var(--c-bkg-light);
   border: 2px solid var(--c-border-light);
   border-radius: var(--border-radius);
-  left: 0;
+  right: 0;
   top: -8px;
   padding: var(--space);
-  transform: translateX(calc(-100% - var(--space)));
+  transform: translateX(calc(100% + var(--space)));
+  width: 260px;
 
   &:after {
     content: '';
@@ -45,15 +50,35 @@
     border-right: 2px solid var(--c-border-light);
     border-top: 2px solid var(--c-border-light);
     position: absolute;
-    right: 0;
+    left: 0;
     top: 20px;
-    rotate: 45deg;
-    translate: 60%;
+    rotate: -135deg;
+    translate: -60%;
+  }
+
+  &.menuLeft {
+    right: auto;
+    left: 0;
+    transform: translateX(calc(-100% - var(--space)));
+
+    &:after {
+      left: auto;
+      right: 0;
+      rotate: 45deg;
+      translate: 60%;
+    }
   }
 }
 
-.button {
-  font-size: 0.85rem;
+.button,
+.headingIcon {
+  font-size: 0.8rem;
   padding: 1em;
   outline: none;
+}
+
+.headingIcon {
+  font-size: 1rem;
+  padding: 0.7em;
+  display: block;
 }

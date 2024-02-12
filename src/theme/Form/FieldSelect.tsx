@@ -18,6 +18,7 @@ const FieldSelect: React.FC<{
   id: string;
   options: OptionsOrGroups<Option, Group>;
   fontStyling?: boolean;
+  [key: string]: any;
 }> = ({
   className = '',
   value,
@@ -26,6 +27,7 @@ const FieldSelect: React.FC<{
   id,
   options,
   fontStyling = false,
+  ...rest
 }) => {
   const allOptions = React.useMemo(
     () =>
@@ -65,6 +67,7 @@ const FieldSelect: React.FC<{
         menu: () => styles.menu,
         menuList: () => styles.menuList,
       }}
+      {...rest}
     />
   );
 };

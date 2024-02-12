@@ -1,0 +1,43 @@
+.root {
+}
+
+.form {
+  margin-top: var(--space);
+}
+
+.labelContainer {
+  min-width: auto;
+}
+
+.sourceLanguage {
+  padding-top: 0.75em;
+  margin-top: 1em;
+  border-top: 1px solid var(--c-border-light);
+}
+
+.recorder {
+  height: 2.6rem;
+}
+
+.recordButton {
+  width: 100%;
+}
+
+.recorderResult {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding-top: 0.4rem;
+}
+
+.recorderAudio {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.audioTime {
+  margin-right: auto;
+  margin-left: 0.75em;
+}
