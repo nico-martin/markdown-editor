@@ -1,6 +1,14 @@
+import Mistral7BInstruct from '@utils/webLLM/models/Mistral7BInstruct.ts';
+import RedPajamaINCITEChat3B from '@utils/webLLM/models/RedPajamaINCITEChat3B.ts';
+
 import { FLORES_200_CODES } from '@store/ai/static/constants.ts';
 
-import { SpeechRecognitionModel, TranslateModel } from './types.ts';
+import { LlmModel, SpeechRecognitionModel, TranslateModel } from './types.ts';
+
+export const LLM_MODELS: Array<LlmModel> = [
+  RedPajamaINCITEChat3B,
+  Mistral7BInstruct,
+];
 
 export const TRANSLATION_MODELS: Array<TranslateModel> = [
   {

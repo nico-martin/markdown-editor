@@ -45,6 +45,11 @@ export const formatAudioTimestamp = (time: number): string => {
   )}`;
 };
 
+export const round = (value: number, precision: number = 0) => {
+  const multiplier = Math.pow(10, precision || 0);
+  return Math.round(value * multiplier) / multiplier;
+};
+
 export const getAudioFromRecording = async (
   data: Blob
 ): Promise<{ buffer: AudioBuffer; url: string; mimeType: string }> =>

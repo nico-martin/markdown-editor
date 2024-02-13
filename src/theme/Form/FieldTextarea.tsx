@@ -7,20 +7,53 @@ import styles from './FieldInput.module.css';
 const FieldTextarea: React.FC<{
   className?: string;
   value: string;
-  onChange: Function;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   name: string;
   id: string;
   type?: string;
+  autogrow?: boolean;
   [key: string]: any;
-}> = ({ className = '', value, onChange, name, id, ...props }) => (
-  <textarea
-    className={cn(className, styles.root)}
-    value={value}
-    onChange={(e) => onChange(e)}
-    name={name}
-    id={id}
-    {...props}
-  />
-);
+}> = ({
+  className = '',
+  value,
+  onChange,
+  name,
+  id,
+  autogrow = false,
+  ...props
+}) => {
+  const ref = React.useRef<HTMLTextAreaElement>(null);
+
+  const onInput = (e: Event) => {
+    const target = e.target as HTMLTextAreaElement;
+    target.style.height = 'auto';
+    target.style.height = target.scrollHeight + 'px';
+  };
+
+  React.useEffect(() => {
+    if (ref?.current && autogrow) {
+      ref.current.setAttribute(
+        'style',
+        'height:' + ref.current.scrollHeight + 'px;overflow-y:hidden;'
+      );
+      ref.current.addEventListener('input', onInput, false);
+      return () => {
+        ref?.current?.removeEventListener('input', onInput, false);
+      };
+    }
+  }, [ref.current]);
+
+  return (
+    <textarea
+      className={cn(className, styles.root)}
+      value={value}
+      onChange={(e) => onChange(e)}
+      name={name}
+      id={id}
+      ref={ref}
+      {...props}
+    />
+  );
+};
 
 export default FieldTextarea;

@@ -18,6 +18,7 @@ const FieldSelect: React.FC<{
   id: string;
   options: OptionsOrGroups<Option, Group>;
   fontStyling?: boolean;
+  onBlur?: () => void;
   [key: string]: any;
 }> = ({
   className = '',
@@ -29,6 +30,7 @@ const FieldSelect: React.FC<{
   fontStyling = false,
   ...rest
 }) => {
+  delete rest.onBlur;
   const allOptions = React.useMemo(
     () =>
       options

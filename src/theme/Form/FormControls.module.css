@@ -1,3 +1,8 @@
 .controls {
   margin-top: var(--space);
 }
+
+.feedback {
+  margin-right: auto;
+  margin-left: 0;
+}

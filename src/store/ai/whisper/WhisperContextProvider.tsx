@@ -134,6 +134,7 @@ const WhisperContextProvider: React.FC<{
         (e) => {
           const status = (e as CustomEvent<WHISPER_WORKER_STATUS>).detail;
           if (status === WHISPER_WORKER_STATUS.COMPLETE) {
+            setBusy(false);
             resolve(true);
           }
         },

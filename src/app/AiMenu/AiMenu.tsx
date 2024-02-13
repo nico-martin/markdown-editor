@@ -25,10 +25,10 @@ const AiMenu: React.FC<{ className?: string; editor: TinyMCEEditor }> = ({
   className = '',
   editor,
 }) => {
-  const { activeTranslateModel, activeSpeechRecognitionModel } =
+  const { activeTranslateModel, activeSpeechRecognitionModel, activeLlmModel } =
     useAiSettings();
-  const menuRef = React.useRef<HTMLDivElement>(null);
   const { width } = useWindowSize();
+  const [menuRect, setMenuRect] = React.useState<DOMRect | null>(null);
   const [editorView] = useEditorView();
   const [openMenu, setOpenMenu] = React.useState<AiMenuItems>(null);
   const [menuLeft, setMenuLeft] = React.useState<boolean>(false);
@@ -36,20 +36,24 @@ const AiMenu: React.FC<{ className?: string; editor: TinyMCEEditor }> = ({
   const toggleMenu = (menu: AiMenuItems) =>
     setOpenMenu((open) => (open === menu ? null : menu));
 
+  const menuRectRef = React.useCallback((node: HTMLElement) => {
+    if (node !== null) {
+      setMenuRect(node.getBoundingClientRect());
+    }
+  }, []);
+
   React.useEffect(() => {
-    window.setTimeout(() => {
-      if (!menuRef.current) return;
-      const rect = menuRef.current.getBoundingClientRect();
-      const right = window.innerWidth - rect.left - rect.width;
-      setMenuLeft(right < 270);
-    }, 50);
-  }, [menuRef, width, editorView]);
+    if (menuRect) {
+      const right = window.innerWidth - menuRect.left - menuRect.width;
+      setMenuLeft(right < 250);
+    }
+  }, [menuRect, width, editorView]);
 
   return (
     (editorView === EDITOR_VIEWS.SPLIT || editorView === EDITOR_VIEWS.HTML) &&
     activeFileIndex !== 'new' &&
     (activeTranslateModel || activeSpeechRecognitionModel) && (
-      <div className={cn(className, styles.root)} ref={menuRef}>
+      <div className={cn(className, styles.root)} ref={menuRectRef}>
         <ul className={cn(styles.list)}>
           <li className={cn(styles.item)}>
             <Icon icon="creation" className={styles.headingIcon} />
@@ -87,20 +91,22 @@ const AiMenu: React.FC<{ className?: string; editor: TinyMCEEditor }> = ({
               )}
             </li>
           )}
-          <li className={cn(styles.item)}>
-            <Button
-              onClick={() => toggleMenu(AiMenuItems.PROMPT)}
-              className={styles.button}
-              layout="empty"
-              icon="comment-text-outline"
-            />
-            {openMenu === AiMenuItems.PROMPT && (
-              <TextGenerator
-                className={cn(styles.menu, { [styles.menuLeft]: menuLeft })}
-                editor={editor}
+          {activeLlmModel && (
+            <li className={cn(styles.item)}>
+              <Button
+                onClick={() => toggleMenu(AiMenuItems.PROMPT)}
+                className={styles.button}
+                layout="empty"
+                icon="comment-text-outline"
               />
-            )}
-          </li>
+              {openMenu === AiMenuItems.PROMPT && (
+                <TextGenerator
+                  className={cn(styles.menu, { [styles.menuLeft]: menuLeft })}
+                  editor={editor}
+                />
+              )}
+            </li>
+          )}
         </ul>
       </div>
     )

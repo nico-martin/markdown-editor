@@ -41,3 +41,7 @@
   margin-right: auto;
   margin-left: 0.75em;
 }
+
+.feedback {
+  font-size: var(--fs-xsmall);
+}

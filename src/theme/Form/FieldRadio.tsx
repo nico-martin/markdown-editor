@@ -9,7 +9,7 @@ const FieldRadio: React.FC<{
   value: string;
   label: string;
   checked?: boolean;
-  onChange: Function;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
   id: string;
 }> = ({

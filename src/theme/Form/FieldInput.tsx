@@ -7,7 +7,7 @@ import styles from './FieldInput.module.css';
 const FieldInput: React.FC<{
   className?: string;
   value: string;
-  onChange: Function;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
   id: string;
   type?: string;

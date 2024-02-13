@@ -125,6 +125,7 @@ const TranslationsContextProvider: React.FC<{
         (e) => {
           const status = (e as CustomEvent<TRANSLATIONS_WORKER_STATUS>).detail;
           if (status === TRANSLATIONS_WORKER_STATUS.COMPLETE) {
+            setBusy(false);
             resolve(true);
           }
         },

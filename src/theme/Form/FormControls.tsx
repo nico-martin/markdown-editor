@@ -17,6 +17,7 @@ interface Props {
     icon: IconType;
     onClick: () => void;
   };
+  feedback?: React.ReactElement;
   [key: string]: any;
 }
 
@@ -30,11 +31,13 @@ const FormControls = React.forwardRef<HTMLButtonElement, Props>(
       resetText = 'Reset',
       resetFunction = null,
       customSubmit = null,
+      feedback = null,
       ...buttonProps
     },
     ref
   ) => (
     <ButtonGroup align={align} className={cn(styles.controls, className)}>
+      {Boolean(feedback) && <div className={styles.feedback}>{feedback}</div>}
       {resetFunction && align === 'right' && (
         <Button round onClick={resetFunction} appearance="none" type="button">
           {resetText}

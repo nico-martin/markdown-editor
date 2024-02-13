@@ -4,13 +4,17 @@ import React from 'react';
 import {
   getFirstXChars,
   removeBracketsAndWordsInside,
+  round,
 } from '@utils/helpers.ts';
 
+import useLlm from '@store/ai/llm/useLlm.ts';
 import {
+  LLM_MODELS,
   SPEECH_RECOGNITION_MODELS,
   TRANSLATION_MODELS,
 } from '@store/ai/static/models.ts';
 import {
+  LlmModel,
   SpeechRecognitionModel,
   TranslateModel,
 } from '@store/ai/static/types.ts';
@@ -120,6 +124,34 @@ const SpeechRecognitionModelOption: React.FC<{
   );
 };
 
+const LlmModelOption: React.FC<{
+  model: LlmModel;
+}> = ({ model }) => {
+  const { activeLlmModel, setActiveLlmModel } = useAiSettings();
+  const { busy, initialize } = useLlm();
+  const [downloadProgress, setDownloadProgress] = React.useState<number>(null);
+  const download = async () => {
+    await initialize(model, (progress) =>
+      setDownloadProgress(round(progress * 100))
+    );
+  };
+
+  return (
+    <ModelOption
+      className={styles.option}
+      title={model.title}
+      name="llm"
+      value={model.id}
+      size={model.size}
+      downloadProgress={downloadProgress}
+      downloadModel={download}
+      downloadDisabled={busy}
+      checked={activeLlmModel?.id === model.id}
+      onCheck={() => setActiveLlmModel(model)}
+    />
+  );
+};
+
 const AiSettingsModal: React.FC<{
   show: boolean;
   setShow: (show: boolean) => void;
@@ -129,6 +161,8 @@ const AiSettingsModal: React.FC<{
     setActiveTranslateModel,
     activeSpeechRecognitionModel,
     setActiveSpeechRecognitionModel,
+    activeLlmModel,
+    setActiveLlmModel,
   } = useAiSettings();
   return (
     <PortalBox
@@ -175,7 +209,21 @@ const AiSettingsModal: React.FC<{
       </div>
 
       <h3 className={styles.sectionTitle}>Text generation</h3>
-      <div className={styles.content}></div>
+      <div className={styles.optionList}>
+        <ModelOption
+          className={styles.option}
+          name="llm"
+          value="none"
+          title="Not activated"
+          checked={activeLlmModel === null}
+          onCheck={() => setActiveLlmModel(null)}
+        />
+        <React.Fragment>
+          {LLM_MODELS.map((model, i) => (
+            <LlmModelOption key={i} model={model} />
+          ))}
+        </React.Fragment>
+      </div>
     </PortalBox>
   );
 };
