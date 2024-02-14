@@ -1,7 +1,7 @@
 import { FieldTextarea, Form, FormControls, FormElement } from '@theme';
+import Quill from 'quill';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Editor as TinyMCEEditor } from 'tinymce';
 
 import styles from '@app/AiMenu/Transcribe.module.css';
 
@@ -11,7 +11,7 @@ import useLlm from '@store/ai/llm/useLlm.ts';
 
 const TextGenerator: React.FC<{
   className?: string;
-  editor: TinyMCEEditor;
+  editor: Quill;
 }> = ({ className = '', editor }) => {
   const { busy, generate } = useLlm();
   const [llmFeedback, setLlmFeedback] = React.useState<string>('');

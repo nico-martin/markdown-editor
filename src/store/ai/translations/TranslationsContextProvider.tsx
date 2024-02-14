@@ -1,4 +1,5 @@
 import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   TRANSLATIONS_MODEL_WORKER_EVENT,
@@ -41,8 +42,12 @@ const TranslationsContextProvider: React.FC<{
     document.dispatchEvent(event);
   };
 
-  const dispatchTranslationEvent = (output: string, done: boolean = false) => {
-    const event = new CustomEvent(translationEventKey, {
+  const dispatchTranslationEvent = (
+    output: string,
+    id: string,
+    done: boolean = false
+  ) => {
+    const event = new CustomEvent(translationEventKey + '-' + id, {
       detail: { output, done },
     });
     document.dispatchEvent(event);
@@ -92,14 +97,18 @@ const TranslationsContextProvider: React.FC<{
 
         case 'update':
           // Generation update: update the output text.
-          dispatchTranslationEvent(e.data.output, false);
+          dispatchTranslationEvent(e.data.output, e.data.id, false);
           break;
 
         case 'complete':
           // Generation complete: re-enable the "Translate" button
           setBusy(false);
           Boolean(e.data.output) &&
-            dispatchTranslationEvent(e.data.output[0].translation_text, true);
+            dispatchTranslationEvent(
+              e.data.output[0].translation_text,
+              e.data.id,
+              true
+            );
           dispatchWorkerEvent(TRANSLATIONS_WORKER_STATUS.COMPLETE);
           break;
       }
@@ -117,8 +126,10 @@ const TranslationsContextProvider: React.FC<{
     new Promise((resolve) => {
       setBusy(true);
       dispatchWorkerEvent(TRANSLATIONS_WORKER_STATUS.LOADING);
+      const requestId = uuidv4();
       worker.current.postMessage({
         model: model.path,
+        id: requestId,
       });
       document.addEventListener(
         workerEventKey,
@@ -142,15 +153,17 @@ const TranslationsContextProvider: React.FC<{
     new Promise((resolve) => {
       setBusy(true);
       dispatchWorkerEvent(TRANSLATIONS_WORKER_STATUS.LOADING);
-      dispatchTranslationEvent('');
+      const requestId = uuidv4();
+      dispatchTranslationEvent('', requestId);
       worker.current.postMessage({
         model: activeTranslateModel.path,
         text,
         src_lang,
         tgt_lang,
+        id: requestId,
       });
       document.addEventListener(
-        translationEventKey,
+        translationEventKey + '-' + requestId,
         (e) => {
           const { output, done } = (
             e as CustomEvent<{

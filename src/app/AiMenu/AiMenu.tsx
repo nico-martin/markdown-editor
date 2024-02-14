@@ -1,6 +1,6 @@
 import { Button, Icon } from '@theme';
+import Quill from 'quill';
 import React from 'react';
-import { Editor as TinyMCEEditor } from 'tinymce';
 
 import TextGenerator from '@app/AiMenu/TextGenerator.tsx';
 import Transcribe from '@app/AiMenu/Transcribe.tsx';
@@ -21,7 +21,7 @@ enum AiMenuItems {
   PROMPT = 'prompt',
 }
 
-const AiMenu: React.FC<{ className?: string; editor: TinyMCEEditor }> = ({
+const AiMenu: React.FC<{ className?: string; editor: Quill }> = ({
   className = '',
   editor,
 }) => {

@@ -13,34 +13,40 @@ type InitPipelineProgressEvent = {
   progress: number;
   status: 'progress';
   total: number;
+  id: string;
 };
 
 type InitPipelineDoneEvent = {
   status: 'done';
   name: string;
   file: string;
+  id: string;
 };
 
 type InitPipelineReadyEvent = {
   status: 'ready';
   name: string;
   file: string;
+  id: string;
 };
 
 type InitPipelineInitiateEvent = {
   status: 'initiate';
   name: string;
   file: string;
+  id: string;
 };
 
 type TranslateUpdateEvent = {
   status: 'update';
   output: string;
+  id: string;
 };
 
 type CompleteEvent = {
   status: 'complete';
   output?: string;
+  id: string;
 };
 
 type PipelineEvent =
@@ -92,13 +98,14 @@ self.addEventListener('message', async (event) => {
   log('event.data.text', event.data.text);
   const translator = await instance.loadPipeline(
     event.data.model,
-    (x: PipelineEvent) => self.postMessage(x)
+    (x: PipelineEvent) => self.postMessage({ ...x, id: event.data.id })
   );
 
   if (!event.data.text) {
     // if there is no text, we don't need to translate and we're done
     self.postMessage({
       status: 'complete',
+      id: event.data.id,
     });
     return;
   }
@@ -115,6 +122,7 @@ self.addEventListener('message', async (event) => {
         output: translator.tokenizer.decode(x[0].output_token_ids, {
           skip_special_tokens: true,
         }),
+        id: event.data.id,
       });
     },
   });
@@ -125,5 +133,6 @@ self.addEventListener('message', async (event) => {
   self.postMessage({
     status: 'complete',
     output: output,
+    id: event.data.id,
   });
 });

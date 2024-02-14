@@ -1,4 +1,5 @@
 .root {
+  overflow: visible;
   position: relative;
   background-color: var(--c-bkg-light);
   box-shadow: var(--shadow-paper);

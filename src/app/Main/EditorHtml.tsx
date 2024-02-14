@@ -1,14 +1,14 @@
-import { Editor } from '@tinymce/tinymce-react';
+import Quill, { TextChangeHandler } from 'quill';
 import React from 'react';
 import showdown from 'showdown';
-import { Editor as TinyMCEEditor } from 'tinymce';
 import TurndownService from 'turndown';
 
 import AiMenu from '@app/AiMenu/AiMenu.tsx';
+import QuillEditor from '@app/Main/editorHtml/QuillEditor.tsx';
 
 import cn from '@utils/classnames';
-import { TINYMCE_URL } from '@utils/constants';
 
+import { EditMode, useEditMode } from '@store/SettingsContext.tsx';
 import { File } from '@store/types';
 
 import styles from './EditorHtml.module.css';
@@ -23,31 +23,50 @@ const EditorHtml: React.FC<{
   activeFile: File;
   updateActiveFile: (file: Partial<File>) => void;
 }> = ({ className = '', activeFile, updateActiveFile }) => {
-  const [editor, setEditor] = React.useState<TinyMCEEditor>(null);
-  const [isEdit, setIsEdit] = React.useState<boolean>(false);
-  const [html, setHtml] = React.useState<string>('');
+  const [editor, setEditor] = React.useState<Quill>(null);
+  const [editMode, setEditMode] = useEditMode();
 
   React.useEffect(() => {
-    editor &&
-      !isEdit &&
-      setHtml(showdownConverter.makeHtml(activeFile.content));
-  }, [editor, activeFile.content, isEdit]);
+    if (editor && editMode !== EditMode.HTML) {
+      const delta = editor.clipboard.convert(
+        // @ts-ignore
+        showdownConverter.makeHtml(activeFile.content)
+      );
+      editor.setContents(delta);
+    }
+  }, [editor, activeFile.content, editMode]);
+
+  const textChange: TextChangeHandler = (_delta, _oldDelta, source) => {
+    if (source == 'api') {
+      //An API call triggered this change.
+    } else if (source == 'silent') {
+      //A Silent call triggered this change.
+    } else if (source == 'user') {
+      setEditMode(EditMode.HTML);
+      updateActiveFile({
+        content: turndownConverter.turndown(editor.root.innerHTML),
+      });
+    }
+  };
 
   React.useEffect(() => {
-    editor && editor.on('focus', () => setIsEdit(true));
-    editor && editor.on('blur', () => setIsEdit(false));
+    if (editor) {
+      editor.on('text-change', textChange);
+
+      return () => {
+        editor.off('text-change', textChange);
+      };
+    }
   }, [editor]);
-
-  // todo: inline controls wrong position
 
   return (
     <React.Fragment>
       <AiMenu className={styles.aiMenu} editor={editor} />
-      <div
+      <QuillEditor
         className={cn(className, styles.root, 'scroll-sync')}
-        data-focus={isEdit}
-      >
-        <Editor
+        setup={setEditor}
+      />
+      {/*<Editor
           tinymceScriptSrc={TINYMCE_URL}
           initialValue={html}
           init={{
@@ -83,8 +102,7 @@ const EditorHtml: React.FC<{
             isEdit &&
               updateActiveFile({ content: turndownConverter.turndown(markup) });
           }}
-        />
-      </div>
+        />*/}
     </React.Fragment>
   );
 };

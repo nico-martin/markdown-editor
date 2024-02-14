@@ -8,11 +8,19 @@ export enum EDITOR_VIEWS {
   HTML = 'html',
 }
 
+export enum EditMode {
+  NONE = 'none',
+  MD = 'md',
+  HTML = 'html',
+}
+
 interface SettingsContext {
   appSettings: Record<string, string>;
   setAppSettings: (settings: Record<string, string>) => void;
   editorView: EDITOR_VIEWS;
   setEditorView: (editorView: EDITOR_VIEWS) => void;
+  editMode: EditMode;
+  setEditMode: (mode: EditMode) => void;
 }
 
 const settingsContext = React.createContext<SettingsContext>({
@@ -20,6 +28,8 @@ const settingsContext = React.createContext<SettingsContext>({
   setAppSettings: () => {},
   editorView: null,
   setEditorView: () => {},
+  editMode: EditMode.NONE,
+  setEditMode: () => {},
 });
 
 export const SettingsContextProvider: React.FC<{
@@ -29,6 +39,7 @@ export const SettingsContextProvider: React.FC<{
   const [editorView, setEditorView] = React.useState<EDITOR_VIEWS>(null);
   const [appSettings, setAppSettings] =
     React.useState<Record<string, string>>(null);
+  const [editMode, setEditMode] = React.useState<EditMode>(EditMode.NONE);
 
   React.useEffect(() => {
     if (!init) {
@@ -44,7 +55,14 @@ export const SettingsContextProvider: React.FC<{
 
   return (
     <settingsContext.Provider
-      value={{ editorView, setEditorView, appSettings, setAppSettings }}
+      value={{
+        editorView,
+        setEditorView,
+        appSettings,
+        setAppSettings,
+        editMode,
+        setEditMode,
+      }}
     >
       {children}
     </settingsContext.Provider>
@@ -67,4 +85,13 @@ export const useAppSettings = (): [
   const { appSettings, setAppSettings } =
     React.useContext<SettingsContext>(settingsContext);
   return [appSettings || {}, setAppSettings];
+};
+
+export const useEditMode = (): [
+  isEditing: EditMode,
+  setIsEditing: (mode: EditMode) => void
+] => {
+  const { editMode, setEditMode } =
+    React.useContext<SettingsContext>(settingsContext);
+  return [editMode, setEditMode];
 };

@@ -1,0 +1,133 @@
+.root :global(.ql-editor) {
+  padding: calc(3 * var(--fs-base-editor));
+
+  * + * {
+    margin-top: var(--fs-base-editor);
+  }
+
+  * + h1,
+  * + h2,
+  * + h3 {
+    margin-top: calc(2 * var(--fs-base-editor));
+  }
+
+  h1 + *,
+  h2 + *,
+  h3 + * {
+    margin-top: calc(1.5 * var(--fs-base-editor));
+  }
+
+  ul,
+  ol {
+    padding-left: 0;
+
+    li + li {
+      margin-top: calc(0.25 * var(--fs-base-editor));
+    }
+  }
+
+  p,
+  li {
+    font-size: var(--fs-base-editor);
+  }
+
+  h1 {
+    font-size: calc(var(--fs-base-editor) * 2.5);
+  }
+
+  h2 {
+    font-size: calc(var(--fs-base-editor) * 1.5);
+  }
+
+  h3 {
+    font-size: calc(var(--fs-base-editor) * 1.2);
+  }
+}
+
+:global {
+  .ql-tooltip {
+    .ql-tooltip-arrow {
+      content: '';
+      display: block;
+      width: 0.75rem;
+      height: 0.75rem;
+      background-color: var(--c-bkg-light);
+      border-right: 2px solid var(--c-border-light);
+      border-top: 2px solid var(--c-border-light);
+      border-bottom: none !important;
+      border-left: none !important;
+      position: absolute;
+      left: 50%;
+      top: 20px;
+      rotate: -45deg;
+      translate: -60%;
+    }
+
+    .ql-toolbar {
+      background-color: var(--c-bkg-light);
+      border: 2px solid var(--c-border-light);
+      border-radius: var(--border-radius);
+
+      color: var(--c-p);
+      padding: 0 4px;
+      .ql-formats {
+        margin: 12px 0 !important;
+        padding: 0 6px !important;
+
+        & + .ql-formats {
+          border-left: 1px solid var(--c-border-light);
+        }
+      }
+    }
+  }
+
+  .ql-bubble {
+    .ql-toolbar {
+      .ql-stroke {
+        stroke: currentColor !important;
+      }
+
+      .ql-fill {
+        fill: currentColor !important;
+      }
+
+      button:hover {
+        color: var(--c-p-hover);
+      }
+    }
+
+    .ql-picker {
+      color: var(--c-p);
+
+      &.ql-expanded .ql-picker-label {
+        color: var(--c-p-hover);
+      }
+    }
+
+    .ql-bubble .ql-toolbar button.ql-active {
+    }
+
+    .ql-toolbar .ql-picker-item,
+    .ql-toolbar .ql-picker-label {
+      color: var(--c-p);
+
+      &:hover {
+        color: var(--c-p-hover);
+      }
+    }
+
+    button.ql-active {
+      color: var(--c-p-hover) !important;
+    }
+
+    .ql-picker-options {
+      background-color: var(--c-bkg-light);
+      border: 2px solid var(--c-border-light);
+      border-top: none;
+      border-bottom-left-radius: var(--border-radius);
+      border-bottom-right-radius: var(--border-radius);
+      color: var(--c-p);
+      margin-top: 12px !important;
+    }
+  }
+}

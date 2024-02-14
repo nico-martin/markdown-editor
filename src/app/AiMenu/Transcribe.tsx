@@ -1,7 +1,7 @@
 import { Button, FieldSelect, Form, FormControls, FormElement } from '@theme';
+import Quill from 'quill';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Editor as TinyMCEEditor } from 'tinymce';
 
 import useAudioRecorder from '@app/hooks/useAudioRecorder.ts';
 
@@ -14,7 +14,7 @@ import useWhisper from '@store/ai/whisper/useWhisper.ts';
 
 import styles from './Transcribe.module.css';
 
-const Transcribe: React.FC<{ className?: string; editor: TinyMCEEditor }> = ({
+const Transcribe: React.FC<{ className?: string; editor: Quill }> = ({
   className = '',
   editor,
 }) => {
@@ -28,13 +28,13 @@ const Transcribe: React.FC<{ className?: string; editor: TinyMCEEditor }> = ({
     clear,
     duration,
   } = useAudioRecorder();
-  const [editorState, setEditorState] = React.useState<{
+  /*const [editorState, setEditorState] = React.useState<{
     content: string;
     bookmark: any;
   }>({
     content: editor.getContent({ format: 'raw' }),
     bookmark: editor.selection.bookmarkManager.getBookmark(2),
-  });
+  });*/
   const [audioPlaying, setAudioPlaying] = React.useState<boolean>(false);
   const [audioTime, setAudioTime] = React.useState<number>(0);
   const audioRef = React.useRef<HTMLAudioElement>(null);
@@ -64,16 +64,16 @@ const Transcribe: React.FC<{ className?: string; editor: TinyMCEEditor }> = ({
             true,
             recordedBlob,
             (output) => {
-              editor.setContent(editorState.content);
+              /*editor.setContent(editorState.content);
               editor.selection.moveToBookmark(editorState.bookmark);
-              editor.selection.setContent(output);
+              editor.selection.setContent(output);*/
             }
           );
 
-          setEditorState({
+          /*setEditorState({
             content: editor.getContent({ format: 'raw' }),
             bookmark: editor.selection.bookmarkManager.getBookmark(2),
-          });
+          });*/
         })}
       >
         <div className={styles.recorder}>
