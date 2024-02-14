@@ -1,4 +1,5 @@
 import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   getAudioFromRecording,
@@ -50,8 +51,12 @@ const WhisperContextProvider: React.FC<{
     document.dispatchEvent(event);
   };
 
-  const dispatchTranscribeEvent = (text: string, done: boolean = false) => {
-    const event = new CustomEvent(transcribeEventKey, {
+  const dispatchTranscribeEvent = (
+    text: string,
+    id: string,
+    done: boolean = false
+  ) => {
+    const event = new CustomEvent(transcribeEventKey + '-' + id, {
       detail: { text, done },
     });
     document.dispatchEvent(event);
@@ -100,14 +105,14 @@ const WhisperContextProvider: React.FC<{
 
         case 'update':
           // Generation update: update the output text.
-          dispatchTranscribeEvent(e.data.data[0], false);
+          dispatchTranscribeEvent(e.data.data[0], e.data.id, false);
           break;
 
         case 'complete':
           // Generation complete: re-enable the "Translate" button
           setBusy(false);
           Boolean(e.data.data) &&
-            dispatchTranscribeEvent(e.data.data.text, true);
+            dispatchTranscribeEvent(e.data.data.text, e.data.id, true);
           dispatchWorkerEvent(WHISPER_WORKER_STATUS.COMPLETE);
           break;
       }
@@ -125,9 +130,11 @@ const WhisperContextProvider: React.FC<{
     new Promise((resolve) => {
       setBusy(true);
       dispatchWorkerEvent(WHISPER_WORKER_STATUS.LOADING);
+      const requestId = uuidv4();
       worker.current.postMessage({
         model: model.path,
         quantized: model.quantized,
+        id: requestId,
       });
       document.addEventListener(
         workerEventKey,
@@ -151,7 +158,8 @@ const WhisperContextProvider: React.FC<{
     new Promise((resolve) => {
       setBusy(true);
       dispatchWorkerEvent(WHISPER_WORKER_STATUS.LOADING);
-      dispatchTranscribeEvent('');
+      const requestId = uuidv4();
+      dispatchTranscribeEvent('', requestId);
       getAudioFromRecording(blob).then((audioData) => {
         worker.current.postMessage({
           model: activeSpeechRecognitionModel.path,
@@ -159,9 +167,10 @@ const WhisperContextProvider: React.FC<{
           multilingual,
           quantized: activeSpeechRecognitionModel.quantized,
           audio: getFloat32FromAudioBuffer(audioData.buffer),
+          id: requestId,
         });
         document.addEventListener(
-          transcribeEventKey,
+          transcribeEventKey + '-' + requestId,
           (e) => {
             const { text, done } = (
               e as CustomEvent<{

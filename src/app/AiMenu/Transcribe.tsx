@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import useAudioRecorder from '@app/hooks/useAudioRecorder.ts';
 
 import cn from '@utils/classnames.tsx';
+import { getSelectionHtml } from '@utils/editor.ts';
 import { formatAudioTimestamp } from '@utils/helpers.ts';
 
 import { TRANSCRIPTION_SOURCE_LANGUAGES } from '@store/ai/static/constants.ts';
@@ -28,13 +29,7 @@ const Transcribe: React.FC<{ className?: string; editor: Quill }> = ({
     clear,
     duration,
   } = useAudioRecorder();
-  /*const [editorState, setEditorState] = React.useState<{
-    content: string;
-    bookmark: any;
-  }>({
-    content: editor.getContent({ format: 'raw' }),
-    bookmark: editor.selection.bookmarkManager.getBookmark(2),
-  });*/
+
   const [audioPlaying, setAudioPlaying] = React.useState<boolean>(false);
   const [audioTime, setAudioTime] = React.useState<number>(0);
   const audioRef = React.useRef<HTMLAudioElement>(null);
@@ -59,21 +54,28 @@ const Transcribe: React.FC<{ className?: string; editor: Quill }> = ({
       <Form
         className={styles.form}
         onSubmit={form.handleSubmit(async (data) => {
+          const { isParagraph } = getSelectionHtml();
+          const selection = editor.getSelection();
+          let content: any = null;
+
           await transcribe(
             data.sourceLanguage,
             true,
             recordedBlob,
             (output) => {
-              /*editor.setContent(editorState.content);
-              editor.selection.moveToBookmark(editorState.bookmark);
-              editor.selection.setContent(output);*/
+              if (!content) {
+                editor.deleteText(selection.index, selection.length);
+                content = editor.getContents();
+              }
+
+              editor.setContents(content);
+              if (isParagraph) {
+                const newLine = '\n';
+                editor.insertText(selection.index - 1, newLine);
+              }
+              editor.clipboard.dangerouslyPasteHTML(selection.index, output);
             }
           );
-
-          /*setEditorState({
-            content: editor.getContent({ format: 'raw' }),
-            bookmark: editor.selection.bookmarkManager.getBookmark(2),
-          });*/
         })}
       >
         <div className={styles.recorder}>

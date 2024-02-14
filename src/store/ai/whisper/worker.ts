@@ -18,34 +18,40 @@ type InitPipelineProgressEvent = {
   progress: number;
   status: 'progress';
   total: number;
+  id: string;
 };
 
 type InitPipelineDoneEvent = {
   status: 'done';
   name: string;
   file: string;
+  id: string;
 };
 
 type InitPipelineReadyEvent = {
   status: 'ready';
   name: string;
   file: string;
+  id: string;
 };
 
 type InitPipelineInitiateEvent = {
   status: 'initiate';
   name: string;
   file: string;
+  id: string;
 };
 
 type TranslateUpdateEvent = {
   status: 'update';
   data: any;
+  id: string;
 };
 
 type CompleteEvent = {
   status: 'complete';
   output?: string;
+  id: string;
 };
 
 type PipelineEvent =
@@ -113,8 +119,7 @@ self.addEventListener('message', async (event) => {
     event.data.model,
     event.data.quantized,
     (x: PipelineEvent) => {
-      //log(x);
-      self.postMessage(x);
+      self.postMessage({ ...x, id: event.data.id });
     }
   );
 
@@ -122,6 +127,7 @@ self.addEventListener('message', async (event) => {
     // if there is no audio, we don't need to translate and we're done
     self.postMessage({
       status: 'complete',
+      id: event.data.id,
     });
     return;
   }
@@ -177,6 +183,7 @@ self.addEventListener('message', async (event) => {
     self.postMessage({
       status: 'update',
       data: data,
+      id: event.data.id,
     });
   }
 
@@ -206,6 +213,7 @@ self.addEventListener('message', async (event) => {
     self.postMessage({
       status: 'error',
       data: error,
+      id: event.data.id,
     });
     return null;
   });
@@ -213,5 +221,6 @@ self.addEventListener('message', async (event) => {
   self.postMessage({
     status: 'complete',
     data: output,
+    id: event.data.id,
   });
 });
