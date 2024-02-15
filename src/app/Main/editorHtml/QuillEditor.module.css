@@ -116,6 +116,7 @@
       }
     }
 
+    .ql-picker-label.ql-active,
     button.ql-active {
       color: var(--c-p-hover) !important;
     }

@@ -1,4 +1,7 @@
+// based on https://github.com/xenova/transformers.js/blob/main/examples/react-translator/src/worker.js
 import { TranslationPipeline, env, pipeline } from '@xenova/transformers';
+
+import { InitPipelineEvent, WorkerRequest, WorkerResponse } from './types.ts';
 
 env.allowLocalModels = false;
 
@@ -6,58 +9,10 @@ const showLog = false;
 const log = (...e: Array<any>) =>
   showLog ? console.log('[WORKER]', ...e) : null;
 
-type InitPipelineProgressEvent = {
-  file: string;
-  loaded: number;
-  name: string;
-  progress: number;
-  status: 'progress';
-  total: number;
-  id: string;
-};
+const postMessage = (e: WorkerResponse) => self.postMessage(e);
+const onMessage = (cb: (e: MessageEvent<WorkerRequest>) => void) =>
+  self.addEventListener('message', cb);
 
-type InitPipelineDoneEvent = {
-  status: 'done';
-  name: string;
-  file: string;
-  id: string;
-};
-
-type InitPipelineReadyEvent = {
-  status: 'ready';
-  name: string;
-  file: string;
-  id: string;
-};
-
-type InitPipelineInitiateEvent = {
-  status: 'initiate';
-  name: string;
-  file: string;
-  id: string;
-};
-
-type TranslateUpdateEvent = {
-  status: 'update';
-  output: string;
-  id: string;
-};
-
-type CompleteEvent = {
-  status: 'complete';
-  output?: string;
-  id: string;
-};
-
-type PipelineEvent =
-  | InitPipelineInitiateEvent
-  | InitPipelineReadyEvent
-  | InitPipelineDoneEvent
-  | InitPipelineProgressEvent
-  | TranslateUpdateEvent
-  | CompleteEvent;
-
-// based on https://github.com/xenova/transformers.js/blob/main/examples/react-translator/src/worker.js
 class PipelineInstance {
   private model = '';
   private static instance: PipelineInstance = null;
@@ -92,32 +47,32 @@ class PipelineInstance {
   }
 }
 
-// Listen for messages from the main thread
-self.addEventListener('message', async (event) => {
+onMessage(async (event) => {
   const instance = PipelineInstance.getInstance();
   log('event.data.text', event.data.text);
   const translator = await instance.loadPipeline(
     event.data.model,
-    (x: PipelineEvent) => self.postMessage({ ...x, id: event.data.id })
+    (x: InitPipelineEvent) => {
+      console.log(x);
+      postMessage({ ...x, id: event.data.id });
+    }
   );
 
   if (!event.data.text) {
-    // if there is no text, we don't need to translate and we're done
-    self.postMessage({
+    postMessage({
       status: 'complete',
       id: event.data.id,
     });
     return;
   }
 
-  // Actually perform the translation
   const output = await translator(event.data.text, {
     // @ts-ignore
     tgt_lang: event.data.tgt_lang,
-    //src_lang: event.data.src_lang,
+    src_lang: event.data.src_lang,
     callback_function: (x: any) => {
       log('translation cb', x);
-      self.postMessage({
+      postMessage({
         status: 'update',
         output: translator.tokenizer.decode(x[0].output_token_ids, {
           skip_special_tokens: true,
@@ -129,10 +84,11 @@ self.addEventListener('message', async (event) => {
 
   log('translation complete', output);
 
-  // Send the output back to the main thread
-  self.postMessage({
+  postMessage({
     status: 'complete',
-    output: output,
+    output:
+      // @ts-ignore
+      typeof output === 'string' ? output : output[0]?.translation_text || '',
     id: event.data.id,
   });
 });

@@ -5,62 +5,17 @@ import {
 } from '@xenova/transformers';
 import { ChunkCallbackItem } from '@xenova/transformers/types/pipelines';
 
+import { InitPipelineEvent, WorkerRequest, WorkerResponse } from './types.ts';
+
 env.allowLocalModels = false;
 
 const showLog = false;
 const log = (...e: Array<any>) =>
   showLog ? console.log('[WORKER]', ...e) : null;
 
-type InitPipelineProgressEvent = {
-  file: string;
-  loaded: number;
-  name: string;
-  progress: number;
-  status: 'progress';
-  total: number;
-  id: string;
-};
-
-type InitPipelineDoneEvent = {
-  status: 'done';
-  name: string;
-  file: string;
-  id: string;
-};
-
-type InitPipelineReadyEvent = {
-  status: 'ready';
-  name: string;
-  file: string;
-  id: string;
-};
-
-type InitPipelineInitiateEvent = {
-  status: 'initiate';
-  name: string;
-  file: string;
-  id: string;
-};
-
-type TranslateUpdateEvent = {
-  status: 'update';
-  data: any;
-  id: string;
-};
-
-type CompleteEvent = {
-  status: 'complete';
-  output?: string;
-  id: string;
-};
-
-type PipelineEvent =
-  | InitPipelineInitiateEvent
-  | InitPipelineReadyEvent
-  | InitPipelineDoneEvent
-  | InitPipelineProgressEvent
-  | TranslateUpdateEvent
-  | CompleteEvent;
+const postMessage = (e: WorkerResponse) => self.postMessage(e);
+const onMessage = (cb: (e: MessageEvent<WorkerRequest>) => void) =>
+  self.addEventListener('message', cb);
 
 class PipelineInstance {
   private model: string = null;
@@ -100,32 +55,29 @@ class PipelineInstance {
       {
         quantized: this.quantized,
         progress_callback,
-        // For medium models, we need to load the `no_attentions` revision to avoid running out of memory
         revision: this.model.includes('/whisper-medium')
           ? 'no_attentions'
           : 'main',
       }
     );
     log('new pipeline', this.pipeline);
-
     return this.pipeline;
   }
 }
 
-self.addEventListener('message', async (event) => {
+onMessage(async (event) => {
   const instance = PipelineInstance.getInstance();
 
   const transcriber = await instance.loadPipeline(
     event.data.model,
     event.data.quantized,
-    (x: PipelineEvent) => {
-      self.postMessage({ ...x, id: event.data.id });
+    (x: InitPipelineEvent) => {
+      postMessage({ ...x, id: event.data.id });
     }
   );
 
   if (!event.data.audio) {
-    // if there is no audio, we don't need to translate and we're done
-    self.postMessage({
+    postMessage({
       status: 'complete',
       id: event.data.id,
     });
@@ -150,11 +102,9 @@ self.addEventListener('message', async (event) => {
 
     const last = chunks_to_process[chunks_to_process.length - 1];
 
-    // Overwrite last chunk with new info
     Object.assign(last, chunk);
     last.finalised = true;
 
-    // Create an empty chunk after, if it not the last chunk
     if (!chunk.is_last) {
       chunks_to_process.push({
         tokens: [],
@@ -166,12 +116,7 @@ self.addEventListener('message', async (event) => {
   function callback_function(item: any) {
     log('callback_function', item);
     const last = chunks_to_process[chunks_to_process.length - 1];
-
-    // Update tokens of last chunk
     last.tokens = [...item[0].output_token_ids];
-
-    // Merge text chunks
-    // TODO optimise so we don't have to decode all chunks every time
     // @ts-ignore
     const data = transcriber.tokenizer._decode_asr(chunks_to_process, {
       time_precision: time_precision,
@@ -180,37 +125,28 @@ self.addEventListener('message', async (event) => {
     });
     log('callback_function data', data);
 
-    self.postMessage({
+    postMessage({
       status: 'update',
       data: data,
       id: event.data.id,
     });
   }
 
-  // Actually run transcription
   const output = await transcriber(event.data.audio, {
-    // Greedy
     top_k: 0,
     do_sample: false,
-
-    // Sliding window
     chunk_length_s: isDistilWhisper ? 20 : 30,
     stride_length_s: isDistilWhisper ? 3 : 5,
-
-    // Language and task
     language: event.data.language,
     task: 'transcribe',
-
-    // Return timestamps
     return_timestamps: true,
     force_full_sequences: false,
 
-    // Callback functions
     // @ts-ignore
-    callback_function, // after each generation step
-    chunk_callback, // after each chunk is processed
+    callback_function,
+    chunk_callback,
   }).catch((error) => {
-    self.postMessage({
+    postMessage({
       status: 'error',
       data: error,
       id: event.data.id,
@@ -218,7 +154,7 @@ self.addEventListener('message', async (event) => {
     return null;
   });
 
-  self.postMessage({
+  postMessage({
     status: 'complete',
     data: output,
     id: event.data.id,

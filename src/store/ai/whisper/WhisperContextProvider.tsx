@@ -16,6 +16,14 @@ import {
 } from '@store/ai/static/types.ts';
 import useAiSettings from '@store/ai/useAiSettings.ts';
 
+import {
+  CompleteEvent,
+  InitPipelineDoneEvent,
+  InitPipelineProgressEvent,
+  TranscribeUpdateEvent,
+  WorkerRequest,
+  WorkerResponse,
+} from './types.ts';
 import { context } from './whisperContext';
 
 let instance = 0;
@@ -56,13 +64,19 @@ const WhisperContextProvider: React.FC<{
     id: string,
     done: boolean = false
   ) => {
-    const event = new CustomEvent(transcribeEventKey + '-' + id, {
+    const event = new CustomEvent(transcribeEventKeyRequestKey(id), {
       detail: { text, done },
     });
     document.dispatchEvent(event);
   };
 
   const worker = React.useRef(null);
+
+  const postWorkerMessage = (payload: WorkerRequest) =>
+    worker.current.postMessage(payload);
+
+  const transcribeEventKeyRequestKey = (requestId: string) =>
+    `${transcribeEventKey}-${requestId}`;
 
   React.useEffect(() => {
     if (!worker.current) {
@@ -71,50 +85,49 @@ const WhisperContextProvider: React.FC<{
       });
     }
 
-    const onMessageReceived = (e: MessageEvent) => {
+    const onMessageReceived = (e: MessageEvent<WorkerResponse>) => {
       switch (e.data.status) {
-        case 'initiate':
-          // Model file start load: add a new progress item to the list.
+        case 'initiate': {
           setReady(false);
-          setProgressItems((prev) => [...prev, e.data]);
+          setProgressItems([]);
           break;
-
-        case 'progress':
-          // Model file progress: update one of the progress items.
+        }
+        case 'progress': {
+          const data = e.data as InitPipelineProgressEvent;
           setProgressItems((prev) =>
             prev.map((item) => {
-              if (item.file === e.data.file) {
-                return { ...item, progress: e.data.progress };
+              if (item.file === data.file) {
+                return { ...item, progress: data.progress };
               }
               return item;
             })
           );
           break;
-
-        case 'done':
-          // Model file loaded: remove the progress item from the list.
+        }
+        case 'done': {
+          const data = e.data as InitPipelineDoneEvent;
           setProgressItems((prev) =>
-            prev.filter((item) => item.file !== e.data.file)
+            prev.filter((item) => item.file !== data.file)
           );
           break;
-
-        case 'ready':
-          // Pipeline ready: the worker is ready to accept messages.
+        }
+        case 'ready': {
           setReady(true);
           break;
-
-        case 'update':
-          // Generation update: update the output text.
-          dispatchTranscribeEvent(e.data.data[0], e.data.id, false);
+        }
+        case 'update': {
+          const data = e.data as TranscribeUpdateEvent;
+          dispatchTranscribeEvent(data.data[0], data.id, false);
           break;
-
-        case 'complete':
-          // Generation complete: re-enable the "Translate" button
+        }
+        case 'complete': {
+          const data = e.data as CompleteEvent;
           setBusy(false);
-          Boolean(e.data.data) &&
-            dispatchTranscribeEvent(e.data.data.text, e.data.id, true);
+          Boolean(data.data) &&
+            dispatchTranscribeEvent(data.data.text, data.id, true);
           dispatchWorkerEvent(WHISPER_WORKER_STATUS.COMPLETE);
           break;
+        }
       }
     };
 
@@ -131,7 +144,7 @@ const WhisperContextProvider: React.FC<{
       setBusy(true);
       dispatchWorkerEvent(WHISPER_WORKER_STATUS.LOADING);
       const requestId = uuidv4();
-      worker.current.postMessage({
+      postWorkerMessage({
         model: model.path,
         quantized: model.quantized,
         id: requestId,
@@ -161,7 +174,7 @@ const WhisperContextProvider: React.FC<{
       const requestId = uuidv4();
       dispatchTranscribeEvent('', requestId);
       getAudioFromRecording(blob).then((audioData) => {
-        worker.current.postMessage({
+        postWorkerMessage({
           model: activeSpeechRecognitionModel.path,
           language,
           multilingual,
@@ -170,7 +183,7 @@ const WhisperContextProvider: React.FC<{
           id: requestId,
         });
         document.addEventListener(
-          transcribeEventKey + '-' + requestId,
+          transcribeEventKeyRequestKey(requestId),
           (e) => {
             const { text, done } = (
               e as CustomEvent<{

@@ -1,4 +1,8 @@
-export const getSelectionHtml = (): { html: string; isParagraph: boolean } => {
+export const getSelectionHtml = (): {
+  html: string;
+  text: string;
+  isParagraph: boolean;
+} => {
   let html: string = '';
   if (typeof window.getSelection === 'undefined') {
     alert('Your browser does not support this feature');
@@ -21,5 +25,5 @@ export const getSelectionHtml = (): { html: string; isParagraph: boolean } => {
     html = html.slice(3, -4);
   }
 
-  return { html, isParagraph };
+  return { html, text: html.replace(/<\/?[^>]+(>|$)/g, ''), isParagraph };
 };

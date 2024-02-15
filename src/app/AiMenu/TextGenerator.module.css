@@ -1,0 +1,21 @@
+.root {
+}
+
+.form {
+  margin-top: var(--space);
+}
+
+.labelContainer {
+  min-width: auto;
+}
+
+.context {
+  padding-bottom: 0.75em;
+  margin-bottom: 1em;
+  border-bottom: 1px solid var(--c-border-light);
+}
+
+.context {
+  margin-top: 0.5rem;
+  font-size: var(--fs-xsmall);
+}

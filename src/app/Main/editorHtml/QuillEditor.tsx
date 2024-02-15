@@ -23,7 +23,7 @@ const QuillEditor: React.FC<{
                 header: [1, 2, 3, false],
               },
             ],
-            ['bold', 'italic', 'underline', 'link'],
+            ['bold', 'italic', 'underline', 'strike', 'link'],
             [{ list: 'ordered' }, { list: 'bullet' }],
           ],
         },
