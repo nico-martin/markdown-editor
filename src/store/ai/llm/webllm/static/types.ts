@@ -1,5 +1,3 @@
-import { round } from '@common/functions';
-
 export interface ConvTemplateConfig {
   system: string;
   roles: Array<string>;
@@ -50,8 +48,11 @@ export type GenerateProgressCallback = (
 
 export enum GenerationState {
   IDLE = 'IDLE',
+  INITIALIZING = 'INITIALIZING',
   THINKING = 'THINKING',
   ANSWERING = 'ANSWERING',
+  COMPLETE = 'COMPLETE',
+  ERROR = 'ERROR',
 }
 
 export interface RuntimeStats {

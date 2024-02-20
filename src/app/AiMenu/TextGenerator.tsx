@@ -7,6 +7,7 @@ import cn from '@utils/classnames.tsx';
 import { getSelectionHtml } from '@utils/editor.ts';
 import { getFirstXChars } from '@utils/helpers.ts';
 
+import { CallbackData } from '@store/ai/llm/llmContext.ts';
 import useLlm from '@store/ai/llm/useLlm.ts';
 
 import styles from './TextGenerator.module.css';
@@ -55,9 +56,9 @@ const TextGenerator: React.FC<{
 
           await generate(
             data.prompt + '\n\n' + context.text,
-            (feedback, message) => {
-              setLlmFeedback(feedback);
-              if (!message) return;
+            (data: CallbackData) => {
+              setLlmFeedback(data.feedback);
+              if (!data.output) return;
               if (!content) {
                 editor.deleteText(selection.index, selection.length);
                 content = editor.getContents();
@@ -81,7 +82,7 @@ const TextGenerator: React.FC<{
               }
               editor.clipboard.dangerouslyPasteHTML(
                 newSelctionIndex + 1,
-                message
+                data.output
               );
             }
           );
@@ -98,7 +99,7 @@ const TextGenerator: React.FC<{
         )}
         <FormElement
           name="prompt"
-          label="Prompt"
+          label="Instruction"
           Input={FieldTextarea}
           form={form}
           labelContainerClassName={styles.labelContainer}

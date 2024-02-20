@@ -48,6 +48,8 @@ const Transcribe: React.FC<{ className?: string; editor: Quill }> = ({
     }
   }, [values]);
 
+  console.log({ duration, audioPlaying, audioTime });
+
   return !activeTranslateModel ? null : (
     <div className={cn(className, styles.root)}>
       <h3>Transcribe</h3>
@@ -122,7 +124,7 @@ const Transcribe: React.FC<{ className?: string; editor: Quill }> = ({
                 />
               )}{' '}
               <span className={styles.audioTime}>
-                {formatAudioTimestamp(audioTime)}
+                {formatAudioTimestamp(audioPlaying ? audioTime : duration)}
               </span>
               <Button
                 layout="outline"

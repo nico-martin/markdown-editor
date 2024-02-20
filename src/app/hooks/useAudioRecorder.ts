@@ -41,6 +41,7 @@ const useAudioRecorder = (): {
   const startRecording = async () => {
     // Reset recording (if any)
     setRecordedBlob(null);
+    setDuration(0);
 
     const startTime: number = Date.now();
     if (!streamRef.current) {
@@ -85,7 +86,6 @@ const useAudioRecorder = (): {
       mediaRecorderRef.current.state === 'recording'
     ) {
       mediaRecorderRef.current.stop(); // set state to inactive
-      setDuration(0);
       setRecording(false);
     }
   };

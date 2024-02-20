@@ -1,24 +1,27 @@
 import React from 'react';
 
-import { ConvTemplateConfig } from '@utils/webLLM/static/types.ts';
-
 import { LlmModel } from '../static/types.ts';
 
-export const context = React.createContext<{
-  //activeModel: LlmModel;
+export interface CallbackData {
+  feedback: string;
+  progress: number;
+  output: string;
+}
+
+export interface Context {
   initialize: (
     model: LlmModel,
-    progressCallback: (progress: number) => void,
-    onversationConfig?: Partial<ConvTemplateConfig>
+    callback: (data: CallbackData) => void
   ) => Promise<boolean>;
   generate: (
     prompt: string,
-    cb?: (feedback: string, output: string) => void
+    callback: (data: CallbackData) => void
   ) => Promise<string>;
   ready: boolean;
   busy: boolean;
-}>({
-  //activeModel: null,
+}
+
+export const context = React.createContext<Context>({
   initialize: async () => true,
   generate: async () => '',
   ready: false,
