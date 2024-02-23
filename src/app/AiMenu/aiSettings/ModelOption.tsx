@@ -11,6 +11,7 @@ const ModelOption: React.FC<{
   name: string;
   value: string;
   title: string;
+  cardLink?: string;
   content?: React.ReactElement | Array<React.ReactElement | string> | string;
   downloadModel?: () => Promise<any>;
   downloadProgress?: number | boolean;
@@ -29,6 +30,7 @@ const ModelOption: React.FC<{
   name,
   value,
   title,
+  cardLink = null,
   downloadModel = null,
   downloadProgress = null,
   downloadDisabled = false,
@@ -70,6 +72,13 @@ const ModelOption: React.FC<{
       </div>
       <div className={styles.about}>
         <h3 className={styles.aboutTitle}>{title}</h3>
+        {Boolean(cardLink) && (
+          <p className={styles.cardLink}>
+            <a href={cardLink} target="_blank">
+              {cardLink}
+            </a>
+          </p>
+        )}
         {typeof content === 'string' ? <p>{content}</p> : content}
       </div>
       <div className={styles.controls}>

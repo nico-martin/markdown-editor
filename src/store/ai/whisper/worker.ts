@@ -40,7 +40,7 @@ class PipelineInstance {
       model,
       thisModel: this.model,
     });
-    if (this.pipeline && model === this.model) {
+    if (this.pipeline && model === this.model && quantized === this.quantized) {
       log('pipeline already ready');
       return this.pipeline;
     } else if (this.pipeline) {

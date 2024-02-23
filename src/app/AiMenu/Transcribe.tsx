@@ -48,8 +48,6 @@ const Transcribe: React.FC<{ className?: string; editor: Quill }> = ({
     }
   }, [values]);
 
-  console.log({ duration, audioPlaying, audioTime });
-
   return !activeTranslateModel ? null : (
     <div className={cn(className, styles.root)}>
       <h3>Transcribe</h3>

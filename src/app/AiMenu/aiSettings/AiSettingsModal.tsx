@@ -44,6 +44,7 @@ const TranslationModelOption: React.FC<{ model: TranslateModel }> = ({
       name="translations"
       value={model.path}
       size={model.size}
+      cardLink={model.cardLink}
       downloadProgress={downloading}
       downloadModel={download}
       downloadDisabled={busy}
@@ -61,7 +62,7 @@ const TranslationModelOption: React.FC<{ model: TranslateModel }> = ({
               :
             </b>
             <br />{' '}
-            {Object.values(model.inputLanguages).length >= 3
+            {Object.values(model.inputLanguages).length >= 4
               ? getFirstXChars(
                   removeBracketsAndWordsInside(
                     Object.values(model.inputLanguages).join(', ')
@@ -79,7 +80,7 @@ const TranslationModelOption: React.FC<{ model: TranslateModel }> = ({
               :
             </b>
             <br />{' '}
-            {Object.values(model.outputLanguages).length >= 3
+            {Object.values(model.outputLanguages).length >= 4
               ? getFirstXChars(
                   removeBracketsAndWordsInside(
                     Object.values(model.outputLanguages).join(', ')
@@ -114,6 +115,7 @@ const SpeechRecognitionModelOption: React.FC<{
       name="speechRecognition"
       value={model.path}
       size={model.size}
+      cardLink={model.cardLink}
       downloadProgress={downloading}
       downloadModel={download}
       downloadDisabled={busy}
@@ -130,11 +132,10 @@ const LlmModelOption: React.FC<{
   const { activeLlmModel, setActiveLlmModel } = useAiSettings();
   const { busy, initialize } = useLlm();
   const [downloadProgress, setDownloadProgress] = React.useState<number>(null);
-  const download = async () => {
-    await initialize(model, (progress) =>
-      setDownloadProgress(round(progress * 100))
+  const download = async () =>
+    await initialize(model, (data) =>
+      setDownloadProgress(round(data.progress * 100))
     );
-  };
 
   return (
     <ModelOption

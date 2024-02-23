@@ -15,6 +15,7 @@ const onMessage = (cb: (e: MessageEvent<WorkerRequest>) => void) =>
 
 class PipelineInstance {
   private model = '';
+  private task = '';
   private static instance: PipelineInstance = null;
   public pipeline: TranslationPipeline = null;
 
@@ -27,20 +28,23 @@ class PipelineInstance {
 
   public async loadPipeline(
     model: string,
-    progress_callback: (e: any) => void
+    progress_callback: (e: any) => void,
+    task: string = 'translation'
   ) {
     log('this.pipeline', {
       pipeline: this.pipeline,
       model,
       thisModel: this.model,
     });
-    if (this.pipeline && model === this.model) {
+    if (this.pipeline && model === this.model && task === this.task) {
       return this.pipeline;
     } else if (this.pipeline) {
       await this.pipeline.dispose();
     }
     this.model = model;
-    this.pipeline = await pipeline<'translation'>('translation', this.model, {
+    this.task = task;
+    // @ts-ignore
+    this.pipeline = await pipeline<'translation'>(task, this.model, {
       progress_callback,
     });
     return this.pipeline;
@@ -49,13 +53,13 @@ class PipelineInstance {
 
 onMessage(async (event) => {
   const instance = PipelineInstance.getInstance();
-  log('event.data.text', event.data.text);
+  log('event.data', event.data);
   const translator = await instance.loadPipeline(
     event.data.model,
-    (x: InitPipelineEvent) => {
-      console.log(x);
-      postMessage({ ...x, id: event.data.id });
-    }
+    (x: InitPipelineEvent) => postMessage({ ...x, id: event.data.id }),
+    event.data.model === 'Xenova/t5-small'
+      ? `translation_${event.data.src_lang}_to_${event.data.tgt_lang}`
+      : 'translation'
   );
 
   if (!event.data.text) {
@@ -70,6 +74,7 @@ onMessage(async (event) => {
     // @ts-ignore
     tgt_lang: event.data.tgt_lang,
     src_lang: event.data.src_lang,
+    max_new_tokens: 10000,
     callback_function: (x: any) => {
       log('translation cb', x);
       postMessage({

@@ -67,6 +67,11 @@
 .aboutTitle {
 }
 
+.cardLink {
+  margin-top: 0.5em;
+  font-size: var(--fs-xsmall);
+}
+
 .controls {
   margin-left: auto;
 }

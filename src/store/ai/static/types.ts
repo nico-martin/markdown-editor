@@ -3,6 +3,7 @@ import Model from '../llm/webllm/Model';
 export interface TranslateModel {
   name: string;
   path: string;
+  cardLink: string;
   size: number;
   inputLanguages: Record<string, string>;
   outputLanguages: Record<string, string>;
@@ -14,6 +15,7 @@ export interface SpeechRecognitionModel {
   key: string;
   name: string;
   path: string;
+  cardLink: string;
   quantized: boolean;
   size: number;
 }
