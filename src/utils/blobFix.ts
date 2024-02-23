@@ -252,6 +252,7 @@ class WebmBase<T> {
   source?: Uint8Array;
   data?: T;
 
+  // @ts-ignore
   constructor(private name = 'Unknown', private type = 'Unknown') {}
 
   updateBySource() {}
