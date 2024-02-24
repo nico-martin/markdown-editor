@@ -1,3 +1,4 @@
+import { useMatomo } from '@datapunt/matomo-tracker-react';
 import { Button, Icon, Tooltip } from '@theme';
 import React from 'react';
 
@@ -39,6 +40,7 @@ const ModelOption: React.FC<{
   checked = false,
   onCheck,
 }) => {
+  const { trackEvent } = useMatomo();
   const tooltipRef = React.useRef<HTMLSpanElement>(null);
   const [disabled, setDisabled] = React.useState<boolean>(true);
   React.useEffect(() => {
@@ -97,6 +99,10 @@ const ModelOption: React.FC<{
                 try {
                   await downloadModel();
                   setModelCached(`${name}/${value}`);
+                  trackEvent({
+                    category: 'download-model',
+                    action: `${name}/${value}`,
+                  });
                   setDisabled(
                     value !== 'none' && !isModelCached(`${name}/${value}`)
                   );

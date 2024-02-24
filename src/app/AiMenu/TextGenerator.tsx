@@ -1,3 +1,4 @@
+import { useMatomo } from '@datapunt/matomo-tracker-react';
 import { FieldTextarea, Form, FormControls, FormElement } from '@theme';
 import Quill, { RangeStatic } from 'quill';
 import Delta from 'quill-delta';
@@ -19,6 +20,7 @@ const TextGenerator: React.FC<{
   editorContext: QuillSelection;
   selection: RangeStatic;
 }> = ({ className = '', editor, editorContext, selection }) => {
+  const { trackEvent } = useMatomo();
   const { busy, generate } = useLlm();
   const [llmFeedback, setLlmFeedback] = React.useState<string>('');
   const form = useForm<{ prompt: string }>({
@@ -34,6 +36,11 @@ const TextGenerator: React.FC<{
         className={styles.form}
         onSubmit={form.handleSubmit(async (data) => {
           let content: any = null;
+
+          trackEvent({
+            category: 'ai-action',
+            action: 'text-generator',
+          });
 
           await generate(
             data.prompt + '\n\n' + editorContext.text,

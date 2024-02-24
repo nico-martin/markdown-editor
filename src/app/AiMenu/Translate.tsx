@@ -1,3 +1,4 @@
+import { useMatomo } from '@datapunt/matomo-tracker-react';
 import { FieldSelect, Form, FormControls, FormElement } from '@theme';
 import Quill, { RangeStatic } from 'quill';
 import Delta from 'quill-delta';
@@ -18,6 +19,7 @@ const Translate: React.FC<{
   editorContext: QuillSelection;
   selection: RangeStatic;
 }> = ({ className = '', editor, selection, editorContext }) => {
+  const { trackEvent } = useMatomo();
   const { activeTranslateModel, aiSettings, setAiSettings } = useAiSettings();
   const { translate, busy } = useTranslations();
   const form = useForm<{ from: string; to: string }>({
@@ -49,6 +51,11 @@ const Translate: React.FC<{
         className={styles.form}
         onSubmit={form.handleSubmit(async (data) => {
           let content: any = null;
+
+          trackEvent({
+            category: 'ai-action',
+            action: 'translate',
+          });
 
           await translate(data.from, data.to, editorContext.text, (output) => {
             if (!content) {

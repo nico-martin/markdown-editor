@@ -1,3 +1,4 @@
+import { useMatomo } from '@datapunt/matomo-tracker-react';
 import { Button, FieldSelect, Form, FormControls, FormElement } from '@theme';
 import Quill, { RangeStatic } from 'quill';
 import Delta from 'quill-delta';
@@ -20,6 +21,7 @@ const Transcribe: React.FC<{
   editor: Quill;
   selection: RangeStatic;
 }> = ({ className = '', editor, selection }) => {
+  const { trackEvent } = useMatomo();
   const { activeTranslateModel, aiSettings, setAiSettings } = useAiSettings();
   const { busy, transcribe } = useWhisper();
   const {
@@ -56,6 +58,11 @@ const Transcribe: React.FC<{
         className={styles.form}
         onSubmit={form.handleSubmit(async (data) => {
           let content: any = null;
+
+          trackEvent({
+            category: 'ai-action',
+            action: 'transcribe',
+          });
 
           await transcribe(
             data.sourceLanguage,
