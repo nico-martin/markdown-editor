@@ -108,7 +108,7 @@ const ModelOption: React.FC<{
                   );
                 } catch (e) {
                   alert('Model could not be loaded');
-                  console.log(e);
+                  console.log(e.toString());
                 }
               }}
               icon="download-outline"

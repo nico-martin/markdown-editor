@@ -101,7 +101,8 @@ self.addEventListener('message', async (event: MessageEvent<WorkerRequest>) => {
     postMessage({
       status: 'error',
       requestId: event.data.requestId,
-      error: e.toString(),
+      // @ts-ignore
+      error: e.message,
     });
   }
 });
