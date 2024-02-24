@@ -36,6 +36,6 @@ Instead of writing paragraphs yourself, md.edit offers a speech to text feature.
 ### Text generation / LLM
 In addition to the smaller translation and speech to text models, the app also uses large language models to generate or improve sections of the file.
 
-md.edit therefore uses LLMs, like the [Mistral 7B Instruct](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2), compiled for the web using [mlc-ai](https://mlc.ai/). Everything runs in a web worker while the calculations are done on the GPU using [WebGPU](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API).
+md.edit therefore uses LLMs, like the [Mistral 7B Instruct](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2), compiled for the web using [MLC LLM](https://github.com/mlc-ai/mlc-llm). Everything runs in a web worker while the calculations are done on the GPU using [WebGPU](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API).
 
 Special thanks to the team behind [WebLLM](https://github.com/mlc-ai/web-llm) where most of my MLC-adapter is based on.
