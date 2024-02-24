@@ -1,20 +1,23 @@
 import { FieldSelect, Form, FormControls, FormElement } from '@theme';
-import Quill from 'quill';
+import Quill, { RangeStatic } from 'quill';
+import Delta from 'quill-delta';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import cn from '@utils/classnames.tsx';
-import { getSelectionHtml } from '@utils/editor.ts';
+import { QuillSelection, getAttributesFromElement } from '@utils/editor.ts';
 
 import useTranslations from '@store/ai/translations/useTranslations.ts';
 import useAiSettings from '@store/ai/useAiSettings.ts';
 
 import styles from './Translate.module.css';
 
-const Translate: React.FC<{ className?: string; editor: Quill }> = ({
-  className = '',
-  editor,
-}) => {
+const Translate: React.FC<{
+  className?: string;
+  editor: Quill;
+  editorContext: QuillSelection;
+  selection: RangeStatic;
+}> = ({ className = '', editor, selection, editorContext }) => {
   const { activeTranslateModel, aiSettings, setAiSettings } = useAiSettings();
   const { translate, busy } = useTranslations();
   const form = useForm<{ from: string; to: string }>({
@@ -45,22 +48,23 @@ const Translate: React.FC<{ className?: string; editor: Quill }> = ({
       <Form
         className={styles.form}
         onSubmit={form.handleSubmit(async (data) => {
-          const { html, isParagraph } = getSelectionHtml();
-          const selection = editor.getSelection();
           let content: any = null;
 
-          await translate(data.from, data.to, html, (output) => {
+          await translate(data.from, data.to, editorContext.text, (output) => {
             if (!content) {
               editor.deleteText(selection.index, selection.length);
               content = editor.getContents();
             }
-
             editor.setContents(content);
-            if (isParagraph) {
-              const newLine = '\n';
-              editor.insertText(selection.index - 1, newLine);
+            const newDelta = new Delta().insert(output);
+            if (editorContext.element) {
+              newDelta.insert(
+                '\n',
+                getAttributesFromElement(editorContext.element)
+              );
             }
-            editor.clipboard.dangerouslyPasteHTML(selection.index, output);
+            const delta = new Delta().retain(selection.index).concat(newDelta);
+            editor.updateContents(delta, Quill.sources.USER);
           });
         })}
       >

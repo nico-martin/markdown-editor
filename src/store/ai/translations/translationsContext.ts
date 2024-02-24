@@ -15,9 +15,7 @@ export const context = React.createContext<{
   busy: boolean;
   progressItems: Array<{
     file: string;
-    name: string;
     progress: number;
-    status: string;
   }>;
 }>({
   activeModel: null,

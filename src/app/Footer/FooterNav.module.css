@@ -3,7 +3,12 @@
   align-items: center;
 }
 
-.element {
+.version {
+  margin-right: var(--space-grid-half);
+}
+
+.element,
+.version {
   font-size: 0.8rem;
 }
 

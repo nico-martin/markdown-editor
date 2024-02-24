@@ -2,7 +2,7 @@ import { Button, Icon, Tooltip } from '@theme';
 import React from 'react';
 
 import cn from '@utils/classnames.tsx';
-import { formatBytes, getLastElementOfPath } from '@utils/helpers.ts';
+import { formatBytes, getLastElementOfPath, round } from '@utils/helpers.ts';
 import { isModelCached, setModelCached } from '@utils/localStorage.ts';
 
 import styles from './ModelOption.module.css';
@@ -18,9 +18,7 @@ const ModelOption: React.FC<{
   downloadDisabled?: boolean;
   progressItems?: Array<{
     file: string;
-    name: string;
     progress: number;
-    status: string;
   }>;
   size?: number;
   className?: string;
@@ -118,7 +116,7 @@ const ModelOption: React.FC<{
           <div className={styles.downloadProgress}>
             <span
               className={styles.downloadProgressBar}
-              style={{ width: item.progress }}
+              style={{ width: round(item.progress) + '%' }}
             >
               {getLastElementOfPath(item.file)}
             </span>

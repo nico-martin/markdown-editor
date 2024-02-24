@@ -1,5 +1,5 @@
 import { Button, Icon } from '@theme';
-import Quill from 'quill';
+import Quill, { RangeStatic } from 'quill';
 import React from 'react';
 
 import TextGenerator from '@app/AiMenu/TextGenerator.tsx';
@@ -7,6 +7,7 @@ import Transcribe from '@app/AiMenu/Transcribe.tsx';
 import useWindowSize from '@app/hooks/useWindowSize.tsx';
 
 import cn from '@utils/classnames.tsx';
+import { QuillSelection } from '@utils/editor.ts';
 
 import { useFileContext } from '@store/FileContext.tsx';
 import { EDITOR_VIEWS, useEditorView } from '@store/SettingsContext.tsx';
@@ -21,10 +22,12 @@ enum AiMenuItems {
   PROMPT = 'prompt',
 }
 
-const AiMenu: React.FC<{ className?: string; editor: Quill }> = ({
-  className = '',
-  editor,
-}) => {
+const AiMenu: React.FC<{
+  className?: string;
+  editor: Quill;
+  editorContext: QuillSelection;
+  selection: RangeStatic;
+}> = ({ className = '', editor, editorContext, selection }) => {
   const { activeTranslateModel, activeSpeechRecognitionModel, activeLlmModel } =
     useAiSettings();
   const { width } = useWindowSize();
@@ -52,7 +55,9 @@ const AiMenu: React.FC<{ className?: string; editor: Quill }> = ({
   return (
     (editorView === EDITOR_VIEWS.SPLIT || editorView === EDITOR_VIEWS.HTML) &&
     activeFileIndex !== 'new' &&
-    (activeTranslateModel || activeSpeechRecognitionModel) && (
+    (activeTranslateModel ||
+      activeSpeechRecognitionModel ||
+      activeLlmModel) && (
       <div className={cn(className, styles.root)} ref={menuRectRef}>
         <ul className={cn(styles.list)}>
           <li className={cn(styles.item)}>
@@ -71,6 +76,8 @@ const AiMenu: React.FC<{ className?: string; editor: Quill }> = ({
                 <Translate
                   className={cn(styles.menu, { [styles.menuLeft]: menuLeft })}
                   editor={editor}
+                  selection={selection}
+                  editorContext={editorContext}
                 />
               )}
             </li>
@@ -87,6 +94,7 @@ const AiMenu: React.FC<{ className?: string; editor: Quill }> = ({
                 <Transcribe
                   className={cn(styles.menu, { [styles.menuLeft]: menuLeft })}
                   editor={editor}
+                  selection={selection}
                 />
               )}
             </li>
@@ -103,6 +111,8 @@ const AiMenu: React.FC<{ className?: string; editor: Quill }> = ({
                 <TextGenerator
                   className={cn(styles.menu, { [styles.menuLeft]: menuLeft })}
                   editor={editor}
+                  editorContext={editorContext}
+                  selection={selection}
                 />
               )}
             </li>

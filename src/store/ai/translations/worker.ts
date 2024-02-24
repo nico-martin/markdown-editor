@@ -56,7 +56,9 @@ onMessage(async (event) => {
   log('event.data', event.data);
   const translator = await instance.loadPipeline(
     event.data.model,
-    (x: InitPipelineEvent) => postMessage({ ...x, id: event.data.id }),
+    (x: InitPipelineEvent) => {
+      postMessage({ ...x, id: event.data.id });
+    },
     event.data.model === 'Xenova/t5-small'
       ? `translation_${event.data.src_lang}_to_${event.data.tgt_lang}`
       : 'translation'

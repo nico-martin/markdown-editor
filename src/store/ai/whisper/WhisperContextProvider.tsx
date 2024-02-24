@@ -37,9 +37,7 @@ const WhisperContextProvider: React.FC<{
   const [progressItems, setProgressItems] = React.useState<
     Array<{
       file: string;
-      name: string;
       progress: number;
-      status: string;
     }>
   >([]);
 
@@ -95,12 +93,16 @@ const WhisperContextProvider: React.FC<{
         case 'progress': {
           const data = e.data as InitPipelineProgressEvent;
           setProgressItems((prev) =>
-            prev.map((item) => {
-              if (item.file === data.file) {
-                return { ...item, progress: data.progress };
-              }
-              return item;
-            })
+            prev.findIndex((item) => item.file === data.file) === -1
+              ? [...prev, { file: data.file, progress: data.progress }]
+              : prev.map((item) =>
+                  item.file === data.file
+                    ? {
+                        ...item,
+                        progress: data.progress,
+                      }
+                    : { file: item.file, progress: item.progress }
+                )
           );
           break;
         }

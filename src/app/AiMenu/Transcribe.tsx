@@ -1,12 +1,12 @@
 import { Button, FieldSelect, Form, FormControls, FormElement } from '@theme';
-import Quill from 'quill';
+import Quill, { RangeStatic } from 'quill';
+import Delta from 'quill-delta';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import useAudioRecorder from '@app/hooks/useAudioRecorder.ts';
 
 import cn from '@utils/classnames.tsx';
-import { getSelectionHtml } from '@utils/editor.ts';
 import { formatAudioTimestamp } from '@utils/helpers.ts';
 
 import { TRANSCRIPTION_SOURCE_LANGUAGES } from '@store/ai/static/constants.ts';
@@ -15,10 +15,11 @@ import useWhisper from '@store/ai/whisper/useWhisper.ts';
 
 import styles from './Transcribe.module.css';
 
-const Transcribe: React.FC<{ className?: string; editor: Quill }> = ({
-  className = '',
-  editor,
-}) => {
+const Transcribe: React.FC<{
+  className?: string;
+  editor: Quill;
+  selection: RangeStatic;
+}> = ({ className = '', editor, selection }) => {
   const { activeTranslateModel, aiSettings, setAiSettings } = useAiSettings();
   const { busy, transcribe } = useWhisper();
   const {
@@ -54,26 +55,24 @@ const Transcribe: React.FC<{ className?: string; editor: Quill }> = ({
       <Form
         className={styles.form}
         onSubmit={form.handleSubmit(async (data) => {
-          const { isParagraph } = getSelectionHtml();
-          const selection = editor.getSelection();
           let content: any = null;
 
           await transcribe(
             data.sourceLanguage,
             true,
             recordedBlob,
-            (output) => {
+            (output: string) => {
               if (!content) {
                 editor.deleteText(selection.index, selection.length);
                 content = editor.getContents();
               }
 
               editor.setContents(content);
-              if (isParagraph) {
-                const newLine = '\n';
-                editor.insertText(selection.index - 1, newLine);
-              }
-              editor.clipboard.dangerouslyPasteHTML(selection.index, output);
+              const newDelta = new Delta().insert(output);
+              const delta = new Delta()
+                .retain(selection.index)
+                .concat(newDelta);
+              editor.updateContents(delta, Quill.sources.USER);
             }
           );
         })}

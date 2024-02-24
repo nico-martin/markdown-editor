@@ -5,6 +5,7 @@ import React from 'react';
 import cn from '@utils/classnames';
 import { appTitle } from '@utils/constants';
 
+import { version } from '../../../package.json';
 import styles from './FooterNav.module.css';
 
 type Menu = 'credits' | 'legal';
@@ -26,6 +27,7 @@ const FooterNav = ({ className = '' }: { className?: string }) => {
   return (
     <React.Fragment>
       <nav className={cn(className, styles.root)}>
+        <p className={cn(styles.version)}>v. {version}</p>
         {Object.entries(NAVIGATION).map(([key, title]) => (
           <Button
             className={cn(styles.element)}

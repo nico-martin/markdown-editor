@@ -1,10 +1,11 @@
 import { FieldTextarea, Form, FormControls, FormElement } from '@theme';
 import Quill, { RangeStatic } from 'quill';
+import Delta from 'quill-delta';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import cn from '@utils/classnames.tsx';
-import { getSelectionHtml } from '@utils/editor.ts';
+import { QuillSelection, getAttributesFromElement } from '@utils/editor.ts';
 import { getFirstXChars } from '@utils/helpers.ts';
 
 import { CallbackData } from '@store/ai/llm/llmContext.ts';
@@ -15,36 +16,16 @@ import styles from './TextGenerator.module.css';
 const TextGenerator: React.FC<{
   className?: string;
   editor: Quill;
-}> = ({ className = '', editor }) => {
+  editorContext: QuillSelection;
+  selection: RangeStatic;
+}> = ({ className = '', editor, editorContext, selection }) => {
   const { busy, generate } = useLlm();
   const [llmFeedback, setLlmFeedback] = React.useState<string>('');
-  const [context, setContext] = React.useState<{
-    html: string;
-    text: string;
-    isParagraph: boolean;
-  }>({ html: '', text: '', isParagraph: false });
-  const [selection, setSelection] = React.useState<RangeStatic>(null);
   const form = useForm<{ prompt: string }>({
     defaultValues: {
       prompt: '',
     },
   });
-
-  const updateSelectionHtml = () => {
-    if (editor.hasFocus() || getSelectionHtml().text !== '') {
-      setSelection(editor.getSelection());
-      setContext(getSelectionHtml());
-    }
-  };
-
-  React.useEffect(() => {
-    updateSelectionHtml();
-    editor.on('selection-change', updateSelectionHtml);
-
-    return () => {
-      editor.off('selection-change', updateSelectionHtml);
-    };
-  }, []);
 
   return (
     <div className={cn(className, styles.root)}>
@@ -55,7 +36,7 @@ const TextGenerator: React.FC<{
           let content: any = null;
 
           await generate(
-            data.prompt + '\n\n' + context.text,
+            data.prompt + '\n\n' + editorContext.text,
             (data: CallbackData) => {
               setLlmFeedback(data.feedback);
               if (!data.output) return;
@@ -65,35 +46,31 @@ const TextGenerator: React.FC<{
               }
 
               editor.setContents(content);
-
-              if (context.isParagraph) {
-                const newLine = '\n';
-                editor.insertText(selection.index - 1, newLine);
-              }
-              editor.clipboard.dangerouslyPasteHTML(
-                selection.index,
-                `<s>${context.html}</s><span> </span>`
-              );
-              const newSelctionIndex = selection.index + context.html.length;
-
-              if (context.isParagraph) {
-                const newLine = '\n';
-                editor.insertText(newSelctionIndex, newLine);
-              }
-              editor.clipboard.dangerouslyPasteHTML(
-                newSelctionIndex + 1,
-                data.output
-              );
+              const newDelta = new Delta().insert(editorContext.text, {
+                strike: true,
+                ...getAttributesFromElement(editorContext.element),
+              });
+              newDelta.insert('\n');
+              newDelta.insert(data.output);
+              editorContext.text !== '' &&
+                newDelta.insert(
+                  '\n',
+                  getAttributesFromElement(editorContext.element || 'p')
+                );
+              const delta = new Delta()
+                .retain(selection.index)
+                .concat(newDelta);
+              editor.updateContents(delta, Quill.sources.USER);
             }
           );
         })}
       >
-        {context.text !== '' && (
+        {editorContext.text !== '' && (
           <div className={styles.contextWrapper}>
             <p>Selected Context</p>
             <p className={styles.context}>
-              {getFirstXChars(context.text, 220) +
-                (context.text.length > 220 ? '...' : '')}
+              {getFirstXChars(editorContext.text, 220) +
+                (editorContext.text.length > 220 ? '...' : '')}
             </p>
           </div>
         )}
