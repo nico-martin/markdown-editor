@@ -26,3 +26,16 @@ Furthermore, all downloaded audio files are cached and can be used offline.
 ## AI
 This app uses a couple of AI models to provide additional features. All the models run directly in the browser and don't require any server communication.
 
+### Translation
+Sections of the markdown can be translated to other languages using AI models.  
+It therefore uses [Transformers.js](https://huggingface.co/docs/transformers.js/index) to run the model in a web worker and then pipes the translated output back to the editor.
+
+### Speech to Text
+Instead of writing paragraphs yourself, md.edit offers a speech to text feature. You can now record whatever you want to say and the app will transcribe it. It uses different versions of [https://huggingface.co/openai/whisper-base](Whisper) that again run in a web worker using [Transformers.js](https://huggingface.co/docs/transformers.js/index).
+
+### Text generation / LLM
+In addition to the smaller translation and speech to text models, the app also uses large language models to generate or improve sections of the file.
+
+md.edit therefore uses LLMs, like the [Mistral 7B Instruct](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2), compiled for the web using [mlc-ai](https://mlc.ai/). Everything runs in a web worker while the calculations are done on the GPU using [WebGPU](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API).
+
+Special thanks to the team behind [WebLLM](https://github.com/mlc-ai/web-llm) where most of my MLC-adapter is based on.
