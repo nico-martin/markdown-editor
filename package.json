@@ -16,7 +16,7 @@
   "dependencies": {
     "@datapunt/matomo-tracker-react": "^0.5.1",
     "@mlc-ai/web-tokenizers": "^0.1.2",
-    "@nico-martin/tvmjs": "^0.20.0-dev0",
+    "@nico-martin/tvmjs": "^0.21.0-dev0",
     "@popperjs/core": "^2.11.8",
     "@tinymce/tinymce-react": "^4.3.2",
     "@types/wicg-file-system-access": "^2020.9.6",
