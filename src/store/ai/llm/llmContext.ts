@@ -1,11 +1,13 @@
 import React from 'react';
 
 import { LlmModel } from '../static/types.ts';
+import { RuntimeStats } from './webllm/static/types.ts';
 
 export interface CallbackData {
   feedback: string;
   progress: number;
   output: string;
+  stats?: RuntimeStats;
 }
 
 export interface Context {

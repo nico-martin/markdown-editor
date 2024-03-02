@@ -9,6 +9,7 @@ const model = new Model({
   requiredFeatures: ['shader-f16'],
   //vram_required_MB: 5063.52,
   //low_resource_required: false,
+  cardLink: '',
 });
 
 export default model;

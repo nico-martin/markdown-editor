@@ -26,3 +26,10 @@
     font-size: var(--fs-xsmall);
   }
 }
+
+.llmModelOptionContent {
+  p {
+    margin-top: 0.5rem;
+    font-size: var(--fs-xsmall);
+  }
+}

@@ -149,6 +149,14 @@ const LlmModelOption: React.FC<{
       downloadDisabled={busy}
       checked={activeLlmModel?.id === model.id}
       onCheck={() => setActiveLlmModel(model)}
+      cardLink={model.cardLink}
+      content={
+        model.about ? (
+          <div className={styles.llmModelOptionContent}>
+            <p>{model.about}</p>
+          </div>
+        ) : null
+      }
     />
   );
 };

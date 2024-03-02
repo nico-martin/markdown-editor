@@ -10,27 +10,24 @@ export interface ConvTemplateConfig {
 }
 
 export interface ChatConfig {
-  tokenizer_files: Array<string>;
-  conv_config?: Partial<ConvTemplateConfig>;
-  conv_template: string;
-  // additional metadata
-  mean_gen_len: number;
-  shift_fill_factor: number;
-  repetition_penalty: number;
-  top_p: number;
-  temperature: number;
-}
+  // Only used in MLC
+  mean_gen_len?: number;
+  shift_fill_factor?: number;
+  repetition_penalty?: number;
 
-export interface ChatConfig {
+  top_p: number;
+  temperature: number;
+  max_gen_len?: number | null;
+  bos_token_id?: number;
+
+  frequency_penalty?: number;
+  presence_penalty?: number;
+  stop?: string | Array<string>;
+  n?: number;
+
   tokenizer_files: Array<string>;
   conv_config?: Partial<ConvTemplateConfig>;
   conv_template: string;
-  // additional metadata
-  mean_gen_len: number;
-  shift_fill_factor: number;
-  repetition_penalty: number;
-  top_p: number;
-  temperature: number;
 }
 
 export type InitProgressCallback = (report: InitProgressCallbackReport) => void;
@@ -67,3 +64,9 @@ export interface RuntimeStats {
 export interface FullStats extends RuntimeStats {
   gpuAdapter: GPUAdapterInfo;
 }
+
+export type ChatCompletionFinishReason =
+  | 'stop'
+  | 'length'
+  | 'tool_calls'
+  | 'abort';

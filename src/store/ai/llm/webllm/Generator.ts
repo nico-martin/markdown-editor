@@ -1,20 +1,21 @@
-import * as tvmjs from '@nico-martin/tvmjs';
-import Model from './Model';
 import { Tokenizer } from '@mlc-ai/web-tokenizers';
+import * as tvmjs from '@nico-martin/tvmjs';
+
+import Model from './Model';
 import Pipeline from './Pipeline';
-import {
-  InitProgressCallback,
-  ChatConfig,
-  ConvTemplateConfig,
-  GenerateProgressCallback,
-  GenerationState,
-  RuntimeStats,
-} from './static/types';
 import {
   CONFIG_CACHE_SCOPE,
   MODEL_CACHE_SCOPE,
   WASM_CACHE_SCOPE,
 } from './static/constants';
+import {
+  ChatConfig,
+  ConvTemplateConfig,
+  GenerateProgressCallback,
+  GenerationState,
+  InitProgressCallback,
+  RuntimeStats,
+} from './static/types';
 import hasModelInCache from './utils/hasModelInCache';
 
 const configCache = new tvmjs.ArtifactCache(CONFIG_CACHE_SCOPE);
@@ -31,6 +32,7 @@ class Generator {
   public gpuDeviceAdapter: GPUAdapterInfo = null;
   private conversationConfig: Partial<ConvTemplateConfig> = {};
   private interruptSignal = false;
+  private deviceLostIsError = false; // whether device.lost is due to actual error or model reload
 
   setInitProgressCallback(initProgressCallback: InitProgressCallback) {
     this.initProgressCallback = initProgressCallback;
@@ -55,6 +57,7 @@ class Generator {
   }
 
   public async load() {
+    this.deviceLostIsError = false;
     await this.unload();
     const tstart = performance.now();
 
@@ -84,7 +87,6 @@ class Generator {
           'so that we can download the model library (i.e. wasm file).'
       );
     }
-
     const fetchWasmSource = async () => {
       if (wasmUrl.includes('localhost')) {
         // do not cache wasm on local host as we might update code frequently
@@ -99,7 +101,6 @@ class Generator {
       }
     };
     const wasmSource = await (await fetchWasmSource()).arrayBuffer();
-
     const tvm = await tvmjs.instantiate(
       new Uint8Array(wasmSource),
       tvmjs.createPolyfillWASI()
@@ -125,20 +126,22 @@ class Generator {
     ) {
       console.log(
         `WARNING: the current maxStorageBufferBindingSize ` +
-          `(${computeMB(gpuDetectOutput.device.limits.maxStorageBufferBindingSize)}) ` +
+          `(${computeMB(
+            gpuDetectOutput.device.limits.maxStorageBufferBindingSize
+          )}) ` +
           `may only work for a limited number of models, e.g.: \n` +
           `- Llama-2-7b-chat-hf-q4f16_1-1k \n` +
           `- RedPajama-INCITE-Chat-3B-v1-q4f16_1-1k \n` +
           `- RedPajama-INCITE-Chat-3B-v1-q4f32_1-1k`
       );
     }
-
     let gpuLabel = 'WebGPU';
     if (gpuDetectOutput.adapterInfo.description.length != 0) {
       gpuLabel += ' - ' + gpuDetectOutput.adapterInfo.description;
     } else {
       gpuLabel += ' - ' + gpuDetectOutput.adapterInfo.vendor;
     }
+
     if (this.model.requiredFeatures !== undefined) {
       for (const feature of this.model.requiredFeatures) {
         if (!gpuDetectOutput.device.features.has(feature)) {
@@ -159,6 +162,18 @@ class Generator {
     }
 
     tvm.initWebGPU(gpuDetectOutput.device);
+    gpuDetectOutput.device.lost.then((info: any) => {
+      // `fetchNDArrayCache` may exceed available memory; use `lost.then` to prevent crashing
+      if (this.deviceLostIsError) {
+        console.error(
+          'Device was lost, please try to initialize again. ',
+          info
+        );
+        this.unload();
+      }
+    });
+
+    this.deviceLostIsError = true;
     const tokenizer = await this.asyncLoadTokenizer(modelUrl, config);
     await tvm.fetchNDArrayCache(modelUrl, tvm.webgpu(), MODEL_CACHE_SCOPE);
 

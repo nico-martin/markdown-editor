@@ -1,7 +1,12 @@
-import * as tvmjs from '@nico-martin/tvmjs';
 import { Tokenizer } from '@mlc-ai/web-tokenizers';
-import { ChatConfig, RuntimeStats } from './static/types';
-import { getConversation, Conversation } from './conversation';
+import * as tvmjs from '@nico-martin/tvmjs';
+
+import { Conversation, getConversation } from './conversation';
+import {
+  ChatCompletionFinishReason,
+  ChatConfig,
+  RuntimeStats,
+} from './static/types';
 
 class Pipeline {
   private config: ChatConfig;
@@ -14,6 +19,12 @@ class Pipeline {
   private prefill: tvmjs.PackedFunc;
   private decoding: tvmjs.PackedFunc;
   private fclearKVCaches: tvmjs.PackedFunc;
+  // Functions for PagedKVCache only
+  private embed?: tvmjs.PackedFunc = undefined;
+  private fKVCacheAddSequence?: tvmjs.PackedFunc = undefined;
+  private fKVCacheRemoveSequence?: tvmjs.PackedFunc = undefined;
+  private fKVCacheBeginForward?: tvmjs.PackedFunc = undefined;
+  private fKVCacheEndForward?: tvmjs.PackedFunc = undefined;
 
   // parameter states
   private params: tvmjs.TVMObject;
@@ -22,7 +33,6 @@ class Pipeline {
   private filledKVCacheLength = 0;
 
   // meta data
-  // TODO(tvm-team): remove hard-coded bos from config, likely can be part of conv template
   private bosTokenId = 1;
   private maxWindowLength = -1;
   private slidingWindowSize = -1;
@@ -36,13 +46,16 @@ class Pipeline {
   private outputMessage = '';
   private outputIds: Array<number> = [];
   private stopTriggered = false;
-  private appearedTokens = new Set<number>();
+  private finishReason: ChatCompletionFinishReason | undefined = undefined;
+  // frequency of appeared token ids till now (refresh after PrefillStep); token_id mapped to freq
+  private appearedTokensFreq = new Map<number, number>();
   private conversation: Conversation;
   // Whether sink is in action
-  private sinkTriggered: boolean = false;
+  private sinkTriggered = false;
   // sliding window cache offset (Next position to be overridden on the rolling kv cache.)
-  private slidingWindowCacheOffset: number = 0;
-  // Total amount of seq len prefilled so far
+  private slidingWindowCacheOffset = 0;
+  // Whether we are using PagedKVCache (eventually this will become default)
+  private usePagedKVCache = false;
 
   // stats
   private decodingTotalTime = 0;
@@ -64,16 +77,26 @@ class Pipeline {
     );
     this.stopStr = this.conversation.getStopStr();
     this.stopTokens = this.conversation.getStopTokens();
+    if (config.bos_token_id !== undefined) {
+      this.bosTokenId = config.bos_token_id;
+    }
 
     this.device = this.tvm.webgpu();
-    tvm.beginScope();
 
+    tvm.beginScope();
     this.vm = this.tvm.detachFromCurrentScope(
       this.tvm.createVirtualMachine(this.device)
     );
     this.prefill = this.tvm.detachFromCurrentScope(
       this.vm.getFunction('prefill')
     );
+    try {
+      this.embed = this.tvm.detachFromCurrentScope(
+        this.vm.getFunction('embed')
+      );
+    } catch {
+      // Do nothing
+    }
     this.decoding = this.tvm.detachFromCurrentScope(
       this.vm.getFunction('decode')
     );
@@ -108,15 +131,16 @@ class Pipeline {
       );
     }
 
-    if (
-      metadata.hasOwnProperty('prefill_chunk_size') &&
-      metadata.prefill_chunk_size != -1
-    ) {
+    if (metadata.hasOwnProperty('prefill_chunk_size')) {
       this.prefillChunkSize = metadata.prefill_chunk_size;
       this.logger('Using prefillChunkSize: ', this.prefillChunkSize);
       if (this.prefillChunkSize <= 0) {
         throw Error('Prefill chunk size needs to be positive.');
       }
+    } else {
+      throw Error(
+        'Cannot find `prefill_chunk_size` in metadta; make sure the wasm is up to date.'
+      );
     }
 
     // Only use one of slidingWindowSize and maxWindowLength
@@ -168,19 +192,69 @@ class Pipeline {
     }
 
     let fcreateCache;
-    if (useSLIM) {
-      fcreateCache = this.vm.getFunction('_initialize_effect');
-    } else {
-      fcreateCache = this.vm.getFunction('create_kv_cache');
+    try {
+      if (useSLIM) {
+        fcreateCache = this.vm.getFunction('_initialize_effect');
+      } else {
+        fcreateCache = this.vm.getFunction('create_kv_cache');
+      }
+    } catch (err) {
+      // If we cannot find function above, it means that we are using the new PagedKVCache
+      this.usePagedKVCache = true;
+      fcreateCache = this.vm.getFunction('create_tir_paged_kv_cache');
+      console.log('Using Paged KVCache');
+      if (this.embed === undefined) {
+        throw Error(
+          'If using paged KVCache, method `embed()` needs to be defined.'
+        );
+      }
     }
 
-    this.fclearKVCaches = this.tvm.detachFromCurrentScope(
-      this.tvm.getGlobalFunc('vm.builtin.attention_kv_cache_array_clear')
-    );
+    // Load cache functions and instantiate KVCache
+    if (this.usePagedKVCache) {
+      this.fclearKVCaches = this.tvm.detachFromCurrentScope(
+        this.tvm.getGlobalFunc('vm.builtin.paged_attention_kv_cache_clear')
+      );
+      this.fKVCacheAddSequence = this.tvm.detachFromCurrentScope(
+        this.tvm.getGlobalFunc(
+          'vm.builtin.paged_attention_kv_cache_add_sequence'
+        )
+      );
+      this.fKVCacheRemoveSequence = this.tvm.detachFromCurrentScope(
+        this.tvm.getGlobalFunc(
+          'vm.builtin.paged_attention_kv_cache_remove_sequence'
+        )
+      );
+      this.fKVCacheBeginForward = this.tvm.detachFromCurrentScope(
+        this.tvm.getGlobalFunc(
+          'vm.builtin.paged_attention_kv_cache_begin_forward'
+        )
+      );
+      this.fKVCacheEndForward = this.tvm.detachFromCurrentScope(
+        this.tvm.getGlobalFunc(
+          'vm.builtin.paged_attention_kv_cache_end_forward'
+        )
+      );
 
-    // use extern config for now
-    this.kvCache = this.tvm.detachFromCurrentScope(fcreateCache());
+      // Create PagedKVCache; we do not expose KVCache config for now
+      const defaultPageSize = 16;
+      const defaultMaxNumSequence = 1;
+      this.kvCache = this.tvm.detachFromCurrentScope(
+        fcreateCache(
+          this.tvm.makeShapeTuple([defaultMaxNumSequence]), // max_num_sequence
+          this.tvm.makeShapeTuple([this.maxWindowLength]), // max_total_sequence_length
+          this.tvm.makeShapeTuple([this.prefillChunkSize]), // prefill_chunk_size
+          this.tvm.makeShapeTuple([defaultPageSize]) // page_size, hard coded for now
+        )
+      );
+    } else {
+      this.fclearKVCaches = this.tvm.detachFromCurrentScope(
+        this.tvm.getGlobalFunc('vm.builtin.attention_kv_cache_array_clear')
+      );
+      this.kvCache = this.tvm.detachFromCurrentScope(fcreateCache());
+    }
     this.filledKVCacheLength = 0;
+    this.resetChat(); // especially needed for PagedKVCache as we need to call fKVCacheAddSequence
     tvm.endScope();
   }
 
@@ -216,13 +290,32 @@ class Pipeline {
   /**
    * Reset the chat history
    */
-  resetChat() {
+  resetChat(keepStats: boolean = false) {
     this.conversation.reset();
-    this.resetRuntimeStats();
-    this.fclearKVCaches(this.kvCache);
+    if (!keepStats) {
+      this.resetRuntimeStats();
+    }
+    this.resetKVCache();
     this.filledKVCacheLength = 0;
     this.sinkTriggered = false;
     this.slidingWindowCacheOffset = 0;
+  }
+
+  /**
+   * Reset KV Cache
+   */
+  resetKVCache() {
+    this.fclearKVCaches(this.kvCache);
+    if (this.usePagedKVCache) {
+      this.fKVCacheAddSequence!(this.kvCache, new tvmjs.Scalar(0, 'int64'));
+    }
+  }
+
+  /**
+   * @returns Finish reason; undefined if generation not started/stopped yet.
+   */
+  getFinishReason(): ChatCompletionFinishReason | undefined {
+    return this.finishReason;
   }
 
   /**
@@ -237,8 +330,12 @@ class Pipeline {
    */
   runtimeStatsText(): string {
     return (
-      `prefill: ${(this.prefillTotalTokens / this.prefillTotalTime).toFixed(4)} tokens/sec, ` +
-      `decoding: ${(this.decodingTotalTokens / this.decodingTotalTime).toFixed(4)} tokens/sec`
+      `prefill: ${(this.prefillTotalTokens / this.prefillTotalTime).toFixed(
+        4
+      )} tokens/sec, ` +
+      `decoding: ${(this.decodingTotalTokens / this.decodingTotalTime).toFixed(
+        4
+      )} tokens/sec`
     );
   }
 
@@ -251,6 +348,39 @@ class Pipeline {
       decodingTotalTime: this.decodingTotalTime,
       decodingTokensPerSec: this.decodingTotalTokens / this.decodingTotalTime,
     };
+  }
+
+  overrideSystemPrompt(system: string): void {
+    this.conversation.config.system = system;
+  }
+
+  /**
+   * Override this.conversation.messages.
+   */
+  overrideConversationMessages(
+    messages: Array<[string, string | undefined]>
+  ): void {
+    // TODO(Charlie): Do we need to make a deep copy here?
+    this.conversation.messages = messages;
+  }
+
+  /**
+   * Get this.conversation.messages.
+   */
+  getConversationMessages(): Array<[string, string | undefined]> {
+    // TODO(Charlie): Do we need to make a deep copy here?
+    return this.conversation.messages;
+  }
+
+  /**
+   * @returns the roles of this.conversation's conversation template of lengths of two.
+   */
+  getRoles(): Array<string> {
+    const res = this.conversation.config.roles;
+    if (res.length !== 2) {
+      throw new Error('Expect the conversation template to have two roles.');
+    }
+    return res;
   }
 
   async asyncLoadWebGPUPipelines() {
@@ -267,7 +397,7 @@ class Pipeline {
 
     // cleanup the per convo states
     this.outputIds = [];
-    this.appearedTokens.clear();
+    this.appearedTokensFreq.clear();
     this.outputMessage = '';
     this.stopTriggered = false;
     const conversation = this.conversation;
@@ -283,71 +413,50 @@ class Pipeline {
     let newSeqLen = this.filledKVCacheLength;
     const tokenLen = promptTokens.length;
     let logits = this.tvm.empty([1, 1], 'int32', this.device); // Dummy value to avoid type error
-    if (this.prefillChunkSize != -1) {
-      // Use prefill chunking regardless whether we use SWA (see Mistral paper figure 3)
-      for (let begin = 0; begin < tokenLen; begin += this.prefillChunkSize) {
-        const end = Math.min(tokenLen, begin + this.prefillChunkSize);
-        const chunk = promptTokens.slice(begin, end);
-        const inputData = this.tvm.empty(
-          [1, chunk.length],
-          'int32',
-          this.device
-        );
-        inputData.copyFrom(chunk);
-        newSeqLen += chunk.length;
-        logits = this.tvm.detachFromCurrentScope(
-          this.forward(inputData, newSeqLen)
-        );
-
-        // Update window cache offset (prefill)
-        if (this.slidingWindowSize != -1) {
-          if (this.sinkTriggered) {
-            this.slidingWindowCacheOffset = Math.max(
-              (this.slidingWindowCacheOffset + chunk.length) %
-                this.slidingWindowSize,
-              this.attentionSinkSize
-            );
-          } else {
-            this.slidingWindowCacheOffset += chunk.length;
-            this.sinkTriggered =
-              this.slidingWindowCacheOffset >= this.attentionSinkSize;
-          }
-        }
-      }
-      if (newSeqLen != this.filledKVCacheLength + tokenLen) {
-        throw Error('Expect chunking process all tokens.');
-      }
-    } else {
-      // Otherwise, prefill entire prompt at once
-      const inputData = this.tvm.empty(
-        [1, promptTokens.length],
-        'int32',
-        this.device
-      );
-      inputData.copyFrom(promptTokens);
-      newSeqLen += tokenLen;
+    for (let begin = 0; begin < tokenLen; begin += this.prefillChunkSize) {
+      const end = Math.min(tokenLen, begin + this.prefillChunkSize);
+      const chunk = promptTokens.slice(begin, end);
+      const inputData = this.tvm.empty([1, chunk.length], 'int32', this.device);
+      inputData.copyFrom(chunk);
+      newSeqLen += chunk.length;
       logits = this.tvm.detachFromCurrentScope(
         this.forward(inputData, newSeqLen)
       );
+
+      // Update window cache offset (prefill)
+      if (this.slidingWindowSize != -1) {
+        if (this.sinkTriggered) {
+          this.slidingWindowCacheOffset = Math.max(
+            (this.slidingWindowCacheOffset + chunk.length) %
+              this.slidingWindowSize,
+            this.attentionSinkSize
+          );
+        } else {
+          this.slidingWindowCacheOffset += chunk.length;
+          this.sinkTriggered =
+            this.slidingWindowCacheOffset >= this.attentionSinkSize;
+        }
+      }
+    }
+    if (newSeqLen != this.filledKVCacheLength + tokenLen) {
+      throw Error('Expect chunking process all tokens.');
     }
     this.filledKVCacheLength = newSeqLen;
     this.tvm.endScope();
 
-    const nextToken = await this.sampleTokenFromLogits(
-      logits,
-      this.config.temperature,
-      this.config.top_p
-    );
+    const genConfig = this.config;
+
+    const nextToken = await this.sampleTokenFromLogits(logits, genConfig);
     logits.dispose();
     const tend = performance.now();
 
     this.prefillTotalTime += (tend - tstart) / 1e3;
     this.prefillTotalTokens += promptTokens.length;
 
-    this.processNextToken(nextToken);
+    this.processNextToken(nextToken, genConfig);
   }
 
-  async decodeStep(): Promise<void> {
+  async decodeStep(genConfig?: ChatConfig): Promise<void> {
     if (this.stopTriggered) {
       throw Error('Cannot run decode when stopped');
     }
@@ -379,18 +488,14 @@ class Pipeline {
     this.tvm.endScope();
 
     // sample from logits
-    const nextToken = await this.sampleTokenFromLogits(
-      logits,
-      this.config.temperature,
-      this.config.top_p
-    );
+    const nextToken = await this.sampleTokenFromLogits(logits, genConfig);
     logits.dispose();
     const tend = performance.now();
 
     this.decodingTotalTime += (tend - tstart) / 1e3;
     this.decodingTotalTokens += 1;
 
-    this.processNextToken(nextToken);
+    this.processNextToken(nextToken, genConfig);
   }
 
   /**
@@ -401,6 +506,7 @@ class Pipeline {
       return;
     }
     this.stopTriggered = true;
+    this.finishReason = 'abort';
     this.conversation.finishReply(this.outputMessage);
   }
 
@@ -409,29 +515,62 @@ class Pipeline {
    *
    * @param nextToken The next token.
    */
-  private processNextToken(nextToken: number): void {
+  private processNextToken(nextToken: number, genConfig?: ChatConfig): void {
     if (this.stopTriggered) {
       throw Error('Cannot call process when it is stoppped');
+    }
+
+    let max_gen_len = this.config.max_gen_len;
+    if (genConfig !== undefined && genConfig.max_gen_len) {
+      max_gen_len = genConfig.max_gen_len;
+    }
+    if (max_gen_len <= 0) {
+      throw new Error('`max_gen_len` should be greater than 0.');
+    }
+    let stopStrs = [this.stopStr];
+    if (genConfig !== undefined && genConfig.stop) {
+      stopStrs = stopStrs.concat(genConfig.stop);
     }
 
     // if there is a stop token
     if (this.stopTokens.includes(nextToken)) {
       this.stopTriggered = true;
+      this.finishReason = 'stop';
     }
 
     if (!this.stopTriggered) {
       this.outputIds.push(nextToken);
-      this.appearedTokens.add(nextToken);
+      // Update token appearance frequency
+      const curFreq = this.appearedTokensFreq.get(nextToken);
+      if (curFreq !== undefined) {
+        this.appearedTokensFreq.set(nextToken, curFreq + 1);
+      } else {
+        this.appearedTokensFreq.set(nextToken, 1);
+      }
     }
 
+    // Stop condition 2: stop string; update `this.outputMessage` subsequently
     let outputMessage = this.tokenizer.decode(new Int32Array(this.outputIds));
-    const stopPos = outputMessage.lastIndexOf(this.stopStr);
-    if (stopPos != -1) {
-      outputMessage = outputMessage.substring(0, stopPos);
-      this.stopTriggered = true;
+    let stopPos = -1;
+    for (const stopStr of stopStrs) {
+      // Stop at the first stopStr we find
+      stopPos = outputMessage.lastIndexOf(stopStr);
+      if (stopPos != -1) {
+        outputMessage = outputMessage.substring(0, stopPos);
+        this.stopTriggered = true;
+        this.finishReason = 'stop';
+        break;
+      }
     }
     this.outputMessage = outputMessage;
 
+    // Stop condition 3: exceed max_gen_len
+    if (this.outputIds.length >= max_gen_len) {
+      this.stopTriggered = true;
+      this.finishReason = 'length';
+    }
+
+    // Finally, modify conversation history if stopped
     if (this.stopTriggered) {
       this.conversation.finishReply(this.outputMessage);
     }
@@ -440,14 +579,28 @@ class Pipeline {
   private forward(inputs: tvmjs.NDArray, curPos: number): tvmjs.NDArray {
     this.tvm.beginScope();
     let retValue;
+    const seqLen = inputs.shape[1]; // Num input tokens
     const seqLenShape = this.tvm.makeShapeTuple([curPos]);
-    if (inputs.shape[1] > 1) {
+    if (seqLen > 1) {
       // Prefill
       if (this.slidingWindowSize == -1) {
-        retValue = this.prefill(inputs, seqLenShape, this.kvCache, this.params);
+        if (this.usePagedKVCache) {
+          const seqIdsTuple = this.tvm.makeShapeTuple([0]);
+          const inputLenShape = this.tvm.makeShapeTuple([seqLen]);
+          this.fKVCacheBeginForward!(this.kvCache, seqIdsTuple, inputLenShape);
+          const embed = this.embed!(inputs, this.params);
+          retValue = this.prefill(embed, this.kvCache, this.params);
+          this.fKVCacheEndForward!(this.kvCache);
+        } else {
+          retValue = this.prefill(
+            inputs,
+            seqLenShape,
+            this.kvCache,
+            this.params
+          );
+        }
       } else {
         // Sliding window attention needs extra shape parameters
-        const seqLen = inputs.shape[1]; // Num input tokens
         const cacheLen = Math.min(this.slidingWindowSize, curPos - seqLen); // Num elements in the cache
         const cacheLenShape = this.tvm.makeShapeTuple([cacheLen]);
         const kvSeqLenShape = this.tvm.makeShapeTuple([cacheLen + seqLen]);
@@ -467,12 +620,21 @@ class Pipeline {
     } else {
       // Decode
       if (this.slidingWindowSize == -1) {
-        retValue = this.decoding(
-          inputs,
-          seqLenShape,
-          this.kvCache,
-          this.params
-        );
+        if (this.usePagedKVCache) {
+          const seqIdsTuple = this.tvm.makeShapeTuple([0]);
+          const appendLength = this.tvm.makeShapeTuple([1]);
+          this.fKVCacheBeginForward!(this.kvCache, seqIdsTuple, appendLength);
+          const embed = this.embed!(inputs, this.params);
+          retValue = this.decoding(embed, this.kvCache, this.params);
+          this.fKVCacheEndForward!(this.kvCache);
+        } else {
+          retValue = this.decoding(
+            inputs,
+            seqLenShape,
+            this.kvCache,
+            this.params
+          );
+        }
       } else {
         // Same logic as above; keeping this if-else structure to match mlc-llm's llm_chat.cc
         const seqLen = inputs.shape[1]; // Num input tokens
@@ -516,11 +678,67 @@ class Pipeline {
 
   private async sampleTokenFromLogits(
     logitsOnGPU: tvmjs.NDArray,
-    temperature: number,
-    top_p: number
+    genConfig?: ChatConfig
   ) {
+    // 0. Get value of temperature, top_p, and reptition_penalty, possibly overridden by genConfig
+    function _hasValue(value: any): boolean {
+      return value !== undefined && value !== null;
+    }
+    let temperature = this.config.temperature;
+    let top_p = this.config.top_p;
+    let repetition_penalty = this.config.repetition_penalty;
+    let frequency_penalty = undefined;
+    let presence_penalty = undefined;
+    if (genConfig !== undefined) {
+      if (_hasValue(genConfig.temperature)) {
+        temperature = genConfig.temperature!;
+      }
+      if (_hasValue(genConfig.top_p)) {
+        top_p = genConfig.top_p!;
+      }
+      if (_hasValue(genConfig.repetition_penalty)) {
+        repetition_penalty = genConfig.repetition_penalty!;
+      }
+      if (_hasValue(genConfig.frequency_penalty)) {
+        frequency_penalty = genConfig.frequency_penalty!;
+      }
+      if (_hasValue(genConfig.presence_penalty)) {
+        presence_penalty = genConfig.presence_penalty!;
+      }
+      // If only one of frequency or presence penatly is set, make the other one 0.0
+      if (_hasValue(frequency_penalty) && !_hasValue(presence_penalty)) {
+        presence_penalty = 0.0;
+      }
+      if (_hasValue(presence_penalty) && !_hasValue(frequency_penalty)) {
+        frequency_penalty = 0.0;
+      }
+    }
+    // Check range validity
+    if (top_p <= 0 || top_p >= 1) {
+      throw new Error('Make sure 0 < `top_p` < 1.');
+    }
+    if (temperature < 0) {
+      throw new Error('Make sure `temperature` >= 0.');
+    }
+    if (repetition_penalty <= 0) {
+      throw new Error('Make sure `repetition_penalty` > 0.');
+    }
+    if (
+      frequency_penalty &&
+      (frequency_penalty < -2.0 || frequency_penalty > 2.0)
+    ) {
+      throw new Error('`frequency_penalty` should be between -2.0 and 2.0.');
+    }
+    if (
+      presence_penalty &&
+      (presence_penalty < -2.0 || presence_penalty > 2.0)
+    ) {
+      throw new Error('`presence_penalty` should be between -2.0 and 2.0.');
+    }
+
+    // 1. Move logits to CPU
     this.tvm.beginScope();
-    const logitsOnCPU = this.updateLogitsOnCPU(logitsOnGPU);
+    this.updateLogitsOnCPU(logitsOnGPU);
     this.tvm.endScope();
     await this.device.sync();
 
@@ -528,35 +746,89 @@ class Pipeline {
       throw Error('logits should be assigned');
     }
 
-    if (this.config.repetition_penalty < 1.0 + 1e-6) {
-      return this.tvm.sampleTopPFromLogits(logitsOnCPU, temperature, top_p);
-    } else {
+    // 3. Sample
+    if (_hasValue(frequency_penalty) && _hasValue(presence_penalty)) {
+      // 3.1. Use frequency and presence penalty
       this.tvm.beginScope();
+      // Both `keys()` and `values()` are in insertion order.
+      const appearedTokens = [...this.appearedTokensFreq.keys()];
+      const appearedTokensFreqs = [...this.appearedTokensFreq.values()];
       const appeared_tokens_ndarray = this.tvm.empty(
-        [1, this.appearedTokens.size],
+        [1, appearedTokens.length],
         'int32',
         this.tvm.cpu()
       );
-      appeared_tokens_ndarray.copyFrom(Array.from(this.appearedTokens));
+      const appeared_tokens_freqs_ndarray = this.tvm.empty(
+        [1, appearedTokensFreqs.length],
+        'int32',
+        this.tvm.cpu()
+      );
+      appeared_tokens_ndarray.copyFrom(appearedTokens);
+      appeared_tokens_freqs_ndarray.copyFrom(appearedTokensFreqs);
+      this.tvm.applyPresenceAndFrequencyPenalty(
+        this.logitsOnCPU,
+        appeared_tokens_ndarray,
+        appeared_tokens_freqs_ndarray,
+        presence_penalty!,
+        frequency_penalty!
+      );
+      this.tvm.endScope();
+    } else if (repetition_penalty != 1.0) {
+      // 3.2. Use repetition penalty
+      this.tvm.beginScope();
+      const appearedTokens = [...this.appearedTokensFreq.keys()];
+      const appeared_tokens_ndarray = this.tvm.empty(
+        [1, appearedTokens.length],
+        'int32',
+        this.tvm.cpu()
+      );
+      appeared_tokens_ndarray.copyFrom(appearedTokens);
       this.tvm.applyRepetitionPenalty(
         this.logitsOnCPU,
         appeared_tokens_ndarray,
-        this.config.repetition_penalty
+        repetition_penalty
       );
       this.tvm.endScope();
-      return this.tvm.sampleTopPFromLogits(
-        this.logitsOnCPU,
-        temperature,
-        top_p
-      );
     }
+    const sampledToken = this.tvm.sampleTopPFromLogits(
+      this.logitsOnCPU,
+      temperature,
+      top_p
+    );
+
+    return sampledToken;
   }
 
-  private getInputTokens(): Array<number> {
+  private getInputTokens(genConfig?: ChatConfig): Array<number> {
+    // Get mean_gen_len and max_gen_len, possibly overriden by genConfig
+    let mean_gen_len = this.config.mean_gen_len;
+    let shift_fill_factor = this.config.shift_fill_factor;
+    if (genConfig !== undefined) {
+      if (
+        genConfig.mean_gen_len !== undefined &&
+        genConfig.mean_gen_len !== null
+      ) {
+        mean_gen_len = genConfig.mean_gen_len;
+      }
+      if (
+        genConfig.shift_fill_factor !== undefined &&
+        genConfig.shift_fill_factor !== null
+      ) {
+        shift_fill_factor = genConfig.shift_fill_factor;
+      }
+    }
+    // Check range validity
+    if (shift_fill_factor <= 0 || shift_fill_factor > 1) {
+      throw new Error('Make sure 0 < `shift_fill_factor` <= 1.');
+    }
+    if (mean_gen_len <= 0) {
+      throw new Error('`mean_gen_len` should be greater than zero.');
+    }
+
     let tokens: Array<number> = [];
     let prompts;
     // beginning of the conversation
-    if (this.conversation.messages.length <= 2) {
+    if (this.filledKVCacheLength === 0) {
       if (this.conversation.config.add_bos) {
         tokens = [this.bosTokenId];
       }
@@ -577,7 +849,7 @@ class Pipeline {
       ctxLength += encoded.length;
       if (
         this.slidingWindowSize == -1 && // There is no maxWindowLength if we use sliding window
-        this.filledKVCacheLength + ctxLength + this.config.mean_gen_len >=
+        this.filledKVCacheLength + ctxLength + mean_gen_len >=
           this.maxWindowLength
       ) {
         needShiftWindow = true;
@@ -602,7 +874,7 @@ class Pipeline {
     // need shift window and re-encode
     this.logger('need shift window');
     this.filledKVCacheLength = 0;
-    this.fclearKVCaches(this.kvCache);
+    this.resetKVCache();
 
     // abandon all tokens we collected
     if (this.conversation.config.add_bos) {
@@ -620,7 +892,7 @@ class Pipeline {
       const encoded = this.tokenizer.encode(all_prompts[i]);
       ctxLength += encoded.length;
       if (
-        ctxLength >= this.config.shift_fill_factor * this.maxWindowLength &&
+        ctxLength >= shift_fill_factor * this.maxWindowLength &&
         i + 2 < all_prompts.length
       ) {
         break;
@@ -630,10 +902,43 @@ class Pipeline {
     for (const ctx of context) {
       tokens.push(...ctx);
     }
-    if (tokens.length + this.config.mean_gen_len >= this.maxWindowLength) {
+    if (tokens.length + mean_gen_len >= this.maxWindowLength) {
       throw Error('Exceed max window length curr=' + tokens.length);
     }
     return tokens;
+  }
+
+  async forwardTokensAndSample(
+    inputIds: Array<number>,
+    curPos: number,
+    isPrefill: boolean
+  ): Promise<number> {
+    // 1. Convert input to NDArray
+    const tstart = performance.now();
+    this.tvm.beginScope();
+    const inputData = this.tvm.empty(
+      [1, inputIds.length],
+      'int32',
+      this.device
+    );
+    inputData.copyFrom(inputIds);
+
+    // 2. Forward tokens and get logits
+    const logitsOnGPU: tvmjs.NDArray = this.forward(inputData, curPos);
+    const nextToken = await this.sampleTokenFromLogits(logitsOnGPU);
+    this.tvm.endScope();
+
+    // 3. Stats
+    const tend = performance.now();
+    if (isPrefill) {
+      // We assume that if the input has more than 1 token
+      this.prefillTotalTime += (tend - tstart) / 1e3;
+      this.prefillTotalTokens += inputIds.length;
+    } else {
+      this.decodingTotalTime += (tend - tstart) / 1e3;
+      this.decodingTotalTokens += 1;
+    }
+    return nextToken;
   }
 }
 

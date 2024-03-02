@@ -13,7 +13,7 @@ const LlmContextProvider: React.FC<{
 }> = ({ children }) => {
   const { activeLlmModel } = useAiSettings();
   const [workerBusy, setWorkerBusy] = React.useState<boolean>(false);
-  const [modelLoaded, setModelLoaded] = React.useState<boolean>(false);
+  const [modelLoaded, setModelLoaded] = React.useState<string>(null);
 
   const worker = React.useRef(null);
 
@@ -35,10 +35,6 @@ const LlmContextProvider: React.FC<{
       worker.current.removeEventListener('message', onMessageReceived);
   }, []);
 
-  React.useEffect(() => {
-    setModelLoaded(false);
-  }, [activeLlmModel]);
-
   const postWorkerMessage = (
     payload: WorkerRequest,
     cb: (data: WorkerResponse) => void
@@ -50,13 +46,14 @@ const LlmContextProvider: React.FC<{
   const initialize = (
     model: LlmModel,
     callback: (data: CallbackData) => void = null
-  ): Promise<boolean> =>
-    new Promise((resolve, reject) => {
-      modelLoaded && resolve(true);
+  ): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      model.id === modelLoaded && resolve(true);
       generate('', callback, model)
         .then(() => resolve(true))
         .catch(reject);
     });
+  };
 
   const generate = (
     prompt: string = '',
@@ -90,7 +87,7 @@ const LlmContextProvider: React.FC<{
                 output: '',
                 progress: 100,
               });
-              setModelLoaded(true);
+              setModelLoaded(model.id);
               break;
             }
             case 'update': {
@@ -106,9 +103,10 @@ const LlmContextProvider: React.FC<{
                 feedback: GenerationState.COMPLETE,
                 output: data.output || '',
                 progress: 100,
+                stats: data?.runtimeStats || null,
               });
               setWorkerBusy(false);
-              setModelLoaded(true);
+              setModelLoaded(model.id);
               resolve(data.output);
               break;
             }
@@ -125,7 +123,7 @@ const LlmContextProvider: React.FC<{
   return (
     <context.Provider
       value={{
-        ready: modelLoaded,
+        ready: Boolean(modelLoaded),
         busy: workerBusy,
         initialize,
         generate,

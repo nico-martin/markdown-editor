@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 
 import cn from '@utils/classnames.tsx';
 import { QuillSelection, getAttributesFromElement } from '@utils/editor.ts';
-import { getFirstXChars } from '@utils/helpers.ts';
+import { getFirstXChars, round } from '@utils/helpers.ts';
 
 import { CallbackData } from '@store/ai/llm/llmContext.ts';
 import useLlm from '@store/ai/llm/useLlm.ts';
@@ -42,34 +42,65 @@ const TextGenerator: React.FC<{
             action: 'text-generator',
           });
 
-          await generate(
-            data.prompt + '\n\n' + editorContext.text,
-            (data: CallbackData) => {
-              setLlmFeedback(data.feedback);
-              if (!data.output) return;
-              if (!content) {
-                editor.deleteText(selection.index, selection.length);
-                content = editor.getContents();
-              }
+          try {
+            await generate(
+              data.prompt + '\n\n' + editorContext.text,
+              (data: CallbackData) => {
+                setLlmFeedback(data.feedback);
+                if (!data.output) return;
+                if (!content) {
+                  editor.deleteText(selection.index, selection.length);
+                  content = editor.getContents();
+                }
 
-              editor.setContents(content);
-              const newDelta = new Delta().insert(editorContext.text, {
-                strike: true,
-                ...getAttributesFromElement(editorContext.element),
-              });
-              newDelta.insert('\n');
-              newDelta.insert(data.output);
-              editorContext.text !== '' &&
-                newDelta.insert(
-                  '\n',
-                  getAttributesFromElement(editorContext.element || 'p')
-                );
-              const delta = new Delta()
-                .retain(selection.index)
-                .concat(newDelta);
-              editor.updateContents(delta, Quill.sources.USER);
-            }
-          );
+                if (data.stats) {
+                  console.log({
+                    inputTokens: data.stats.prefillTotalTokens,
+                    inputTokensPerSecond: round(
+                      data.stats.prefillTokensPerSec,
+                      2
+                    ),
+                    outputTokens: data.stats.decodingTotalTokens,
+                    outputTokensPerSecond: round(
+                      data.stats.decodingTokensPerSec,
+                      2
+                    ),
+                  });
+                  trackEvent({
+                    category: 'llm-stats',
+                    action: 'text-generator',
+                    name: 'output-tps',
+                    value: data.stats.decodingTokensPerSec,
+                  });
+                  trackEvent({
+                    category: 'llm-stats',
+                    action: 'text-generator',
+                    name: 'input-tps',
+                    value: data.stats.prefillTokensPerSec,
+                  });
+                }
+
+                editor.setContents(content);
+                const newDelta = new Delta().insert(editorContext.text, {
+                  strike: true,
+                  ...getAttributesFromElement(editorContext.element),
+                });
+                newDelta.insert('\n');
+                newDelta.insert(data.output);
+                editorContext.text !== '' &&
+                  newDelta.insert(
+                    '\n',
+                    getAttributesFromElement(editorContext.element || 'p')
+                  );
+                const delta = new Delta()
+                  .retain(selection.index)
+                  .concat(newDelta);
+                editor.updateContents(delta, Quill.sources.USER);
+              }
+            );
+          } catch (e) {
+            alert(`Error: ${e}`);
+          }
         })}
       >
         {editorContext.text !== '' && (
@@ -95,7 +126,7 @@ const TextGenerator: React.FC<{
           align="right"
           value="Generate"
           loading={busy}
-          feedback={<p className={styles.feedback}>{llmFeedback}</p>}
+          data-status={llmFeedback}
         />
       </Form>
     </div>
