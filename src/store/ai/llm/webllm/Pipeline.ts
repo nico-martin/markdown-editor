@@ -22,6 +22,7 @@ class Pipeline {
   // Functions for PagedKVCache only
   private embed?: tvmjs.PackedFunc = undefined;
   private fKVCacheAddSequence?: tvmjs.PackedFunc = undefined;
+  // @ts-ignore
   private fKVCacheRemoveSequence?: tvmjs.PackedFunc = undefined;
   private fKVCacheBeginForward?: tvmjs.PackedFunc = undefined;
   private fKVCacheEndForward?: tvmjs.PackedFunc = undefined;
