@@ -81,6 +81,11 @@
   gap: var(--space-half);
   align-items: center;
 }
+.controlsInstalledSize {
+  font-size: var(--fs-xssmall);
+  text-align: right;
+  margin-top: 0.25em;
+}
 
 .iconLoaded {
   color: var(--c-primary);

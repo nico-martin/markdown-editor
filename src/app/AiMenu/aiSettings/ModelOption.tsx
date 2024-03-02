@@ -83,9 +83,14 @@ const ModelOption: React.FC<{
       </div>
       <div className={styles.controls}>
         {!disabled && value !== 'none' ? (
-          <p className={styles.controlsInstalled}>
-            <Icon icon="check" className={styles.iconLoaded} /> installed
-          </p>
+          <div>
+            <p className={styles.controlsInstalled}>
+              <Icon icon="check" className={styles.iconLoaded} /> installed
+            </p>
+            <p className={styles.controlsInstalledSize}>
+              ({formatBytes(size)})
+            </p>
+          </div>
         ) : (
           disabled &&
           Boolean(downloadModel) && (

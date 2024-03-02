@@ -38,7 +38,7 @@
     --c-border-dark: rgb(78, 78, 78);
     --c-border-light: rgb(112, 112, 112);
     --c-primary: #14808f;
-    --c-primary-bkg: #3e3e3e;
+    --c-primary-bkg: #282828;
   }
 }
 
@@ -57,5 +57,5 @@ body[color-scheme='dark'] {
   --c-border-dark: rgb(78, 78, 78);
   --c-border-light: rgb(112, 112, 112);
   --c-primary: #14808f;
-  --c-primary-bkg: #3e3e3e;
+  --c-primary-bkg: #282828;
 }
