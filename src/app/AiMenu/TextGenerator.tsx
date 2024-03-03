@@ -66,7 +66,7 @@ const TextGenerator: React.FC<{
                       2
                     ),
                   });
-                  trackEvent({
+                  /*trackEvent({
                     category: 'llm-stats',
                     action: 'text-generator',
                     name: 'output-tps',
@@ -77,7 +77,7 @@ const TextGenerator: React.FC<{
                     action: 'text-generator',
                     name: 'input-tps',
                     value: data.stats.prefillTokensPerSec,
-                  });
+                  });*/
                 }
 
                 editor.setContents(content);
