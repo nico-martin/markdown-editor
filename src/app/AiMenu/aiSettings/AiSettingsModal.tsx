@@ -113,7 +113,7 @@ const SpeechRecognitionModelOption: React.FC<{
       className={styles.option}
       title={model.name + (model.quantized ? ' (quantized*)' : '')}
       name="speechRecognition"
-      value={model.path}
+      value={model.key}
       size={model.size}
       cardLink={model.cardLink}
       downloadProgress={downloading}

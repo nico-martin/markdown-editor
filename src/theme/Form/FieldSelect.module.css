@@ -1,31 +1,37 @@
-/*.root {
-  width: 100%;
-  background-color: var(--c-bkg-light);
-  border: 1px solid var(--c-border);
-  padding: 0.3em 0.5em;
-  border-radius: 5px;
-  color: var(--c-p);
-
-  &:focus {
-    @mixin a11y-focus;
-  }
-}
-*/
-
 .root {
   .control {
     width: 100%;
     background-color: var(--c-bkg-light);
     border: 1px solid var(--c-border);
-    //padding: 0.3em 0.5em;
     border-radius: 5px;
+    color: var(--c-p);
+  }
+
+  .input,
+  .singleValue {
     color: var(--c-p);
   }
 
   .menu {
     margin-top: 0;
+    background-color: var(--c-bkg);
   }
 
   .menuList {
+  }
+
+  .option {
+  }
+
+  .optionFocus {
+    background-color: var(--c-bkg-dark);
+  }
+
+  .dropdownIndicator {
+    color: var(--c-border-light);
+  }
+
+  .dropdownIndicatorFocus {
+    color: var(--c-border) !important;
   }
 }

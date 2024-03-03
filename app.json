@@ -1,7 +1,7 @@
 {
   "title": "[md.edit]",
-  "short": "Markdown Editor",
-  "description": "A markdown editor web app based on the File System Access API",
+  "short": "AI Markdown Editor",
+  "description": "An AI powered markdown editor web app based on the File System Access API",
   "color": "#106672",
   "colorbkg": "#eaeaea",
   "iconImages": [

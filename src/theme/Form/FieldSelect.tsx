@@ -68,6 +68,14 @@ const FieldSelect: React.FC<{
         control: () => styles.control,
         menu: () => styles.menu,
         menuList: () => styles.menuList,
+        input: () => styles.input,
+        singleValue: () => styles.singleValue,
+        option: (state) =>
+          state.isFocused ? styles.optionFocus : styles.option,
+        dropdownIndicator: (state) =>
+          state.isFocused
+            ? styles.dropdownIndicatorFocus
+            : styles.dropdownIndicator,
       }}
       {...rest}
     />
