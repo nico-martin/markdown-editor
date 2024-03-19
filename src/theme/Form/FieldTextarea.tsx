@@ -13,6 +13,7 @@ const FieldTextarea: React.FC<{
   type?: string;
   autogrow?: boolean;
   [key: string]: any;
+  focusOnMount?: boolean;
 }> = ({
   className = '',
   value,
@@ -20,6 +21,7 @@ const FieldTextarea: React.FC<{
   name,
   id,
   autogrow = false,
+  focusOnMount = false,
   ...props
 }) => {
   const ref = React.useRef<HTMLTextAreaElement>(null);
@@ -29,6 +31,10 @@ const FieldTextarea: React.FC<{
     target.style.height = 'auto';
     target.style.height = target.scrollHeight + 'px';
   };
+
+  React.useEffect(() => {
+    if (focusOnMount && ref.current) ref.current?.focus();
+  }, [ref]);
 
   React.useEffect(() => {
     if (ref?.current && autogrow) {

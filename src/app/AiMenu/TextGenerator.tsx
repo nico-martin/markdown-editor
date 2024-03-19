@@ -4,6 +4,7 @@ import Quill, { RangeStatic } from 'quill';
 import Delta from 'quill-delta';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import showdown from 'showdown';
 
 import cn from '@utils/classnames.tsx';
 import { QuillSelection, getAttributesFromElement } from '@utils/editor.ts';
@@ -13,6 +14,8 @@ import { CallbackData } from '@store/ai/llm/llmContext.ts';
 import useLlm from '@store/ai/llm/useLlm.ts';
 
 import styles from './TextGenerator.module.css';
+
+const showdownConverter = new showdown.Converter();
 
 const TextGenerator: React.FC<{
   className?: string;
@@ -54,7 +57,7 @@ const TextGenerator: React.FC<{
                 }
 
                 if (data.stats) {
-                  console.log({
+                  console.log('stats', {
                     inputTokens: data.stats.prefillTotalTokens,
                     inputTokensPerSecond: round(
                       data.stats.prefillTokensPerSec,
@@ -81,21 +84,32 @@ const TextGenerator: React.FC<{
                 }
 
                 editor.setContents(content);
-                const newDelta = new Delta().insert(editorContext.text, {
+
+                const delta = new Delta().insert(editorContext.text, {
                   strike: true,
                   ...getAttributesFromElement(editorContext.element),
                 });
-                newDelta.insert('\n');
-                newDelta.insert(data.output);
+                delta.insert('\n');
+                //delta.insert(data.output);
+                const deltaContent = delta.concat(
+                  editor.clipboard.convert(
+                    // @ts-ignore
+                    showdownConverter.makeHtml(data.output)
+                  )
+                );
+
                 editorContext.text !== '' &&
-                  newDelta.insert(
+                  deltaContent.insert(
                     '\n',
                     getAttributesFromElement(editorContext.element || 'p')
                   );
-                const delta = new Delta()
-                  .retain(selection.index)
-                  .concat(newDelta);
-                editor.updateContents(delta, Quill.sources.USER);
+                console.log(
+                  new Delta().retain(selection.index).concat(deltaContent)
+                );
+                editor.updateContents(
+                  new Delta().retain(selection.index).concat(deltaContent),
+                  Quill.sources.USER
+                );
               }
             );
           } catch (e) {
@@ -121,6 +135,7 @@ const TextGenerator: React.FC<{
           stacked
           className={styles.prompt}
           autogrow
+          focusOnMount
         />
         <FormControls
           align="right"
