@@ -103,9 +103,7 @@ const TextGenerator: React.FC<{
                     '\n',
                     getAttributesFromElement(editorContext.element || 'p')
                   );
-                console.log(
-                  new Delta().retain(selection.index).concat(deltaContent)
-                );
+
                 editor.updateContents(
                   new Delta().retain(selection.index).concat(deltaContent),
                   Quill.sources.USER
