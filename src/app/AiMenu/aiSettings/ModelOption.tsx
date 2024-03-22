@@ -63,7 +63,7 @@ const ModelOption: React.FC<{
           <React.Fragment>
             <span className={styles.visualInput} ref={tooltipRef} />
             <Tooltip tooltipRef={tooltipRef} placement="right" width={220}>
-              You need to install the model before you can use it.
+              You need to download the model before you can use it.
             </Tooltip>
           </React.Fragment>
         ) : (
@@ -85,7 +85,7 @@ const ModelOption: React.FC<{
         {!disabled && value !== 'none' ? (
           <div>
             <p className={styles.controlsInstalled}>
-              <Icon icon="check" className={styles.iconLoaded} /> installed
+              <Icon icon="check" className={styles.iconLoaded} /> downloaded
             </p>
             <p className={styles.controlsInstalledSize}>
               ({formatBytes(size)})
@@ -119,7 +119,7 @@ const ModelOption: React.FC<{
               icon="download-outline"
               layout="outline"
             >
-              Install{size !== 0 ? ` (${formatBytes(size)})` : ''}
+              Download{size !== 0 ? ` (${formatBytes(size)})` : ''}
             </Button>
           )
         )}
