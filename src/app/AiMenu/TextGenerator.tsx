@@ -63,11 +63,19 @@ const TextGenerator: React.FC<{
                       data.stats.prefillTokensPerSec,
                       2
                     ),
+                    inputTokenTime: `${round(
+                      60 / data.stats.prefillTokensPerSec,
+                      2
+                    )} ms`,
                     outputTokens: data.stats.decodingTotalTokens,
                     outputTokensPerSecond: round(
                       data.stats.decodingTokensPerSec,
                       2
                     ),
+                    outputTokenTime: `${round(
+                      60 / data.stats.decodingTokensPerSec,
+                      2
+                    )} ms`,
                   });
                   /*trackEvent({
                     category: 'llm-stats',
