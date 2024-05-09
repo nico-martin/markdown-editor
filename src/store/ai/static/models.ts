@@ -1,5 +1,4 @@
 import Gemma2B from '../llm/webllm/models/Gemma2B.ts';
-import Llama38B from '../llm/webllm/models/Llama38B.ts';
 import Mistral7BInstruct from '../llm/webllm/models/Mistral7BInstruct.ts';
 //import RedPajamaINCITEChat3B from '../llm/webllm/models/RedPajamaINCITEChat3B.ts';
 import {
@@ -13,7 +12,6 @@ import { LlmModel, SpeechRecognitionModel, TranslateModel } from './types.ts';
 
 export const LLM_MODELS: Array<LlmModel> = [
   //RedPajamaINCITEChat3B,
-  Llama38B,
   Mistral7BInstruct,
   Gemma2B,
 ];

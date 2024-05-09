@@ -126,15 +126,9 @@ export class Conversation {
 }
 
 export function getConversation(
-  conv_template: string | ConvTemplateConfig,
+  conv_template: string,
   conv_config?: Partial<ConvTemplateConfig>
 ): Conversation {
-  if (typeof conv_template !== 'string') {
-    return new Conversation({
-      ...conv_template,
-      ...conv_config,
-    });
-  }
   if (conv_template == 'llama-2') {
     return new Conversation({
       system:
