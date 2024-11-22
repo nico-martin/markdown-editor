@@ -1,12 +1,15 @@
 import React from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
-import { LlmModel } from '../static/types.ts';
+import {
+  GenerateCallbackData,
+  InitializeCallbackData,
+  LlmInterface,
+} from '@store/ai/llm/types.ts';
+import WebLlm from '@store/ai/llm/webllm/WebLlm.ts';
+
 import useAiSettings from '../useAiSettings.ts';
-import { CallbackData, context } from './llmContext.ts';
-import { GenerationState } from './webllm/static/types.ts';
-import { dispatchWorkerEvent, onWorkerEvent } from './worker/client.ts';
-import { WorkerRequest, WorkerResponse } from './worker/types.ts';
+import { context } from './llmContext.ts';
+import models from './models';
 
 const LlmContextProvider: React.FC<{
   children: React.ReactElement;
@@ -15,118 +18,61 @@ const LlmContextProvider: React.FC<{
   const [workerBusy, setWorkerBusy] = React.useState<boolean>(false);
   const [modelLoaded, setModelLoaded] = React.useState<string>(null);
 
-  const worker = React.useRef(null);
+  const model = React.useMemo(
+    () =>
+      models.find((m) => m.model.id === activeLlmModel?.id)?.model ||
+      models[0].model,
+    [activeLlmModel]
+  );
 
-  React.useEffect(() => {
-    if (!worker.current) {
-      worker.current = new Worker(
-        new URL('./worker/worker.ts', import.meta.url),
-        {
-          type: 'module',
-        }
-      );
-    }
-
-    const onMessageReceived = (e: MessageEvent<WorkerResponse>) =>
-      dispatchWorkerEvent(e.data);
-
-    worker.current.addEventListener('message', onMessageReceived);
-    return () =>
-      worker.current.removeEventListener('message', onMessageReceived);
-  }, []);
-
-  const postWorkerMessage = (
-    payload: WorkerRequest,
-    cb: (data: WorkerResponse) => void
-  ) => {
-    worker.current.postMessage(payload);
-    onWorkerEvent(payload.requestId, (data: WorkerResponse) => cb(data));
-  };
+  const llmInterface: LlmInterface = React.useMemo(
+    () => new WebLlm('You are a helpful AI assistant.', model),
+    [model]
+  );
 
   const initialize = (
-    model: LlmModel,
-    callback: (data: CallbackData) => void = null
-  ): Promise<boolean> => {
-    return new Promise((resolve, reject) => {
-      model.id === modelLoaded && resolve(true);
-      generate('', callback, model)
-        .then(() => resolve(true))
+    callback: (data: InitializeCallbackData) => void = () => {}
+  ): Promise<boolean> =>
+    new Promise((resolve, reject) => {
+      llmInterface
+        .initialize(callback)
+        .then(() => {
+          setModelLoaded(model.id);
+          resolve(true);
+        })
+        .then(() => {
+          resolve(true);
+        })
         .catch(reject);
     });
-  };
 
   const generate = (
     prompt: string = '',
-    callback: (data: CallbackData) => void = null,
-    model: LlmModel = activeLlmModel
+    callback: (data: GenerateCallbackData) => void = () => {}
   ): Promise<string> =>
-    new Promise((resolve, reject) => {
+    // eslint-disable-next-line no-async-promise-executor
+    new Promise(async (resolve, reject) => {
       setWorkerBusy(true);
-      const requestId = uuidv4();
-      postWorkerMessage(
-        {
-          model,
-          prompt,
-          rememberPreviousConversation: false,
-          conversationConfig: {},
-          requestId,
-        },
-        (data: WorkerResponse) => {
-          switch (data.status) {
-            case 'progress': {
-              callback({
-                feedback: GenerationState.INITIALIZING,
-                output: '',
-                progress: data.progress,
-              });
-              break;
-            }
-            case 'initDone': {
-              callback({
-                feedback: GenerationState.THINKING,
-                output: '',
-                progress: 100,
-              });
-              setModelLoaded(model.id);
-              break;
-            }
-            case 'update': {
-              callback({
-                feedback: GenerationState.ANSWERING,
-                output: data.output || '',
-                progress: 100,
-              });
-              break;
-            }
-            case 'complete': {
-              callback({
-                feedback: GenerationState.COMPLETE,
-                output: data.output || '',
-                progress: 100,
-                stats: data?.runtimeStats || null,
-              });
-              setWorkerBusy(false);
-              setModelLoaded(model.id);
-              resolve(data.output);
-              break;
-            }
-            case 'error': {
-              setWorkerBusy(false);
-              reject(data.error);
-              break;
-            }
-          }
-        }
-      );
+      try {
+        const fullReply = await llmInterface.generate(prompt, (data) =>
+          callback(data)
+        );
+        setWorkerBusy(false);
+        resolve(fullReply);
+      } catch (e) {
+        setWorkerBusy(false);
+        reject(e);
+      }
     });
 
   return (
     <context.Provider
       value={{
-        ready: Boolean(modelLoaded),
+        ready: modelLoaded === model.id,
         busy: workerBusy,
         initialize,
         generate,
+        model,
       }}
     >
       {children}

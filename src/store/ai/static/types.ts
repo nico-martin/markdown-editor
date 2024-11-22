@@ -1,4 +1,4 @@
-import Model from '../llm/webllm/Model';
+import Model from '../llm/models/Model';
 
 export interface TranslateModel {
   name: string;

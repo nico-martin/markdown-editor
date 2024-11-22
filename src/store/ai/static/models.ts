@@ -1,6 +1,5 @@
-import Gemma2B from '../llm/webllm/models/Gemma2B.ts';
-import Mistral7BInstruct from '../llm/webllm/models/Mistral7BInstruct.ts';
-//import RedPajamaINCITEChat3B from '../llm/webllm/models/RedPajamaINCITEChat3B.ts';
+import Gemma2_2B from '../llm/models/Gemma2-2B.ts';
+import Gemma2_9B from '../llm/models/Gemma2-9B.ts';
 import {
   FLORES_200_CODES,
   M2M100_LANGUAGES,
@@ -10,11 +9,7 @@ import {
 } from './constants.ts';
 import { LlmModel, SpeechRecognitionModel, TranslateModel } from './types.ts';
 
-export const LLM_MODELS: Array<LlmModel> = [
-  //RedPajamaINCITEChat3B,
-  Mistral7BInstruct,
-  Gemma2B,
-];
+export const LLM_MODELS: Array<LlmModel> = [Gemma2_2B, Gemma2_9B];
 
 export const TRANSLATION_MODELS: Array<TranslateModel> = [
   {

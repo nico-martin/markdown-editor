@@ -133,9 +133,10 @@ const LlmModelOption: React.FC<{
   const { busy, initialize } = useLlm();
   const [downloadProgress, setDownloadProgress] = React.useState<number>(null);
   const download = async () =>
-    await initialize(model, (data) =>
-      setDownloadProgress(round(data.progress * 100))
-    );
+    await initialize((data) => {
+      console.log('llm init', data);
+      setDownloadProgress(round(data.progress * 100));
+    });
 
   return (
     <ModelOption
