@@ -82,7 +82,7 @@ const TextGenerator: React.FC<{
                       60 / data.stats.extra.prefill_tokens_per_s,
                       2
                     )} ms`,
-                    outputTokens: data.stats.extra.decode_tokens_per_s,
+                    outputTokens: data.stats.completion_tokens,
                     outputTokensPerSecond: round(
                       data.stats.extra.decode_tokens_per_s,
                       2

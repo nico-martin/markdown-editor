@@ -136,7 +136,7 @@ const LlmModelOption: React.FC<{
     await initialize((data) => {
       console.log('llm init', data);
       setDownloadProgress(round(data.progress * 100));
-    });
+    }, model);
 
   return (
     <ModelOption

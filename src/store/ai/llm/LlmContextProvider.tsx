@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Model from '@store/ai/llm/models/Model.ts';
 import {
   GenerateCallbackData,
   InitializeCallbackData,
@@ -18,23 +19,32 @@ const LlmContextProvider: React.FC<{
   const [workerBusy, setWorkerBusy] = React.useState<boolean>(false);
   const [modelLoaded, setModelLoaded] = React.useState<string>(null);
 
-  const model = React.useMemo(
+  const activeModel = React.useMemo(
     () =>
       models.find((m) => m.model.id === activeLlmModel?.id)?.model ||
       models[0].model,
     [activeLlmModel]
   );
 
-  const llmInterface: LlmInterface = React.useMemo(
-    () => new WebLlm('You are a helpful AI assistant.', model),
-    [model]
-  );
+  const llmInstances: Record<string, LlmInterface> = React.useMemo(() => {
+    return models.reduce((acc: Record<string, LlmInterface>, { model }) => {
+      acc[model.id] = new WebLlm('You are a helpful AI assistant.', model);
+      return acc;
+    }, {});
+  }, []);
+
+  const getInstance = (model: Model) =>
+    llmInstances[model.id] || llmInstances[activeModel.id];
 
   const initialize = (
-    callback: (data: InitializeCallbackData) => void = () => {}
+    callback: (data: InitializeCallbackData) => void = () => {},
+    model: Model = null
   ): Promise<boolean> =>
     new Promise((resolve, reject) => {
-      llmInterface
+      const modelInstance = getInstance(model);
+      if (!modelInstance) return;
+
+      modelInstance
         .initialize(callback)
         .then(() => {
           setModelLoaded(model.id);
@@ -46,33 +56,30 @@ const LlmContextProvider: React.FC<{
         .catch(reject);
     });
 
-  const generate = (
+  const generate = async (
     prompt: string = '',
-    callback: (data: GenerateCallbackData) => void = () => {}
-  ): Promise<string> =>
-    // eslint-disable-next-line no-async-promise-executor
-    new Promise(async (resolve, reject) => {
-      setWorkerBusy(true);
-      try {
-        const fullReply = await llmInterface.generate(prompt, (data) =>
-          callback(data)
-        );
-        setWorkerBusy(false);
-        resolve(fullReply);
-      } catch (e) {
-        setWorkerBusy(false);
-        reject(e);
-      }
-    });
+    callback: (data: GenerateCallbackData) => void = () => {},
+    model: Model = null
+  ): Promise<string> => {
+    const modelInstance = getInstance(model);
+    if (!modelInstance) return;
+
+    setWorkerBusy(true);
+    const fullReply = await getInstance(model).generate(prompt, (data) =>
+      callback(data)
+    );
+    setWorkerBusy(false);
+    return fullReply;
+  };
 
   return (
     <context.Provider
       value={{
-        ready: modelLoaded === model.id,
+        ready: modelLoaded === activeModel.id,
         busy: workerBusy,
         initialize,
         generate,
-        model,
+        model: activeModel,
       }}
     >
       {children}

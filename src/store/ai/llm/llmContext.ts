@@ -8,11 +8,13 @@ import {
 
 export interface Context {
   initialize: (
-    callback?: (data: InitializeCallbackData) => void
+    callback?: (data: InitializeCallbackData) => void,
+    model?: Model
   ) => Promise<boolean>;
   generate: (
     prompt: string,
-    callback: (data: GenerateCallbackData) => void
+    callback: (data: GenerateCallbackData) => void,
+    model?: Model
   ) => Promise<string>;
   ready: boolean;
   busy: boolean;
