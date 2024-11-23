@@ -31,6 +31,7 @@ class WebLlm implements LlmInterface {
         ],
       },
     });
+
     return true;
   };
 

@@ -7,10 +7,10 @@ import {
   LlmInterface,
 } from '@store/ai/llm/types.ts';
 import WebLlm from '@store/ai/llm/webllm/WebLlm.ts';
+import { LLM_MODELS } from '@store/ai/static/models.ts';
 
 import useAiSettings from '../useAiSettings.ts';
 import { context } from './llmContext.ts';
-import models from './models';
 
 const LlmContextProvider: React.FC<{
   children: React.ReactElement;
@@ -21,20 +21,20 @@ const LlmContextProvider: React.FC<{
 
   const activeModel = React.useMemo(
     () =>
-      models.find((m) => m.model.id === activeLlmModel?.id)?.model ||
-      models[0].model,
+      LLM_MODELS.find((model) => model.id === activeLlmModel?.id) ||
+      LLM_MODELS[0],
     [activeLlmModel]
   );
 
   const llmInstances: Record<string, LlmInterface> = React.useMemo(() => {
-    return models.reduce((acc: Record<string, LlmInterface>, { model }) => {
+    return LLM_MODELS.reduce((acc: Record<string, LlmInterface>, model) => {
       acc[model.id] = new WebLlm('You are a helpful AI assistant.', model);
       return acc;
     }, {});
   }, []);
 
   const getInstance = (model: Model) =>
-    llmInstances[model.id] || llmInstances[activeModel.id];
+    llmInstances[model?.id] || llmInstances[activeModel.id];
 
   const initialize = (
     callback: (data: InitializeCallbackData) => void = () => {},
@@ -47,7 +47,7 @@ const LlmContextProvider: React.FC<{
       modelInstance
         .initialize(callback)
         .then(() => {
-          setModelLoaded(model.id);
+          setModelLoaded(model?.id || activeModel.id);
           resolve(true);
         })
         .then(() => {

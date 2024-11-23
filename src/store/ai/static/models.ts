@@ -1,5 +1,8 @@
 import Gemma2_2B from '../llm/models/Gemma2-2B.ts';
 import Gemma2_9B from '../llm/models/Gemma2-9B.ts';
+import Llama3_2_1B from '../llm/models/Llama3_2_1B.ts';
+import Llama3_2_3B from '../llm/models/Llama3_2_3B.ts';
+import Phi3_5_mini from '../llm/models/Phi3_5-mini.ts';
 import {
   FLORES_200_CODES,
   M2M100_LANGUAGES,
@@ -9,7 +12,13 @@ import {
 } from './constants.ts';
 import { LlmModel, SpeechRecognitionModel, TranslateModel } from './types.ts';
 
-export const LLM_MODELS: Array<LlmModel> = [Gemma2_2B, Gemma2_9B];
+export const LLM_MODELS: Array<LlmModel> = [
+  Gemma2_2B,
+  Gemma2_9B,
+  Phi3_5_mini,
+  Llama3_2_1B,
+  Llama3_2_3B,
+];
 
 export const TRANSLATION_MODELS: Array<TranslateModel> = [
   {
