@@ -1,6 +1,8 @@
 import { File } from '@store/types';
 
-export const openFileFromSystem = async (): Promise<Partial<File>> => {
+export const openFileFromSystem = async (
+  onChangeCallback: (file: Partial<File>) => void = null
+): Promise<Partial<File>> => {
   const [handle] = await window.showOpenFilePicker({
     types: [
       {
@@ -11,12 +13,12 @@ export const openFileFromSystem = async (): Promise<Partial<File>> => {
       },
     ],
   });
-
-  return await getFileFromHandle(handle);
+  return await getFileFromHandle(handle, onChangeCallback);
 };
 
 export const getFileFromHandle = async (
-  fileHandle: FileSystemFileHandle
+  fileHandle: FileSystemFileHandle,
+  onChangeCallback: (file: Partial<File>) => void = null
 ): Promise<Partial<File>> => {
   const verify = await verifyPermission(fileHandle, false);
   if (!verify) {
@@ -27,6 +29,52 @@ export const getFileFromHandle = async (
   try {
     const file = await fileHandle.getFile();
     const content = await file.text();
+    console.log(onChangeCallback, 'FileSystemObserver' in window);
+    if (onChangeCallback && 'FileSystemObserver' in window) {
+      const observer = new FileSystemObserver((records, observer) => {
+        console.log('records', records.length);
+        for (const record of records) {
+          console.log('Change detected', record.root.name, record.type);
+        }
+
+        /*fileHandle.getFile().then((newFile) => {
+          console.log('newFile', newFile);
+          file.text().then((content) => {
+            console.log('newFile', content);
+
+            onChangeCallback({
+              title: newFile.name,
+              content,
+              savedContent: content,
+              handle: fileHandle,
+              handleLoaded: true,
+            });
+          });
+        });*/
+
+        /*const record = records[0];
+        const newHandle = record.changedHandle;
+        console.log('newHandle', newHandle);
+
+        // @ts-ignore
+        newHandle.getFile().then((newFile) => {
+          console.log('newFile', newFile);
+          file.text().then((content) => {
+            console.log('newFile', content);
+
+            onChangeCallback({
+              title: newFile.name,
+              content,
+              savedContent: content,
+              handle: fileHandle,
+              handleLoaded: true,
+            });
+          });
+        });*/
+      });
+      await observer.observe(fileHandle);
+    }
+
     return {
       title: file.name,
       content,

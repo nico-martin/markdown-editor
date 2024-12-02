@@ -86,7 +86,7 @@ export const FileContextProvider: React.FC<{
         if (launchParams.files.length) {
           await waitForInit();
           const fileHandle = launchParams.files[0];
-          const file = await getFileFromHandle(fileHandle);
+          const file = await getFileFromHandle(fileHandle, console.log);
           trackEvent({ category: 'file-action', action: 'create-from-queue' });
           await createNewFile(file);
         }

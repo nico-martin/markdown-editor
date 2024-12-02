@@ -15,6 +15,10 @@ import app from './app.json';
 
 dotenv.config();
 
+const ORIGIN_TRIAL_TOKENS = [
+  'AgnPfbFuPAO/2caFKEdwd6c0LZ73yQ06kAci8DRgH4OrraCE3cMWeGC0UbC52PsUMK65oGAajpeBchEwgi10UgkAAABXeyJvcmlnaW4iOiJodHRwczovL21kLm5pY28uZGV2OjQ0MyIsImZlYXR1cmUiOiJGaWxlU3lzdGVtT2JzZXJ2ZXIiLCJleHBpcnkiOjE3NDcxODA3OTl9',
+];
+
 const icons = [
   ...app.iconSizes.map((size) => ({
     src: `fav/icon/pwa-${size}x${size}.png`,
@@ -158,6 +162,10 @@ export default defineConfig({
           name: 'twitter:image',
           content: '/twitter.jpg',
         },
+        ...ORIGIN_TRIAL_TOKENS.map((token) => ({
+          name: 'trial_tokens',
+          content: token,
+        })),
       ],
     }),
   ],

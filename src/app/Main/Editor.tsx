@@ -32,7 +32,10 @@ const Editor = ({ className = '' }: { className?: string }) => {
 
   const loadActiveFile = async () => {
     if (!activeFile.handleLoaded) {
-      const updatedFile = await getFileFromHandle(activeFile.handle);
+      const updatedFile = await getFileFromHandle(
+        activeFile.handle,
+        console.log
+      );
       if (updatedFile) {
         updateActiveFile(updatedFile);
       } else {

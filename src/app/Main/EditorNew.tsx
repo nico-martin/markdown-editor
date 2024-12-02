@@ -58,7 +58,7 @@ const EditorNew: React.FC<{
       input.click();
       return;
     }
-    const file = await openFileFromSystem();
+    const file = await openFileFromSystem((...e) => console.log(e));
     trackEvent({ category: 'file-action', action: 'open' });
     createNewFile(file);
   };
