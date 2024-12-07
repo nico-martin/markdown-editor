@@ -1,26 +1,24 @@
 import React from 'react';
 
-import { LlmModel } from '../static/types.ts';
-import { RuntimeStats } from './webllm/static/types.ts';
-
-export interface CallbackData {
-  feedback: string;
-  progress: number;
-  output: string;
-  stats?: RuntimeStats;
-}
+import Model from '@store/ai/llm/models/Model.ts';
+import {
+  GenerateCallbackData,
+  InitializeCallbackData,
+} from '@store/ai/llm/types.ts';
 
 export interface Context {
   initialize: (
-    model: LlmModel,
-    callback: (data: CallbackData) => void
+    callback?: (data: InitializeCallbackData) => void,
+    model?: Model
   ) => Promise<boolean>;
   generate: (
     prompt: string,
-    callback: (data: CallbackData) => void
+    callback: (data: GenerateCallbackData) => void,
+    model?: Model
   ) => Promise<string>;
   ready: boolean;
   busy: boolean;
+  model: Model;
 }
 
 export const context = React.createContext<Context>({
@@ -28,4 +26,5 @@ export const context = React.createContext<Context>({
   generate: async () => '',
   ready: false,
   busy: false,
+  model: null,
 });

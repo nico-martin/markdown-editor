@@ -1,4 +1,4 @@
-import md5 from './utils/md5';
+import md5 from '@store/ai/llm/models/utils/md5.ts';
 
 class Model {
   public libUrl: string;
@@ -18,6 +18,7 @@ class Model {
     size = 0,
     about = '',
     requiredFeatures = [],
+    id = null,
   }: {
     url: string;
     libUrl: string;
@@ -26,6 +27,7 @@ class Model {
     size?: number;
     about?: string;
     requiredFeatures?: Array<string>;
+    id?: string;
   }) {
     this.url = url;
     this.libUrl = libUrl;
@@ -33,7 +35,7 @@ class Model {
     this.title = title;
     this.size = size;
     this.about = about;
-    this.id = md5(`${url}-${title}`);
+    this.id = id || md5(`${url}-${title}`);
     this.requiredFeatures = requiredFeatures;
   }
 }

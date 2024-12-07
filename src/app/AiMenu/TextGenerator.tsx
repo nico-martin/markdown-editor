@@ -10,12 +10,20 @@ import cn from '@utils/classnames.tsx';
 import { QuillSelection, getAttributesFromElement } from '@utils/editor.ts';
 import { getFirstXChars, round } from '@utils/helpers.ts';
 
-import { CallbackData } from '@store/ai/llm/llmContext.ts';
 import useLlm from '@store/ai/llm/useLlm.ts';
 
 import styles from './TextGenerator.module.css';
 
 const showdownConverter = new showdown.Converter();
+
+enum GenerationState {
+  IDLE = 'IDLE',
+  INITIALIZING = 'INITIALIZING',
+  THINKING = 'THINKING',
+  ANSWERING = 'ANSWERING',
+  COMPLETE = 'COMPLETE',
+  ERROR = 'ERROR',
+}
 
 const TextGenerator: React.FC<{
   className?: string;
@@ -24,8 +32,11 @@ const TextGenerator: React.FC<{
   selection: RangeStatic;
 }> = ({ className = '', editor, editorContext, selection }) => {
   const { trackEvent } = useMatomo();
-  const { busy, generate } = useLlm();
-  const [llmFeedback, setLlmFeedback] = React.useState<string>('');
+  const { generate, initialize } = useLlm();
+  const [busy, setBusy] = React.useState<boolean>(false);
+  const [llmFeedback, setLlmFeedback] = React.useState<GenerationState>(
+    GenerationState.IDLE
+  );
   const form = useForm<{ prompt: string }>({
     defaultValues: {
       prompt: '',
@@ -46,10 +57,14 @@ const TextGenerator: React.FC<{
           });
 
           try {
+            setBusy(true);
+            setLlmFeedback(GenerationState.INITIALIZING);
+            await initialize();
+            setLlmFeedback(GenerationState.THINKING);
             await generate(
               data.prompt + '\n\n' + editorContext.text,
-              (data: CallbackData) => {
-                setLlmFeedback(data.feedback);
+              (data) => {
+                setLlmFeedback(GenerationState.ANSWERING);
                 if (!data.output) return;
                 if (!content) {
                   editor.deleteText(selection.index, selection.length);
@@ -58,37 +73,25 @@ const TextGenerator: React.FC<{
 
                 if (data.stats) {
                   console.log('stats', {
-                    inputTokens: data.stats.prefillTotalTokens,
+                    inputTokens: data.stats.prompt_tokens,
                     inputTokensPerSecond: round(
-                      data.stats.prefillTokensPerSec,
+                      data.stats.extra.prefill_tokens_per_s,
                       2
                     ),
                     inputTokenTime: `${round(
-                      60 / data.stats.prefillTokensPerSec,
+                      60 / data.stats.extra.prefill_tokens_per_s,
                       2
                     )} ms`,
-                    outputTokens: data.stats.decodingTotalTokens,
+                    outputTokens: data.stats.completion_tokens,
                     outputTokensPerSecond: round(
-                      data.stats.decodingTokensPerSec,
+                      data.stats.extra.decode_tokens_per_s,
                       2
                     ),
                     outputTokenTime: `${round(
-                      60 / data.stats.decodingTokensPerSec,
+                      60 / data.stats.extra.decode_tokens_per_s,
                       2
                     )} ms`,
                   });
-                  /*trackEvent({
-                    category: 'llm-stats',
-                    action: 'text-generator',
-                    name: 'output-tps',
-                    value: data.stats.decodingTokensPerSec,
-                  });
-                  trackEvent({
-                    category: 'llm-stats',
-                    action: 'text-generator',
-                    name: 'input-tps',
-                    value: data.stats.prefillTokensPerSec,
-                  });*/
                 }
 
                 editor.setContents(content);
@@ -118,9 +121,14 @@ const TextGenerator: React.FC<{
                 );
               }
             );
+            setBusy(false);
           } catch (e) {
+            console.error(e);
+            setBusy(false);
+            setLlmFeedback(GenerationState.ERROR);
             alert(`Error: ${e}`);
           }
+          setLlmFeedback(GenerationState.COMPLETE);
         })}
       >
         {editorContext.text !== '' && (

@@ -1,12 +1,16 @@
 import React from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
-import { LlmModel } from '../static/types.ts';
+import Model from '@store/ai/llm/models/Model.ts';
+import {
+  GenerateCallbackData,
+  InitializeCallbackData,
+  LlmInterface,
+} from '@store/ai/llm/types.ts';
+import WebLlm from '@store/ai/llm/webllm/WebLlm.ts';
+import { LLM_MODELS } from '@store/ai/static/models.ts';
+
 import useAiSettings from '../useAiSettings.ts';
-import { CallbackData, context } from './llmContext.ts';
-import { GenerationState } from './webllm/static/types.ts';
-import { dispatchWorkerEvent, onWorkerEvent } from './worker/client.ts';
-import { WorkerRequest, WorkerResponse } from './worker/types.ts';
+import { context } from './llmContext.ts';
 
 const LlmContextProvider: React.FC<{
   children: React.ReactElement;
@@ -15,118 +19,67 @@ const LlmContextProvider: React.FC<{
   const [workerBusy, setWorkerBusy] = React.useState<boolean>(false);
   const [modelLoaded, setModelLoaded] = React.useState<string>(null);
 
-  const worker = React.useRef(null);
+  const activeModel = React.useMemo(
+    () =>
+      LLM_MODELS.find((model) => model.id === activeLlmModel?.id) ||
+      LLM_MODELS[0],
+    [activeLlmModel]
+  );
 
-  React.useEffect(() => {
-    if (!worker.current) {
-      worker.current = new Worker(
-        new URL('./worker/worker.ts', import.meta.url),
-        {
-          type: 'module',
-        }
-      );
-    }
-
-    const onMessageReceived = (e: MessageEvent<WorkerResponse>) =>
-      dispatchWorkerEvent(e.data);
-
-    worker.current.addEventListener('message', onMessageReceived);
-    return () =>
-      worker.current.removeEventListener('message', onMessageReceived);
+  const llmInstances: Record<string, LlmInterface> = React.useMemo(() => {
+    return LLM_MODELS.reduce((acc: Record<string, LlmInterface>, model) => {
+      acc[model.id] = new WebLlm('You are a helpful AI assistant.', model);
+      return acc;
+    }, {});
   }, []);
 
-  const postWorkerMessage = (
-    payload: WorkerRequest,
-    cb: (data: WorkerResponse) => void
-  ) => {
-    worker.current.postMessage(payload);
-    onWorkerEvent(payload.requestId, (data: WorkerResponse) => cb(data));
-  };
+  const getInstance = (model: Model) =>
+    llmInstances[model?.id] || llmInstances[activeModel.id];
 
   const initialize = (
-    model: LlmModel,
-    callback: (data: CallbackData) => void = null
-  ): Promise<boolean> => {
-    return new Promise((resolve, reject) => {
-      model.id === modelLoaded && resolve(true);
-      generate('', callback, model)
-        .then(() => resolve(true))
+    callback: (data: InitializeCallbackData) => void = () => {},
+    model: Model = null
+  ): Promise<boolean> =>
+    new Promise((resolve, reject) => {
+      const modelInstance = getInstance(model);
+      if (!modelInstance) return;
+
+      modelInstance
+        .initialize(callback)
+        .then(() => {
+          setModelLoaded(model?.id || activeModel.id);
+          resolve(true);
+        })
+        .then(() => {
+          resolve(true);
+        })
         .catch(reject);
     });
-  };
 
-  const generate = (
+  const generate = async (
     prompt: string = '',
-    callback: (data: CallbackData) => void = null,
-    model: LlmModel = activeLlmModel
-  ): Promise<string> =>
-    new Promise((resolve, reject) => {
-      setWorkerBusy(true);
-      const requestId = uuidv4();
-      postWorkerMessage(
-        {
-          model,
-          prompt,
-          rememberPreviousConversation: false,
-          conversationConfig: {},
-          requestId,
-        },
-        (data: WorkerResponse) => {
-          switch (data.status) {
-            case 'progress': {
-              callback({
-                feedback: GenerationState.INITIALIZING,
-                output: '',
-                progress: data.progress,
-              });
-              break;
-            }
-            case 'initDone': {
-              callback({
-                feedback: GenerationState.THINKING,
-                output: '',
-                progress: 100,
-              });
-              setModelLoaded(model.id);
-              break;
-            }
-            case 'update': {
-              callback({
-                feedback: GenerationState.ANSWERING,
-                output: data.output || '',
-                progress: 100,
-              });
-              break;
-            }
-            case 'complete': {
-              callback({
-                feedback: GenerationState.COMPLETE,
-                output: data.output || '',
-                progress: 100,
-                stats: data?.runtimeStats || null,
-              });
-              setWorkerBusy(false);
-              setModelLoaded(model.id);
-              resolve(data.output);
-              break;
-            }
-            case 'error': {
-              setWorkerBusy(false);
-              reject(data.error);
-              break;
-            }
-          }
-        }
-      );
-    });
+    callback: (data: GenerateCallbackData) => void = () => {},
+    model: Model = null
+  ): Promise<string> => {
+    const modelInstance = getInstance(model);
+    if (!modelInstance) return;
+
+    setWorkerBusy(true);
+    const fullReply = await getInstance(model).generate(prompt, (data) =>
+      callback(data)
+    );
+    setWorkerBusy(false);
+    return fullReply;
+  };
 
   return (
     <context.Provider
       value={{
-        ready: Boolean(modelLoaded),
+        ready: modelLoaded === activeModel.id,
         busy: workerBusy,
         initialize,
         generate,
+        model: activeModel,
       }}
     >
       {children}

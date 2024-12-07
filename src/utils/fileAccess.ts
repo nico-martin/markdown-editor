@@ -11,7 +11,6 @@ export const openFileFromSystem = async (): Promise<Partial<File>> => {
       },
     ],
   });
-
   return await getFileFromHandle(handle);
 };
 
@@ -27,6 +26,7 @@ export const getFileFromHandle = async (
   try {
     const file = await fileHandle.getFile();
     const content = await file.text();
+
     return {
       title: file.name,
       content,

@@ -183,6 +183,37 @@ export const FileContextProvider: React.FC<{
     return true;
   };
 
+  const reloadActiveFileFromDisc = async (handle: FileSystemFileHandle) => {
+    const updatedFile = await getFileFromHandle(handle);
+    if (
+      updatedFile.title !== activeFile.title ||
+      updatedFile.content !== activeFile.content
+    ) {
+      updateActiveFile(updatedFile);
+    }
+  };
+
+  React.useEffect(() => {
+    let observer: FileSystemObserver;
+    console.log("'FileSystemObserver' in self", 'FileSystemObserver' in self);
+    if (
+      activeFile.handle &&
+      activeFile.handleLoaded &&
+      'FileSystemObserver' in self
+    ) {
+      observer = new FileSystemObserver((records) => {
+        const record = records[0];
+        if (record.type === 'appeared') {
+          reloadActiveFileFromDisc(record.changedHandle);
+        }
+      });
+      observer.observe(activeFile.handle);
+    }
+    return () => {
+      observer?.disconnect();
+    };
+  }, [activeFile]);
+
   return (
     <fileContext.Provider
       value={{
