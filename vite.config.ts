@@ -16,6 +16,7 @@ import app from './app.json';
 dotenv.config();
 
 const ORIGIN_TRIAL_TOKENS = [
+  'Ah5u8QW8G3Py0j8j/29DK4WAdQpJtPJoQsvknC4MqgDItwciaP892EP4iEjejOh28DlQuUk5KgjB7IEUsuh4fQEAAABWeyJvcmlnaW4iOiJodHRwczovL2xvY2FsaG9zdDozMDAwIiwiZmVhdHVyZSI6IkZpbGVTeXN0ZW1PYnNlcnZlciIsImV4cGlyeSI6MTc0NzE4MDc5OX0=',
   'AgnPfbFuPAO/2caFKEdwd6c0LZ73yQ06kAci8DRgH4OrraCE3cMWeGC0UbC52PsUMK65oGAajpeBchEwgi10UgkAAABXeyJvcmlnaW4iOiJodHRwczovL21kLm5pY28uZGV2OjQ0MyIsImZlYXR1cmUiOiJGaWxlU3lzdGVtT2JzZXJ2ZXIiLCJleHBpcnkiOjE3NDcxODA3OTl9',
 ];
 
