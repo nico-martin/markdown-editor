@@ -86,7 +86,7 @@ export const FileContextProvider: React.FC<{
         if (launchParams.files.length) {
           await waitForInit();
           const fileHandle = launchParams.files[0];
-          const file = await getFileFromHandle(fileHandle, console.log);
+          const file = await getFileFromHandle(fileHandle);
           trackEvent({ category: 'file-action', action: 'create-from-queue' });
           await createNewFile(file);
         }
@@ -181,6 +181,36 @@ export const FileContextProvider: React.FC<{
           : files.activeFileIndex,
     }));
   };
+
+  const reloadActiveFileFromDisc = async (handle: FileSystemFileHandle) => {
+    const updatedFile = await getFileFromHandle(handle);
+    if (
+      updatedFile.title !== activeFile.title ||
+      updatedFile.content !== activeFile.content
+    ) {
+      updateActiveFile(updatedFile);
+    }
+  };
+
+  React.useEffect(() => {
+    let observer: FileSystemObserver;
+    if (
+      activeFile.handle &&
+      activeFile.handleLoaded &&
+      'FileSystemObserver' in self
+    ) {
+      observer = new FileSystemObserver((records) => {
+        const record = records[0];
+        if (record.type === 'appeared') {
+          reloadActiveFileFromDisc(record.changedHandle);
+        }
+      });
+      observer.observe(activeFile.handle);
+    }
+    return () => {
+      observer?.disconnect();
+    };
+  }, [activeFile]);
 
   return (
     <fileContext.Provider

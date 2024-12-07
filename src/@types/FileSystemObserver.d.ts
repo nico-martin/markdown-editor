@@ -17,8 +17,7 @@ enum FileSystemChangeType {
 }
 
 interface FileSystemChangeRecord {
-  readonly root: FileSystemHandle;
-  readonly changedHandle: FileSystemHandle;
+  readonly changedHandle: FileSystemFileHandle;
   readonly relativePathComponents: ReadonlyArray<string>;
   readonly type: FileSystemChangeType;
   readonly relativePathMovedFrom?: ReadonlyArray<string>;
@@ -27,9 +26,9 @@ interface FileSystemChangeRecord {
 class FileSystemObserver {
   constructor(callback: FileSystemObserverCallback);
   observe(
-    handle: FileSystemHandle,
+    handle: FileSystemFileHandle,
     options?: FileSystemObserverObserveOptions
   ): Promise<void>;
-  unobserve(handle: FileSystemHandle): void;
+  unobserve(handle: FileSystemFileHandle): void;
   disconnect(): void;
 }
