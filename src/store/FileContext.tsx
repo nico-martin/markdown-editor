@@ -18,7 +18,7 @@ interface FileContext {
   updateActiveFile: (updatedFile: Partial<File>) => void;
   createNewFile: (file?: Partial<File>) => void;
   setActiveFileIndex: (index: ActiveFileIndex) => void;
-  closeFileByIndex: (index: number) => void;
+  closeFileByIndex: (index: number) => boolean;
 }
 
 const fileContext = React.createContext<FileContext>({
@@ -29,7 +29,7 @@ const fileContext = React.createContext<FileContext>({
   updateActiveFile: () => {},
   createNewFile: () => {},
   setActiveFileIndex: () => {},
-  closeFileByIndex: () => {},
+  closeFileByIndex: () => false,
 });
 
 let windowInit = false;
@@ -161,14 +161,14 @@ export const FileContextProvider: React.FC<{
     });
   };
 
-  const closeFileByIndex = (index: number) => {
+  const closeFileByIndex = (index: number): boolean => {
     if (
       files.fileList[index].content !== files.fileList[index].savedContent &&
       !confirm(
         'Are you sure you want to close this file? Unsaved changes will be lost.'
       )
     ) {
-      return;
+      return false;
     }
     setFiles((files) => ({
       ...files,
@@ -180,6 +180,7 @@ export const FileContextProvider: React.FC<{
           ? Number(files.activeFileIndex) - 1
           : files.activeFileIndex,
     }));
+    return true;
   };
 
   return (

@@ -102,8 +102,8 @@ const ButtonSave: React.FC<{ className?: string }> = ({ className = '' }) => {
         <Button
           className={cn(styles.clearButton)}
           onClick={() => {
-            closeFileByIndex(activeFileIndex);
-            setActiveFileIndex('new');
+            const closed = closeFileByIndex(activeFileIndex);
+            closed && setActiveFileIndex('new');
           }}
           round
           layout="empty"
