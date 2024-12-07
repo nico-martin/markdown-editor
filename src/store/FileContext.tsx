@@ -195,7 +195,6 @@ export const FileContextProvider: React.FC<{
 
   React.useEffect(() => {
     let observer: FileSystemObserver;
-    console.log("'FileSystemObserver' in self", 'FileSystemObserver' in self);
     if (
       activeFile.handle &&
       activeFile.handleLoaded &&
